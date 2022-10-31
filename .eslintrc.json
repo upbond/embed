@@ -1,0 +1,19 @@
+{
+  "root": true,
+  "extends": ["@toruslabs/eslint-config-typescript"],
+  "parser": "@typescript-eslint/parser",
+  "ignorePatterns": "*.config.js",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 11,
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
+  }
+}

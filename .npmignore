@@ -1,8 +1,11 @@
+examples
+secrets.json
 .DS_Store
 node_modules
-/dist
-
+src/
+.npmrc
 embed.min.js
+embed.user.js
 # local env files
 .env.local
 .env.*.local
@@ -14,6 +17,7 @@ yarn-error.log*
 
 # Editor directories and files
 .idea
+.vscode
 *.suo
 *.ntvs*
 *.njsproj
@@ -22,6 +26,16 @@ yarn-error.log*
 
 disc.html
 
-secrets.json
+.vscode
+.editorconfig
+scripts
+test
+.eslintrc.json
+server.js
+.circleci
+.babelrc
+.eslintignore
+.prettierignore
+.prettierrc.yaml
+.github
 toruslabs-torus-embed*
-.eslintcache
