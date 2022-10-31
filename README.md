@@ -17,13 +17,13 @@ yarn add @upbond/upbond-embed
 This is the main class of anything related to Upbond Embed
 
 ```javascript 
-const Upbond = require("@upbond/embed");
+const Upbond = require("@upbond/upbond-embed");
 ```
 
 Using ES6
 
 ```javascript 
-import Upbond  from "@upbond/embed";
+import Upbond  from "@upbond/upbond-embed";
 ```
 
 Then, create a new instance of Upbond
@@ -50,7 +50,7 @@ const upbond = new Upbond(options);
 **Examples**
 
 ```javascript
-import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
+import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-embed";
 
 const upbond = new Upbond(); 
 const upbond = new Upbond({
@@ -86,7 +86,7 @@ Prompts the user to login if they are not logged in. If an OAuth verifier is not
 ******************Examples:******************
 
 ```javascript 
-import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
+import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-embed";
 
 // Your code ...
 const upbond = new Upbond(); 
@@ -131,7 +131,7 @@ Logs the user out of Upbond. Requires that a user is logged in already.
 ******************Examples:******************
 
 ```javascript
-import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
+import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-embed";
 
 // Your code ...
 const upbond = new Upbond(); 
@@ -230,7 +230,7 @@ handling some function eip-1193 function [EIP-1193](https://github.com/ethereum/
 
 ```javascript 
 import web3 from 'web3'
-import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
+import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-embed";
 
 const upbond = new Upbond(); 
 const upbond = new Upbond({
