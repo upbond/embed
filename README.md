@@ -281,4 +281,4 @@ Repository: [dapps-upbond-embed-example](https://github.com/upbond/dapps-embed-e
 
 # Current version
 
-version: v1.0.2
+version: v1.0.3
