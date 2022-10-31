@@ -1,11 +1,11 @@
 {
   "name": "@upbond/upbond-embed",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Embed script for Upbond",
-  "main": "dist/upbond.cjs.js",
-  "module": "dist/upbond.esm.js",
-  "unpkg": "dist/upbond.umd.min.js",
-  "jsdelivr": "dist/upbond.umd.min.js",
+  "main": "dist/upbondEmbed.cjs.js",
+  "module": "dist/upbondEmbed.esm.js",
+  "unpkg": "dist/upbondEmbed.umd.min.js",
+  "jsdelivr": "dist/upbondEmbed.umd.min.js",
   "types": "dist/types/index.d.ts",
   "files": [
     "dist",
