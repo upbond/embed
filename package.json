@@ -1,6 +1,6 @@
 {
   "name": "@upbond/upbond-embed",
-  "version": "1.1.4",
+  "version": "1.0.0",
   "description": "Embed script for Upbond",
   "main": "dist/upbond.cjs.js",
   "module": "dist/upbond.esm.js",
@@ -102,10 +102,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/upbond/upbond-embed-trial.git"
+    "url": "git+https://github.com/upbond/embed.git"
   },
   "bugs": {
-    "url": "https://github.com/upbond/upbond-embed-trial/issues"
+    "url": "https://github.com/upbond/embed/issues"
   },
-  "homepage": "https://github.com/upbond/upbond-embed-trial#readme"
+  "homepage": "https://github.com/upbond/embed#readme"
 }
