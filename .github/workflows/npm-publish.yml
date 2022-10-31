@@ -4,8 +4,10 @@
 name: Publishing @upbond/embed to npm
 
 on:
-  release:
-    types: [created]
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build:
