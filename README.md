@@ -86,42 +86,42 @@ Prompts the user to login if they are not logged in. If an OAuth verifier is not
 ******************Examples:******************
 
 ```javascript 
-  import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
+import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
 
-  // Your code ...
-  const upbond = new Upbond(); 
-  const upbond = new Upbond({
-    buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
-    buttonSize: 56,
-    modalZIndex: 150,
-    apiKey: '<your-api-key>'
-  });
+// Your code ...
+const upbond = new Upbond(); 
+const upbond = new Upbond({
+  buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
+  buttonSize: 56,
+  modalZIndex: 150,
+  apiKey: '<your-api-key>'
+});
 
-  const [initialized, setInitialized] = useState(false)
+const [initialized, setInitialized] = useState(false)
 
-  useEffect(() => {
-    const init = async () => {
-      await upbond.init({
-        buildEnv: UPBOND_BUILD_ENV.TESTING
-      });
-      setInitialized(true)
-    }
-    if (!initialized) {
-      init()
-    }
-  }, [])
-
-  const loginEmbed = async () => {
-    try {
-      await upbond.login();
-    } catch(err) {
-      throw new Error(err)
-    }
+useEffect(() => {
+  const init = async () => {
+    await upbond.init({
+      buildEnv: UPBOND_BUILD_ENV.TESTING
+    });
+    setInitialized(true)
   }
+  if (!initialized) {
+    init()
+  }
+}, [])
 
-  return (
-    // render yours
-  )
+const loginEmbed = async () => {
+  try {
+    await upbond.login();
+  } catch(err) {
+    throw new Error(err)
+  }
+}
+
+return (
+  // render yours
+)
 ```
 
 ## Logout
@@ -131,42 +131,42 @@ Logs the user out of Upbond. Requires that a user is logged in already.
 ******************Examples:******************
 
 ```javascript
-  import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
+import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
 
-  // Your code ...
-  const upbond = new Upbond(); 
-  const upbond = new Upbond({
-    buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
-    buttonSize: 56,
-    modalZIndex: 150,
-    apiKey: '<your-api-key>'
-  });
+// Your code ...
+const upbond = new Upbond(); 
+const upbond = new Upbond({
+  buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
+  buttonSize: 56,
+  modalZIndex: 150,
+  apiKey: '<your-api-key>'
+});
 
-  const [initialized, setInitialized] = useState(false)
+const [initialized, setInitialized] = useState(false)
 
-  useEffect(() => {
-    const init = async () => {
-      await upbond.init({
-        buildEnv: UPBOND_BUILD_ENV.TESTING
-      });
-      setInitialized(true)
-    }
-    if (!initialized) {
-      init()
-    }
-  }, [])
-
-  const logout = async () => {
-    try {
-      await upbond.logout();
-    } catch(err) {
-      throw new Error(err)
-    }
+useEffect(() => {
+  const init = async () => {
+    await upbond.init({
+      buildEnv: UPBOND_BUILD_ENV.TESTING
+    });
+    setInitialized(true)
   }
+  if (!initialized) {
+    init()
+  }
+}, [])
 
-  return (
-    // render yours
-  )
+const logout = async () => {
+  try {
+    await upbond.logout();
+  } catch(err) {
+    throw new Error(err)
+  }
+}
+
+return (
+  // render yours
+)
 ```
 
 ## GetUserInfo
@@ -176,15 +176,15 @@ Returns the logged-in user's info including name, email, and imageUrl. Only work
 ******************Examples:******************
 
 ```javascript
- const userInfo = await upbond.getUserInfo();
+const userInfo = await upbond.getUserInfo();
 ```
 
 **Returns**
 
 - `Promise<UserInfo>` : Returns a promise which resolves to `UserInfo` object.
 
-```javascript
-UserInfo {
+```typescript
+interface UserInfo {
   email: string;
   name: string;
   profileImage: string;
@@ -202,23 +202,23 @@ assign upbond provider to use in Web3
 ****************Examples****************
 
 ```javascript
- import web3 from 'web3'
+import web3 from 'web3'
 
-  const upbond = new Upbond(); 
-  const upbond = new Upbond({
-    buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
-    buttonSize: 56,
-    modalZIndex: 150,
-    apiKey: '<your-api-key>'
-  });
+const upbond = new Upbond(); 
+const upbond = new Upbond({
+  buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
+  buttonSize: 56,
+  modalZIndex: 150,
+  apiKey: '<your-api-key>'
+});
 
-  /* ... Your upbond embed code ... 
-    You need to login to upbond embed first for get the ethereum 
-    provider returned from upbond embed
-  */
+/* ... Your upbond embed code ... 
+  You need to login to upbond embed first for get the ethereum 
+  provider returned from upbond embed
+*/
 
- const web3 = new Web3(upbond.provider);
- const account = await web3.eth.getAccounts() 
+const web3 = new Web3(upbond.provider);
+const account = await web3.eth.getAccounts() 
  //[0x000] - your account
 ```
 
@@ -229,8 +229,8 @@ handling some function eip-1193 function [EIP-1193](https://github.com/ethereum/
 ******Examples:******
 
 ```javascript 
- import web3 from 'web3'
- import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
+import web3 from 'web3'
+import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/embed";
 
 const upbond = new Upbond(); 
 const upbond = new Upbond({
@@ -257,9 +257,8 @@ upbond.provider.on("accountsChanged", (accounts) => {
 If you want to use the upbond provider, sure you can use on a react lifecycles like this: 
 
 ```javascript
-
 useEffect(() => {
-  if (upbond.provider) {
+if (upbond.provider) {
     if (upbond.provider.on) {
       upbond.provider.on("chainChanged", (resp) => {
           console.log(resp, "chainchanged");
@@ -279,3 +278,7 @@ useEffect(() => {
 **React**
 
 Repository: [dapps-upbond-embed-example](https://github.com/upbond/dapps-embed-example)
+
+# Current version
+
+version: v1.0.0
