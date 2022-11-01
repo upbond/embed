@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ObservableStore, storeAsStream } from "@metamask/obs-store";
 import {
   createIdRemapMiddleware,
@@ -284,6 +285,7 @@ class UpbondInpageProvider extends SafeEventEmitter {
    * or rejects if an error is encountered.
    */
   async request<T>(args: RequestArguments): Promise<Maybe<T>> {
+    console.log("@onRequest", args);
     if (!args || typeof args !== "object" || Array.isArray(args)) {
       throw ethErrors.rpc.invalidRequest({
         message: messages.errors.invalidRequestArgs(),
@@ -319,6 +321,7 @@ class UpbondInpageProvider extends SafeEventEmitter {
    * @param cb - The callback function.
    */
   sendAsync(payload: JRPCRequest<unknown>, callback: (error: Error | null, result?: JRPCResponse<unknown>) => void): void {
+    console.log("@onSendAsync", payload);
     this._rpcRequest(payload, callback);
   }
 
@@ -329,11 +332,13 @@ class UpbondInpageProvider extends SafeEventEmitter {
    */
 
   addListener(eventName: string, listener: (...args: unknown[]) => void): this {
+    console.log(`on addListener: ${eventName}`);
     this._warnOfDeprecation(eventName);
     return super.addListener(eventName, listener);
   }
 
   on(eventName: string, listener: (...args: unknown[]) => void): this {
+    console.log(`on listener: ${eventName}`);
     this._warnOfDeprecation(eventName);
     return super.on(eventName, listener);
   }

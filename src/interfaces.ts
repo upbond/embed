@@ -48,16 +48,11 @@ export const SUPPORTED_PAYMENT_NETWORK = {
 export const UPBOND_BUILD_ENV = {
   PRODUCTION: "production",
   DEVELOPMENT: "development",
-  BINANCE: "binance",
   TESTING: "testing",
-  LRC: "lrc",
-  BETA: "beta",
-  BNB: "bnb",
-  POLYGON: "polygon",
   TORUS_UPBOND: "torus-upbond",
 } as const;
 
-export type BuildEnv = "production" | "development" | "binance" | "testing" | "lrc" | "beta" | "bnb" | "polygon" | "torus-upbond";
+export type BuildEnv = "production" | "development" | "testing" | "torus-upbond";
 
 export type PAYMENT_PROVIDER_TYPE = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
 
@@ -631,6 +626,9 @@ export interface TorusParams {
    * @defaultValue production
    */
   buildEnv?: BuildEnv;
+
+  isUsingDirect?: boolean;
+
   /**
    * Enables or disables logging.
    *

@@ -161,13 +161,14 @@ export const getTorusUrl = async (
   buildEnv: UPBOND_BUILD_ENV_TYPE,
   integrity: IntegrityParams
 ): Promise<{ torusUrl: string; logLevel: LogLevelDesc }> => {
+  log.info("Opening torus URL!");
   let torusUrl: string;
   let logLevel: LogLevelDesc;
   // Do not change this line
   const version = process.env.TORUS_EMBED_VERSION;
   let versionUsed = integrity.version || version;
   try {
-    if ((buildEnv === "binance" || buildEnv === "production") && !integrity.version) {
+    if (buildEnv === "production" && !integrity.version) {
       let response: { data: string };
       if (!config.prodTorusUrl)
         response = await get(`${config.api}/latestversion?name=@toruslabs/torus-embed&version=${version}`, {}, { useAPIKey: true });
@@ -181,32 +182,16 @@ export const getTorusUrl = async (
   }
   log.info("version used: ", versionUsed);
   switch (buildEnv) {
-    case "binance":
-      torusUrl = `https://binance.tor.us/v${versionUsed}`;
-      logLevel = "info";
+    case "production":
+      torusUrl = `https://wallet.upbond.io`;
+      logLevel = "error";
       break;
     case "testing":
       torusUrl = "https://wallet-mobile.dev.upbond.io";
       logLevel = "debug";
       break;
-    case "bnb":
-      torusUrl = "https://bnb.tor.us";
-      logLevel = "error";
-      break;
-    case "polygon":
-      torusUrl = "https://polygon.tor.us";
-      logLevel = "error";
-      break;
-    case "lrc":
-      torusUrl = "https://lrc.tor.us";
-      logLevel = "debug";
-      break;
-    case "beta":
-      torusUrl = "https://beta.tor.us";
-      logLevel = "debug";
-      break;
     case "development":
-      torusUrl = "http://localhost:3000";
+      torusUrl = "http://localhost:3001";
       logLevel = "debug";
       break;
     case "torus-upbond":

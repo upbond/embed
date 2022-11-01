@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { get, setAPIKey } from "@toruslabs/http-helpers";
 import { BasePostMessageStream, JRPCRequest, ObjectMultiplex, setupMultiplex, Substream } from "@toruslabs/openlogin-jrpc";
 import deepmerge from "lodash.merge";
@@ -125,6 +126,8 @@ class Upbond {
 
   communicationMux: ObjectMultiplex;
 
+  isUsingDirect: boolean;
+
   isLoginCallback: () => void;
 
   paymentProviders = configuration.paymentProviders;
@@ -149,6 +152,7 @@ class Upbond {
     this.modalZIndex = modalZIndex;
     this.alertZIndex = modalZIndex + 1000;
     this.isIframeFullScreen = false;
+    this.isUsingDirect = false;
   }
 
   async init({
@@ -174,6 +178,7 @@ class Upbond {
     whiteLabel,
     skipTKey = false,
     useWalletConnect = false,
+    isUsingDirect = false,
     mfaLevel = "default",
   }: TorusParams = {}): Promise<void> {
     log.info(`Using login config: `, loginConfig);
@@ -182,6 +187,7 @@ class Upbond {
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
 
+    this.isUsingDirect = isUsingDirect;
     this.torusUrl = torusUrl;
     this.whiteLabel = whiteLabel;
     this.useWalletConnect = useWalletConnect;
@@ -189,6 +195,7 @@ class Upbond {
 
     log.info(`Using custom login: ${this.isCustomLogin}`);
     log.setDefaultLevel(logLevel);
+    // log.setDefaultLevel("debug");
 
     if (enableLogging) log.enableAll();
     else log.disableAll();
@@ -197,7 +204,7 @@ class Upbond {
     if (upbondIframeUrl.pathname.endsWith("/")) upbondIframeUrl.pathname += "popup";
     else upbondIframeUrl.pathname += "/popup";
 
-    upbondIframeUrl.hash = `#isCustomLogin=${this.isCustomLogin}`;
+    upbondIframeUrl.hash = `#isCustomLogin=${this.isCustomLogin}&isRedirect=${isUsingDirect}`;
 
     // Iframe code
     this.upbondIframe = htmlToElement<HTMLIFrameElement>(
@@ -816,7 +823,27 @@ class Upbond {
   }
 
   protected _showLoginPopup(calledFromEmbed: boolean, resolve: (a: string[]) => void, reject: (err: Error) => void): void {
-    const loginHandler = (data) => {
+    const isJsonString = (str): boolean => {
+      try {
+        JSON.parse(str);
+      } catch (e) {
+        return false;
+      }
+      return true;
+    };
+
+    const loginHandler = async (data) => {
+      console.log(`onLoginHandler: `, data);
+      if (data.urlData) {
+        const { urlData } = data;
+        if (isJsonString(urlData)) {
+          const jsonData = JSON.parse(urlData);
+          console.log(jsonData.finalUrl, "@urlData");
+          const handledWindow = new PopupHandler({ url: new URL(jsonData.finalUrl), target: "_self", features: FEATURES_CONFIRM_WINDOW });
+          await handledWindow.open();
+        }
+        return;
+      }
       const { err, selectedAddress } = data;
       if (err) {
         log.error(err);
@@ -824,7 +851,7 @@ class Upbond {
       }
       // returns an array (cause accounts expects it)
       else if (resolve) resolve([selectedAddress]);
-      if (this.isIframeFullScreen) this._displayIframe();
+      if (this.isIframeFullScreen) this._displayIframe(true);
     };
     const oauthStream = this.communicationMux.getStream("oauth") as Substream;
     if (!this.requestedVerifier) {

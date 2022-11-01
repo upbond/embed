@@ -1,4 +1,4 @@
-import Upbond, { UPBOND_BUILD_ENV } from "@upbond/upbond-embed";
+import Upbond, { UPBOND_BUILD_ENV } from "./upbond-embed/upbondEmbed.esm";
 import Web3 from "web3";
 
 class UpbondEmbed {
@@ -9,7 +9,7 @@ class UpbondEmbed {
   web3 = null
 
   // you can also using another envs.
-  env = UPBOND_BUILD_ENV.TESTING
+  env = "development"
   
   provider
 
@@ -26,7 +26,8 @@ class UpbondEmbed {
   async init() {
     if (this.upbond instanceof Upbond) {
       await this.upbond.init({
-        buildEnv: this.env
+        buildEnv: this.env,
+        isUsingDirect: false
       })
       this.initialized = true
     }

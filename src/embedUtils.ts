@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Stream } from "pump";
 
 export const runOnLoad = (fn: () => void): Promise<unknown> =>
@@ -37,6 +38,7 @@ export const handleEvent = (handle: EventTarget, eventName: string, handler: (..
 
 export const handleStream = (handle: Stream, eventName: string, handler: (chunk: unknown) => void): void => {
   const handlerWrapper = (chunk: unknown) => {
+    console.log(`on: ${eventName} | data: `, chunk);
     handler(chunk);
     handle.removeListener(eventName, handlerWrapper);
   };
