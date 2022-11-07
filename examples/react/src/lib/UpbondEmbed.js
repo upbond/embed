@@ -1,4 +1,4 @@
-import Upbond, { UPBOND_BUILD_ENV } from "./upbond-embed/upbondEmbed.esm";
+import Upbond from "./upbond-embed/upbondEmbed.esm";
 import Web3 from "web3";
 
 class UpbondEmbed {
@@ -27,7 +27,8 @@ class UpbondEmbed {
     if (this.upbond instanceof Upbond) {
       await this.upbond.init({
         buildEnv: this.env,
-        isUsingDirect: false
+        isUsingDirect: true,
+        dappRedirectUri: window.location.origin
       })
       this.initialized = true
     }
@@ -37,12 +38,9 @@ class UpbondEmbed {
     try {
       if (this.upbond instanceof Upbond && this.web3 instanceof Web3) {
         const _provider = await this.upbond.login() // login using upbond
-        console.log(_provider, '@upbondProvider?')
-        console.log(this.upbond.provider, '@provider?')
         this.web3.setProvider(this.upbond.provider)
 
         const accounts = await this.web3.eth.getAccounts()
-        console.log(`Provided account: ${accounts[0]}`)
 
         this.isLoggedIn = true
         this.provider = _provider
@@ -54,6 +52,7 @@ class UpbondEmbed {
         }
       }
     } catch (error) {
+      console.log(error, '@errorOnReactProject?')
       return {
         msg: error.message || 'Failed to login',
         data: null
@@ -82,7 +81,7 @@ class UpbondEmbed {
   }
 
   async getUserInfo() {
-    if (this.upbond instanceof Upbond && this.isLoggedIn) {
+    if (this.upbond instanceof Upbond) {
       try {
         const userInfo = await this.upbond.getUserInfo()
         return userInfo

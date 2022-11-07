@@ -15,7 +15,8 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [account, setAccount] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
-  const [signInfo, setSignInfo] = useState(null)
+  const [signInfo, setSignInfo] = useState(null);
+  const _upbond = upbondServices.upbond.provider;
 
   const [upbondProvider, setUpbondProvider] = useState(null)
 
@@ -39,16 +40,12 @@ const App = () => {
     setLoading(true)
     try {
       const login = await upbondServices.login()
-      console.log(login, '@LOGIN???')
       if (login.data !== null) {
-        console.log('Success login!')
-
         setUpbondProvider(login.data)
         setAccount(login.accounts)
         setLoading(false)
         return
       }
-      console.log(`error login: ${login.msg}`)
       setLoading(false)
     } catch (error) {
       setLoading(false)
@@ -82,18 +79,42 @@ const App = () => {
   }
 
   useEffect(() => {
-    if (upbondProvider !== null) {
-      if (upbondProvider.on) {
-        upbondProvider.on("accountsChanged", (accounts) => {
+    const init = async () => {
+      if (upbondServices.upbond) {
+        if (upbondServices.upbond.isLoggedIn) {
+          setLoading(true)
+          const user = await upbondServices.getUserInfo()
+          if (user) {
+            const web3 = new Web3(_upbond)
+            setUpbondProvider(_upbond)
+            const account = await web3.eth.getAccounts()
+            setAccount(account)
+            setLoading(false)
+          }   
+          setLoading(false)
+        }
+      }
+    }
+    init()
+  }, [_upbond])
+
+  useEffect(() => {
+    if (_upbond) {
+      if (_upbond.on) {
+        _upbond.on("accountsChanged", (accounts) => {
           console.log(`Account changed: ${accounts}`)
         })
 
-        upbondProvider.on("chainChanged", (res) => {
+        _upbond.on("chainChanged", (res) => {
           console.log(`Chain changed on: ${res}`)
+        })
+
+        _upbond.on("connect", (res) => {
+          console.log('onConnect?', res)
         })
       }
     }
-  }, [upbondProvider])
+  }, [_upbond])
 
   return (
     <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">

@@ -38,6 +38,7 @@ import {
   getPreopenInstanceId,
   getTorusUrl,
   getUserLanguage,
+  searchToObject,
   validatePaymentProvider,
 } from "./utils";
 
@@ -80,8 +81,15 @@ const UNSAFE_METHODS = [
     }
   } catch (error) {
     log.warn(error);
+    throw new Error(error);
   }
 })();
+
+export const ACCOUNT_TYPE = {
+  NORMAL: "normal",
+  THRESHOLD: "threshold",
+  IMPORTED: "imported",
+};
 
 class Upbond {
   buttonPosition: BUTTON_POSITION_TYPE = BUTTON_POSITION.BOTTOM_LEFT;
@@ -129,6 +137,8 @@ class Upbond {
   isUsingDirect: boolean;
 
   isLoginCallback: () => void;
+
+  dappRedirectUrl: string;
 
   paymentProviders = configuration.paymentProviders;
 
@@ -180,6 +190,7 @@ class Upbond {
     useWalletConnect = false,
     isUsingDirect = false,
     mfaLevel = "default",
+    dappRedirectUri = window.location.origin,
   }: TorusParams = {}): Promise<void> {
     log.info(`Using login config: `, loginConfig);
     if (this.isInitialized) throw new Error("Already initialized");
@@ -187,6 +198,7 @@ class Upbond {
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
 
+    this.dappRedirectUrl = dappRedirectUri;
     this.isUsingDirect = isUsingDirect;
     this.torusUrl = torusUrl;
     this.whiteLabel = whiteLabel;
@@ -195,7 +207,6 @@ class Upbond {
 
     log.info(`Using custom login: ${this.isCustomLogin}`);
     log.setDefaultLevel(logLevel);
-    // log.setDefaultLevel("debug");
 
     if (enableLogging) log.enableAll();
     else log.disableAll();
@@ -204,7 +215,9 @@ class Upbond {
     if (upbondIframeUrl.pathname.endsWith("/")) upbondIframeUrl.pathname += "popup";
     else upbondIframeUrl.pathname += "/popup";
 
-    upbondIframeUrl.hash = `#isCustomLogin=${this.isCustomLogin}&isRedirect=${isUsingDirect}`;
+    upbondIframeUrl.hash = `#isCustomLogin=${this.isCustomLogin}&isRedirect=${isUsingDirect}&dappRedirectUri=${encodeURIComponent(
+      `${dappRedirectUri}`
+    )}`;
 
     // Iframe code
     this.upbondIframe = htmlToElement<HTMLIFrameElement>(
@@ -238,7 +251,7 @@ class Upbond {
       return new Promise((resolve, reject) => {
         this.upbondIframe.onload = async () => {
           // only do this if iframe is not full screen
-          this._setupWeb3();
+          await this._setupWeb3();
           const initStream = this.communicationMux.getStream("init_stream") as Substream;
           initStream.on("data", (chunk) => {
             const { name, data, error } = chunk;
@@ -287,7 +300,6 @@ class Upbond {
         },
         response
       );
-      log.info(calculatedIntegrity, "integrity");
       if (calculatedIntegrity === integrity.hash) {
         await handleSetup();
       } else {
@@ -373,7 +385,6 @@ class Upbond {
       const providerChangeStream = this.communicationMux.getStream("provider_change") as Substream;
       const handler = (chunk) => {
         const { err, success } = chunk.data;
-        log.info(chunk);
         if (err) {
           reject(err);
         } else if (success) {
@@ -678,8 +689,7 @@ class Upbond {
     this.isIframeFullScreen = isFull;
   }
 
-  protected _setupWeb3(): void {
-    log.info("setupWeb3 running");
+  protected async _setupWeb3(): Promise<void> {
     // setup background connection
     const metamaskStream = new BasePostMessageStream({
       name: "embed_metamask",
@@ -819,31 +829,40 @@ class Upbond {
 
     if (this.provider.shouldSendMetadata) sendSiteMetadata(this.provider._rpcEngine);
     inpageProvider._initializeState();
-    log.debug("Upbond - injected provider");
+    if (window.location.search) {
+      // taro buat send stream address disini:
+
+      const data = searchToObject<{
+        loggedIn: string;
+        rehydrate: string;
+        selectedAddress: string;
+        verifier: string;
+      }>(window.location.search);
+
+      const oauthStream = this.communicationMux.getStream("oauth") as Substream;
+      const isLoggedIn = data.loggedIn === "true";
+      const isRehydrate = data.rehydrate === "true";
+
+      const { selectedAddress, verifier } = data;
+
+      if (isLoggedIn) {
+        this.isLoggedIn = true;
+        this.currentVerifier = verifier;
+      } else this._displayIframe(true);
+
+      this._displayIframe(true);
+
+      oauthStream.write({ selectedAddress });
+      statusStream.write({ loggedIn: isLoggedIn, rehydrate: isRehydrate, verifier });
+
+      await inpageProvider._initializeState();
+
+      window.history.replaceState(null, "", window.location.origin + window.location.pathname);
+    }
   }
 
   protected _showLoginPopup(calledFromEmbed: boolean, resolve: (a: string[]) => void, reject: (err: Error) => void): void {
-    const isJsonString = (str): boolean => {
-      try {
-        JSON.parse(str);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    };
-
     const loginHandler = async (data) => {
-      console.log(`onLoginHandler: `, data);
-      if (data.urlData) {
-        const { urlData } = data;
-        if (isJsonString(urlData)) {
-          const jsonData = JSON.parse(urlData);
-          console.log(jsonData.finalUrl, "@urlData");
-          const handledWindow = new PopupHandler({ url: new URL(jsonData.finalUrl), target: "_self", features: FEATURES_CONFIRM_WINDOW });
-          await handledWindow.open();
-        }
-        return;
-      }
       const { err, selectedAddress } = data;
       if (err) {
         log.error(err);
@@ -851,7 +870,7 @@ class Upbond {
       }
       // returns an array (cause accounts expects it)
       else if (resolve) resolve([selectedAddress]);
-      if (this.isIframeFullScreen) this._displayIframe(true);
+      if (this.isIframeFullScreen) this._displayIframe(false);
     };
     const oauthStream = this.communicationMux.getStream("oauth") as Substream;
     if (!this.requestedVerifier) {

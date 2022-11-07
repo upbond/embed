@@ -19,6 +19,7 @@ class PopupHandler extends EventEmitter {
     super();
     this.url = url;
     this.target = target || "_blank";
+    // eslint-disable-next-line no-console
     this.features = features || getPopupFeatures();
     this.window = undefined;
     this.windowTimer = undefined;

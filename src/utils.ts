@@ -253,3 +253,14 @@ export function getPopupFeatures(): string {
   const features = `titlebar=0,toolbar=0,status=0,location=0,menubar=0,height=${h / systemZoom},width=${w / systemZoom},top=${top},left=${left}`;
   return features;
 }
+
+export const searchToObject = <T>(search): T => {
+  return search
+    .substring(1)
+    .split("&")
+    .reduce(function (result, value) {
+      const parts = value.split("=");
+      if (parts[0]) result[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+      return result as T;
+    }, {});
+};

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { ObservableStore, storeAsStream } from "@metamask/obs-store";
 import {
   createIdRemapMiddleware,
@@ -285,7 +284,6 @@ class UpbondInpageProvider extends SafeEventEmitter {
    * or rejects if an error is encountered.
    */
   async request<T>(args: RequestArguments): Promise<Maybe<T>> {
-    console.log("@onRequest", args);
     if (!args || typeof args !== "object" || Array.isArray(args)) {
       throw ethErrors.rpc.invalidRequest({
         message: messages.errors.invalidRequestArgs(),
@@ -321,7 +319,6 @@ class UpbondInpageProvider extends SafeEventEmitter {
    * @param cb - The callback function.
    */
   sendAsync(payload: JRPCRequest<unknown>, callback: (error: Error | null, result?: JRPCResponse<unknown>) => void): void {
-    console.log("@onSendAsync", payload);
     this._rpcRequest(payload, callback);
   }
 
@@ -332,13 +329,11 @@ class UpbondInpageProvider extends SafeEventEmitter {
    */
 
   addListener(eventName: string, listener: (...args: unknown[]) => void): this {
-    console.log(`on addListener: ${eventName}`);
     this._warnOfDeprecation(eventName);
     return super.addListener(eventName, listener);
   }
 
   on(eventName: string, listener: (...args: unknown[]) => void): this {
-    console.log(`on listener: ${eventName}`);
     this._warnOfDeprecation(eventName);
     return super.on(eventName, listener);
   }
@@ -379,8 +374,8 @@ class UpbondInpageProvider extends SafeEventEmitter {
       this._handleAccountsChanged(accounts);
     } catch (error) {
       log.error("MetaMask: Failed to get initial state. Please report this bug.", error);
+      throw new Error(error);
     } finally {
-      log.info("initialized state");
       this._state.initialized = true;
       this.emit("_initialized");
     }
@@ -513,7 +508,6 @@ class UpbondInpageProvider extends SafeEventEmitter {
     if (!this._state.isConnected) {
       this._state.isConnected = true;
       this.emit("connect", { chainId });
-      log.debug(messages.info.connected(chainId));
     }
   }
 

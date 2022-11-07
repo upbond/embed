@@ -74,6 +74,11 @@ export interface IPaymentProvider {
   sell?: boolean;
 }
 
+export interface IBcHandler {
+  url: URL;
+  channelName: string;
+}
+
 export interface IHashAlgorithmOptions {
   algorithms?: createHash.algorithm[];
   delimiter?: string;
@@ -601,6 +606,15 @@ export interface WhiteLabelParams {
 }
 
 export interface TorusParams {
+  /**
+   *
+   *
+   * @type {string}
+   * will redirect you after upbond login reconstruct your key, then you will get your public key
+   * @defaultValue {window.location.origin}
+   * @memberof TorusParams
+   */
+  dappRedirectUri?: string;
   /**
    * Torus Network Object
    */
