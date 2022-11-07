@@ -157,7 +157,7 @@ export function logStreamDisconnectWarning(remoteLabel: string, error: Error, em
 
 export const getPreopenInstanceId = () => Math.random().toString(36).slice(2);
 
-export const getTorusUrl = async (
+export const getUpbondWalletUrl = async (
   buildEnv: UPBOND_BUILD_ENV_TYPE,
   integrity: IntegrityParams
 ): Promise<{ torusUrl: string; logLevel: LogLevelDesc }> => {
@@ -184,7 +184,7 @@ export const getTorusUrl = async (
   switch (buildEnv) {
     case "production":
       torusUrl = `https://wallet.upbond.io`;
-      logLevel = "error";
+      logLevel = "info";
       break;
     case "testing":
       torusUrl = "https://wallet-mobile.dev.upbond.io";
@@ -204,7 +204,7 @@ export const getTorusUrl = async (
       break;
     default:
       torusUrl = `https://wallet.upbond.io`;
-      logLevel = "error";
+      logLevel = "info";
       break;
   }
   return { torusUrl, logLevel };

@@ -1,6 +1,6 @@
 {
   "name": "@upbond/upbond-embed",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Embed script for Upbond",
   "main": "dist/upbondEmbed.cjs.js",
   "module": "dist/upbondEmbed.esm.js",

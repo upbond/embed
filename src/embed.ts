@@ -36,7 +36,7 @@ import {
   FEATURES_DEFAULT_WALLET_WINDOW,
   FEATURES_PROVIDER_CHANGE_WINDOW,
   getPreopenInstanceId,
-  getTorusUrl,
+  getUpbondWalletUrl,
   getUserLanguage,
   searchToObject,
   validatePaymentProvider,
@@ -69,7 +69,7 @@ const UNSAFE_METHODS = [
   try {
     if (typeof document === "undefined") return;
     const upbondIframeHtml = document.createElement("link");
-    const { torusUrl } = await getTorusUrl("production", { check: false, hash: iframeIntegrity, version: "" });
+    const { torusUrl } = await getUpbondWalletUrl("production", { check: false, hash: iframeIntegrity, version: "" });
     upbondIframeHtml.href = `${torusUrl}/popup`;
     upbondIframeHtml.crossOrigin = "anonymous";
     upbondIframeHtml.type = "text/html";
@@ -194,7 +194,7 @@ class Upbond {
   }: TorusParams = {}): Promise<void> {
     log.info(`Using login config: `, loginConfig);
     if (this.isInitialized) throw new Error("Already initialized");
-    const { torusUrl, logLevel } = await getTorusUrl(buildEnv, integrity);
+    const { torusUrl, logLevel } = await getUpbondWalletUrl(buildEnv, integrity);
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
 

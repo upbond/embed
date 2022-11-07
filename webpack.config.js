@@ -11,9 +11,6 @@ exports.baseConfig = {
     },
   },
   resolve: {
-    fallback: {
-      crypto: require.resolve('crypto-browserify')
-    },
     alias: {
       "bn.js": path.resolve(__dirname, "node_modules/bn.js"),
       lodash: path.resolve(__dirname, "node_modules/lodash-es"),

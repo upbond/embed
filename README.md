@@ -52,7 +52,6 @@ const upbond = new Upbond(options);
 ```javascript
 import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-embed";
 
-const upbond = new Upbond(); 
 const upbond = new Upbond({
   buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT, // default: 'bottom-left'
   buttonSize: 56,
@@ -89,7 +88,6 @@ Prompts the user to login if they are not logged in. If an OAuth verifier is not
 import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-embed";
 
 // Your code ...
-const upbond = new Upbond(); 
 const upbond = new Upbond({
   buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
   buttonSize: 56,
@@ -134,7 +132,6 @@ Logs the user out of Upbond. Requires that a user is logged in already.
 import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-embed";
 
 // Your code ...
-const upbond = new Upbond(); 
 const upbond = new Upbond({
   buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
   buttonSize: 56,
@@ -204,7 +201,6 @@ assign upbond provider to use in Web3
 ```javascript
 import web3 from 'web3'
 
-const upbond = new Upbond(); 
 const upbond = new Upbond({
   buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
   buttonSize: 56,
@@ -281,4 +277,4 @@ Repository: [dapps-upbond-embed-example](https://github.com/upbond/dapps-embed-e
 
 # Current version
 
-version: v1.0.4
+version: v1.0.7
