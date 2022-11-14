@@ -606,7 +606,7 @@ export interface WhiteLabelParams {
   customTranslations?: LocaleLinks<unknown>;
 }
 
-export interface TorusParams {
+export interface IUpbondEmbedParams {
   /**
    *
    *

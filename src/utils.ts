@@ -1,4 +1,4 @@
-import { get } from "@toruslabs/http-helpers";
+// import { get } from "@toruslabs/http-helpers";
 import { JRPCMiddleware, PendingJRPCResponse, SafeEventEmitter } from "@toruslabs/openlogin-jrpc";
 import { ethErrors } from "eth-rpc-errors";
 import { LogLevelDesc } from "loglevel";
@@ -159,28 +159,13 @@ export const getPreopenInstanceId = () => Math.random().toString(36).slice(2);
 
 export const getUpbondWalletUrl = async (
   buildEnv: UPBOND_BUILD_ENV_TYPE,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   integrity: IntegrityParams
 ): Promise<{ torusUrl: string; logLevel: LogLevelDesc }> => {
   log.info("Opening torus URL!");
   let torusUrl: string;
   let logLevel: LogLevelDesc;
-  // Do not change this line
-  const version = process.env.TORUS_EMBED_VERSION;
-  let versionUsed = integrity.version || version;
-  try {
-    if (buildEnv === "production" && !integrity.version) {
-      let response: { data: string };
-      if (!config.prodTorusUrl)
-        response = await get(`${config.api}/latestversion?name=@toruslabs/torus-embed&version=${version}`, {}, { useAPIKey: true });
-      else response = { data: config.prodTorusUrl };
-      versionUsed = response.data;
-      // eslint-disable-next-line require-atomic-updates
-      config.prodTorusUrl = response.data;
-    }
-  } catch (error) {
-    log.error(error, "unable to fetch latest version");
-  }
-  log.info("version used: ", versionUsed);
+  // log.info("version used: ", versionUsed);
   switch (buildEnv) {
     case "production":
       torusUrl = `https://wallet.upbond.io`;

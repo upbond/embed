@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { get, setAPIKey } from "@toruslabs/http-helpers";
 import { BasePostMessageStream, JRPCRequest, ObjectMultiplex, setupMultiplex, Substream } from "@toruslabs/openlogin-jrpc";
 import deepmerge from "lodash.merge";
@@ -11,13 +10,13 @@ import {
   BUTTON_POSITION,
   BUTTON_POSITION_TYPE,
   EMBED_TRANSLATION_ITEM,
+  IUpbondEmbedParams,
   LOGIN_PROVIDER,
   NetworkInterface,
   PAYMENT_PROVIDER_TYPE,
   PaymentParams,
   TorusCtorArgs,
   TorusLoginParams,
-  TorusParams,
   TorusPublicKey,
   UnvalidatedJsonRpcRequest,
   UPBOND_BUILD_ENV,
@@ -76,12 +75,12 @@ const UNSAFE_METHODS = [
     upbondIframeHtml.rel = "prefetch";
     if (upbondIframeHtml.relList && upbondIframeHtml.relList.supports) {
       if (upbondIframeHtml.relList.supports("prefetch")) {
-        document.head.appendChild(upbondIframeHtml);
+        log.info("IFrame loaded");
+        // document.head.appendChild(upbondIframeHtml);
       }
     }
   } catch (error) {
     log.warn(error);
-    throw new Error(error);
   }
 })();
 
@@ -191,7 +190,7 @@ class Upbond {
     isUsingDirect = false,
     mfaLevel = "default",
     dappRedirectUri = window.location.origin,
-  }: TorusParams = {}): Promise<void> {
+  }: IUpbondEmbedParams = {}): Promise<void> {
     log.info(`Using login config: `, loginConfig);
     if (this.isInitialized) throw new Error("Already initialized");
     const { torusUrl, logLevel } = await getUpbondWalletUrl(buildEnv, integrity);
@@ -258,7 +257,7 @@ class Upbond {
             if (name === "init_complete" && data.success) {
               // resolve promise
               this.isInitialized = true;
-              this._displayIframe(this.isIframeFullScreen);
+              this._displayIframe();
               resolve(undefined);
             } else if (error) {
               reject(new Error(error));
@@ -807,6 +806,7 @@ class Upbond {
     const widgetStream = communicationMux.getStream("widget") as Substream;
     widgetStream.on("data", (chunk) => {
       const { data } = chunk;
+      // eslint-disable-next-line no-console
       this._displayIframe(data);
     });
 

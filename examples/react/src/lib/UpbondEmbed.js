@@ -1,4 +1,4 @@
-import Upbond from "./upbond-embed/upbondEmbed.esm";
+import Upbond from "@upbond/upbond-embed";
 import Web3 from "web3";
 
 class UpbondEmbed {
@@ -9,7 +9,7 @@ class UpbondEmbed {
   web3 = null
 
   // you can also using another envs.
-  env = "development"
+  env = "direct-test"
   
   provider
 

@@ -1,34 +1,34 @@
-# **Installation**
+# **Upbond Embed**
 
 ****************with npm****************
 
-``` 
+```terminal  
 npm install @upbond/upbond-embed
 ```
 
 ******************with yarn******************
 
-``` 
+```terminal
 yarn add @upbond/upbond-embed 
 ```
 
-# **Initialization**
+## **Initialization**
 
 This is the main class of anything related to Upbond Embed
 
-```javascript 
+```javascript
 const Upbond = require("@upbond/upbond-embed");
 ```
 
 Using ES6
 
-```javascript 
+```javascript
 import Upbond  from "@upbond/upbond-embed";
 ```
 
 Then, create a new instance of Upbond
 
-```javascript 
+```javascript
 const upbond = new Upbond(options);
 ```
 
@@ -277,4 +277,4 @@ Repository: [dapps-upbond-embed-example](https://github.com/upbond/dapps-embed-e
 
 # Current version
 
-version: v1.0.7
+version: v1.0.8
