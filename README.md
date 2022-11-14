@@ -1,5 +1,5 @@
+![alt text](https://github.com/upbond/embed/blob/master/assets/upbond_logo.png?raw=true)
 # **Upbond Embed**
-
 ****************with npm****************
 
 ```terminal  
@@ -273,7 +273,7 @@ if (upbond.provider) {
 
 **React**
 
-Repository: [dapps-upbond-embed-example](https://github.com/upbond/dapps-embed-example)
+You can check this out [here](https://github.com/upbond/embed/tree/master/examples/react)
 
 # Current version
 
