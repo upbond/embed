@@ -76,7 +76,7 @@ const UNSAFE_METHODS = [
     if (upbondIframeHtml.relList && upbondIframeHtml.relList.supports) {
       if (upbondIframeHtml.relList.supports("prefetch")) {
         log.info("IFrame loaded");
-        // document.head.appendChild(upbondIframeHtml);
+        document.head.appendChild(upbondIframeHtml);
       }
     }
   } catch (error) {
@@ -203,6 +203,8 @@ class Upbond {
     this.whiteLabel = whiteLabel;
     this.useWalletConnect = useWalletConnect;
     this.isCustomLogin = !!(loginConfig && Object.keys(loginConfig).length > 0) || !!(whiteLabel && Object.keys(whiteLabel).length > 0);
+
+    log.info("@customLogin?", this.isCustomLogin);
 
     log.info(`Using custom login: ${this.isCustomLogin}`);
     log.setDefaultLevel(logLevel);
@@ -429,7 +431,7 @@ class Upbond {
           finalUrl.searchParams.append(x, params[x]);
         });
         finalUrl.hash = `#isCustomLogin=${this.isCustomLogin}`;
-
+        log.info(`loaded: ${finalUrl}`);
         const walletWindow = new PopupHandler({ url: finalUrl, features: FEATURES_DEFAULT_WALLET_WINDOW });
         walletWindow.open();
       }
@@ -806,7 +808,7 @@ class Upbond {
     const widgetStream = communicationMux.getStream("widget") as Substream;
     widgetStream.on("data", (chunk) => {
       const { data } = chunk;
-      // eslint-disable-next-line no-console
+
       this._displayIframe(data);
     });
 

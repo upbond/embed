@@ -1,4 +1,4 @@
-import Upbond from "@upbond/upbond-embed";
+import Upbond from "./upbond-embed/upbondEmbed.esm";
 import Web3 from "web3";
 
 class UpbondEmbed {
@@ -9,7 +9,7 @@ class UpbondEmbed {
   web3 = null
 
   // you can also using another envs.
-  env = "direct-test"
+  env = "development"
   
   provider
 
@@ -28,7 +28,7 @@ class UpbondEmbed {
       await this.upbond.init({
         buildEnv: this.env,
         isUsingDirect: true,
-        dappRedirectUri: window.location.origin
+        dappRedirectUri: window.location.origin,
       })
       this.initialized = true
     }

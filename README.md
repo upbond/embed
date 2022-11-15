@@ -45,7 +45,6 @@ const upbond = new Upbond(options);
     ```
     - `buttonSize` (optional) : number, default is `56`
     - `modalZIndex` (optional): number, default is `99999`
-    - `apiKey` (optional): string
 
 **Examples**
 
@@ -54,9 +53,8 @@ import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-e
 
 const upbond = new Upbond({
   buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT, // default: 'bottom-left'
-  buttonSize: 56,
-  modalZIndex: 150,
-  apiKey: '<your-api-key>'
+  buttonSize: 56, // optional
+  modalZIndex: 150, // optional
 });
 
 await upbond.init({
@@ -277,4 +275,4 @@ You can check this out [here](https://github.com/upbond/embed/tree/master/exampl
 
 # Current version
 
-version: v1.0.8
+version: v1.0.9
