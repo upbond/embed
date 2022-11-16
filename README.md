@@ -89,8 +89,7 @@ import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-e
 const upbond = new Upbond({
   buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
   buttonSize: 56,
-  modalZIndex: 150,
-  apiKey: '<your-api-key>'
+  modalZIndex: 150
 });
 
 const [initialized, setInitialized] = useState(false)
@@ -133,8 +132,7 @@ import Upbond, { UPBOND_BUILD_ENV, BUTTON_POSITION_TYPE } from "@upbond/upbond-e
 const upbond = new Upbond({
   buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
   buttonSize: 56,
-  modalZIndex: 150,
-  apiKey: '<your-api-key>'
+  modalZIndex: 150
 });
 
 const [initialized, setInitialized] = useState(false)
@@ -202,8 +200,7 @@ import web3 from 'web3'
 const upbond = new Upbond({
   buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
   buttonSize: 56,
-  modalZIndex: 150,
-  apiKey: '<your-api-key>'
+  modalZIndex: 150
 });
 
 /* ... Your upbond embed code ... 
@@ -230,8 +227,7 @@ const upbond = new Upbond();
 const upbond = new Upbond({
   buttonPosition: BUTTON_POSITION_TYPE.BOTTOM_LEFT,
   buttonSize: 56,
-  modalZIndex: 150,
-  apiKey: '<your-api-key>'
+  modalZIndex: 150
 });
 
 /* ... Your upbond embed code ... 
