@@ -9,7 +9,7 @@ class UpbondEmbed {
   web3 = null
 
   // you can also using another envs.
-  env = "development"
+  env = "direct-test"
   
   provider
 
