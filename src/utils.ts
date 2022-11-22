@@ -47,6 +47,32 @@ export const defaultLoginParam = {
     mainOption: true,
     priority: 1,
   } as LoginConfigItem,
+  jwt: {
+    loginProvider: "jwt",
+    verifier: "upbond-google-dev-tesnet",
+    typeOfLogin: "jwt",
+    name: "google",
+    description: "",
+    clientId: "hxFv4SaQVXv3tE_rhe5u9",
+    verifierSubIdentifier: "torus",
+    logoHover: "",
+    logoLight: "",
+    logoDark: "",
+    showOnModal: false,
+    mainOption: false,
+    showOnDesktop: false,
+    showOnMobile: false,
+    // For torus only
+    buttonDescription: "",
+    walletVerifier: "upbond-google-dev-tesnet",
+    jwtParameters: {
+      domain: "https://lzg2dndj.auth.dev.upbond.io/",
+      connection: "google",
+      clientId: "hxFv4SaQVXv3tE_rhe5u9",
+      redirect_uri: "http://localhost:3002/auth",
+    },
+    customLogo: "google",
+  } as LoginConfigItem,
 } as LoginConfig;
 
 export const validatePaymentProvider = (provider: string, params: PaymentParams): { errors: PaymentErrors; isValid: boolean } => {
@@ -177,6 +203,10 @@ export const getUpbondWalletUrl = async (
       break;
     case "development":
       torusUrl = "http://localhost:3001";
+      logLevel = "debug";
+      break;
+    case "new-dev-local":
+      torusUrl = "http://localhost:3000";
       logLevel = "debug";
       break;
     case "torus-upbond":

@@ -36,8 +36,8 @@ const upbond = new Upbond(options);
 
 - `options` (optional) : The options of the constructor
     - `buttonPosition` (optional) : string, default is `BOTTOM_LEFT` <br />
-    The position of the Upbond button. Supported values are `top-left` `bottom-left` `top-right` `bottom-right`. Or you can following this code: 
-    ```javascript 
+    The position of the Upbond button. Supported values are `top-left` `bottom-left` `top-right` `bottom-right`. Or you can following this code:
+    ```javascript
       BOTTOM_LEFT: "bottom-left",
       TOP_LEFT: "top-left",
       BOTTOM_RIGHT: "bottom-right",
@@ -271,4 +271,4 @@ You can check this out [here](https://github.com/upbond/embed/tree/master/exampl
 
 # Current version
 
-version: v1.0.9
+version: v1.0.10
