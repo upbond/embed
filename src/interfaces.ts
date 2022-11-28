@@ -702,6 +702,16 @@ export interface IUpbondEmbedParams {
    * @defaultValue default
    */
   mfaLevel?: "none" | "default" | "optional" | "mandatory";
+
+  /**
+   *
+   *
+   * @type {boolean}
+   * @memberof IUpbondEmbedParams
+   */
+  skipDialog?: boolean;
+
+  selectedVerifier?: string;
 }
 
 export interface UnvalidatedJsonRpcRequest {

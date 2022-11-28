@@ -99,6 +99,8 @@ class Upbond {
 
   upbondIframe: HTMLIFrameElement;
 
+  skipDialog: boolean;
+
   styleLink: HTMLLinkElement;
 
   isLoggedIn: boolean;
@@ -140,6 +142,8 @@ class Upbond {
   dappRedirectUrl: string;
 
   paymentProviders = configuration.paymentProviders;
+
+  selectedVerifier: string;
 
   private loginHint = "";
 
@@ -189,6 +193,8 @@ class Upbond {
     useWalletConnect = false,
     isUsingDirect = false,
     mfaLevel = "default",
+    selectedVerifier,
+    skipDialog = false,
     dappRedirectUri = window.location.origin,
   }: IUpbondEmbedParams = {}): Promise<void> {
     log.info(`Using login config: `, loginConfig);
@@ -197,6 +203,20 @@ class Upbond {
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
 
+    if (selectedVerifier) {
+      try {
+        const isAvailableOnLoginConfig = loginConfig[selectedVerifier];
+        if (isAvailableOnLoginConfig) {
+          this.selectedVerifier = selectedVerifier;
+        } else {
+          throw new Error("Selected verifier is not exist on your loginConfig");
+        }
+      } catch (error) {
+        throw new Error("Selected verifier is not exist on your loginConfig");
+      }
+    }
+
+    this.skipDialog = skipDialog;
     this.dappRedirectUrl = dappRedirectUri;
     this.isUsingDirect = isUsingDirect;
     this.torusUrl = torusUrl;
@@ -278,6 +298,12 @@ class Upbond {
               skipTKey,
               network,
               mfaLevel,
+              skipDialog,
+              selectedVerifier,
+              directConfig: {
+                enabled: isUsingDirect,
+                redirectUrl: dappRedirectUri,
+              },
             },
           });
         };
@@ -763,7 +789,7 @@ class Upbond {
             }
           } else {
             // set up listener for login
-            this._showLoginPopup(true, resolve, reject);
+            this._showLoginPopup(true, resolve, reject, this.skipDialog);
           }
         });
       });
@@ -806,9 +832,8 @@ class Upbond {
 
     // show torus widget if button clicked
     const widgetStream = communicationMux.getStream("widget") as Substream;
-    widgetStream.on("data", (chunk) => {
+    widgetStream.on("data", async (chunk) => {
       const { data } = chunk;
-
       this._displayIframe(data);
     });
 
@@ -863,7 +888,7 @@ class Upbond {
     }
   }
 
-  protected _showLoginPopup(calledFromEmbed: boolean, resolve: (a: string[]) => void, reject: (err: Error) => void): void {
+  protected _showLoginPopup(calledFromEmbed: boolean, resolve: (a: string[]) => void, reject: (err: Error) => void, skipDialog = false): void {
     const loginHandler = async (data) => {
       const { err, selectedAddress } = data;
       if (err) {
@@ -878,14 +903,31 @@ class Upbond {
     if (!this.requestedVerifier) {
       this._displayIframe(true);
       handleStream(oauthStream, "data", loginHandler);
-      oauthStream.write({ name: "oauth_modal", data: { calledFromEmbed } });
+      oauthStream.write({
+        name: "oauth_modal",
+        data: {
+          calledFromEmbed,
+          skipDialog,
+          isUsingDirect: this.isUsingDirect,
+          verifier: this.currentVerifier,
+          dappRedirectUrl: this.dappRedirectUrl,
+          selectedVerifier: this.selectedVerifier,
+        },
+      });
     } else {
       handleStream(oauthStream, "data", loginHandler);
       const preopenInstanceId = getPreopenInstanceId();
       this._handleWindow(preopenInstanceId);
       oauthStream.write({
         name: "oauth",
-        data: { calledFromEmbed, verifier: this.requestedVerifier, preopenInstanceId, login_hint: this.loginHint },
+        data: {
+          calledFromEmbed,
+          verifier: this.requestedVerifier,
+          preopenInstanceId,
+          login_hint: this.loginHint,
+          skipDialog,
+          selectedVerifier: this.selectedVerifier,
+        },
       });
     }
   }
