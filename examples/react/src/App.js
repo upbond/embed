@@ -90,6 +90,11 @@ const App = () => {
     }
   }
 
+  const signWeb3Token = async () => {
+    const signedMsg = await upbondServices.signWeb3Token(account[0])
+    setSignInfo(`Web3 token:  ${signedMsg}`)
+  }
+
   useEffect(() => {
     const init = async () => {
       if (upbondServices.upbond) {
@@ -147,6 +152,13 @@ const App = () => {
                   onClick={getUser}
                 >
                   Get User Info
+                </button>
+                <button
+                  type="button"
+                  className="items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  onClick={signWeb3Token}
+                >
+                  Sign Web3Token
                 </button>
               </div>
               {/* User Info */}

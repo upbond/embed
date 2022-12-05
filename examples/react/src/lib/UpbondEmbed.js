@@ -2,6 +2,7 @@ import Upbond from "./upbond-embed/upbondEmbed.esm";
 import Web3 from "web3";
 import { Web3Auth } from "@web3auth/modal";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import Web3Token from "web3-token";
 
 class UpbondEmbed {
 
@@ -208,7 +209,17 @@ class UpbondEmbed {
       }
     }
   }
+  async signWeb3Token(account) {
+    this.web3.setProvider(this.upbond.provider)
+    const sign = await Web3Token.sign(async (msg) => {
+      if (this.web3 instanceof Web3) {
+        return await this.web3.eth.personal.sign(msg, account)
+      }
+    }, '1d')
+    return sign
+  }
 }
+
 
 const upbondServices = new UpbondEmbed()
 
