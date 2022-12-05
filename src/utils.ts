@@ -209,8 +209,8 @@ export const getUpbondWalletUrl = async (
       torusUrl = "http://localhost:3000";
       logLevel = "debug";
       break;
-    case "torus-upbond":
-      torusUrl = "https://torus-wallet.upbond.io";
+    case "staging":
+      torusUrl = "https://wallet.stg.upbond.io";
       logLevel = "debug";
       break;
     case "direct-test":

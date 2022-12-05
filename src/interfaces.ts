@@ -49,12 +49,12 @@ export const UPBOND_BUILD_ENV = {
   PRODUCTION: "production",
   DEVELOPMENT: "development",
   TESTING: "testing",
-  TORUS_UPBOND: "torus-upbond",
+  STAGING: "staging",
   DIRECT_TEST: "direct-test",
   NEW_DEV_LOCAL: "new-dev-local",
 } as const;
 
-export type BuildEnv = "production" | "development" | "testing" | "torus-upbond" | "direct-test" | "new-dev-local";
+export type BuildEnv = "production" | "development" | "testing" | "staging" | "direct-test" | "new-dev-local";
 
 export type PAYMENT_PROVIDER_TYPE = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
 

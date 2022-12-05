@@ -54,6 +54,18 @@ const App = () => {
     }
   };
 
+  const openloginLogin = async () => {
+    try {
+      setLoading(true)
+      await await upbondServices.loginOpenlogin()
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+      console.error(error)
+      throw new Error(error)
+    }
+  }
+
   const getUser = async () => {
     setLoading(true);
     try {
@@ -175,13 +187,22 @@ const App = () => {
             {loading === true ? (
               <SpinnerLoading />
             ) : (
-              <button
-                type="button"
-                className="mx-auto px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  w-1/4"
-                onClick={login}
-              >
-                Login
-              </button>
+              <div className="flex flex-1 flex-col space-y-3">
+                <button
+                  type="button"
+                  className="mx-auto px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  w-1/4"
+                  onClick={login}
+                >
+                  Login Embed
+                </button>
+                <button
+                  type="button"
+                  className="mx-auto px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  w-1/4"
+                  onClick={openloginLogin}
+                >
+                  Login Openlogin
+                </button>
+              </div>
             )}
           </div>
         )}
