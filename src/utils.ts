@@ -217,6 +217,10 @@ export const getUpbondWalletUrl = async (
       torusUrl = "https://wallet-embed-trial.dev.upbond.io";
       logLevel = "debug";
       break;
+    case "staging":
+      torusUrl = "https://wallet.stg.upbond.io";
+      logLevel = "debug";
+      break;
     default:
       torusUrl = `https://wallet.upbond.io`;
       logLevel = "info";
