@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { get, setAPIKey } from "@toruslabs/http-helpers";
 import { BasePostMessageStream, JRPCRequest, ObjectMultiplex, setupMultiplex, Substream } from "@toruslabs/openlogin-jrpc";
 import deepmerge from "lodash.merge";
@@ -152,6 +151,8 @@ class Upbond {
 
   private isCustomLogin = false;
 
+  buildEnv: typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
+
   constructor({ buttonPosition = BUTTON_POSITION.BOTTOM_LEFT, buttonSize = 56, modalZIndex = 99999, apiKey = "torus-default" }: TorusCtorArgs = {}) {
     this.buttonPosition = buttonPosition;
     this.buttonSize = buttonSize;
@@ -167,6 +168,7 @@ class Upbond {
     this.alertZIndex = modalZIndex + 1000;
     this.isIframeFullScreen = false;
     this.isUsingDirect = false;
+    this.buildEnv = "production";
   }
 
   async init({
@@ -217,6 +219,7 @@ class Upbond {
       }
     }
 
+    this.buildEnv = buildEnv;
     this.skipDialog = skipDialog;
     this.dappRedirectUrl = dappRedirectUri;
     this.isUsingDirect = isUsingDirect;
@@ -672,7 +675,6 @@ class Upbond {
   protected _displayIframe(isFull = false): void {
     const style: Partial<CSSStyleDeclaration> = {};
     const size = this.buttonSize + 14; // 15px padding
-    console.log(size, "@size?");
     // set phase
     if (!isFull) {
       style.display = this.torusWidgetVisibility ? "block" : "none";
@@ -762,10 +764,6 @@ class Upbond {
         // If user is already logged in, we assume they have given access to the website
         inpageProvider.sendAsync({ jsonrpc: "2.0", id: getPreopenInstanceId(), method: "eth_requestAccounts", params: [] }, (err, response) => {
           const { result: res } = (response as { result: unknown }) || {};
-          console.log(`onInpageProviderCallback:`, {
-            response,
-            res,
-          });
           if (err) {
             setTimeout(() => {
               reject(err);
@@ -803,13 +801,15 @@ class Upbond {
 
     inpageProvider.tryPreopenHandle = (payload: UnvalidatedJsonRpcRequest | UnvalidatedJsonRpcRequest[], cb: (...args: unknown[]) => void) => {
       const _payload = payload;
-      if (!Array.isArray(_payload) && UNSAFE_METHODS.includes(_payload.method)) {
-        const preopenInstanceId = getPreopenInstanceId();
-        this._handleWindow(preopenInstanceId, {
-          target: "_blank",
-          features: FEATURES_CONFIRM_WINDOW,
-        });
-        _payload.preopenInstanceId = preopenInstanceId;
+      if (!this.buildEnv.includes("v2")) {
+        if (!Array.isArray(_payload) && UNSAFE_METHODS.includes(_payload.method)) {
+          const preopenInstanceId = getPreopenInstanceId();
+          this._handleWindow(preopenInstanceId, {
+            target: "_blank",
+            features: FEATURES_CONFIRM_WINDOW,
+          });
+          _payload.preopenInstanceId = preopenInstanceId;
+        }
       }
       inpageProvider._rpcEngine.handle(_payload as JRPCRequest<unknown>[], cb);
     };
@@ -877,7 +877,6 @@ class Upbond {
       const isRehydrate = data.rehydrate === "true";
 
       const { selectedAddress, verifier } = data;
-
       if (isLoggedIn) {
         this.isLoggedIn = true;
         this.currentVerifier = verifier;

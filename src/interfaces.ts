@@ -52,6 +52,10 @@ export const UPBOND_BUILD_ENV = {
   STAGING: "staging",
   DIRECT_TEST: "direct-test",
   NEW_DEV_LOCAL: "new-dev-local",
+  V2_DEVELOPMENT: "v2_development",
+  V2_LOCAL: "v2_local",
+  V2_STAGING: "v2_staging",
+  V2_NEW_DEV_LOCAL: "v2_new-dev-local",
 } as const;
 
 export type BuildEnv = "production" | "development" | "testing" | "staging" | "direct-test" | "new-dev-local";
@@ -351,6 +355,10 @@ export interface LoginConfigItem {
    * Modify the order of buttons. Should be greater than zero, where 1 is top priority.
    */
   priority?: number;
+
+  buttonBgColor?: string;
+
+  buttonTextColor?: string;
 }
 
 export interface LoginConfig {

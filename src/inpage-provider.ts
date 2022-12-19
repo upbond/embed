@@ -212,7 +212,6 @@ class UpbondInpageProvider extends SafeEventEmitter {
     });
 
     // connect to async provider
-
     const jsonRpcConnection = createStreamMiddleware();
     pump(
       jsonRpcConnection.stream,

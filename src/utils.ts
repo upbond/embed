@@ -202,7 +202,7 @@ export const getUpbondWalletUrl = async (
       logLevel = "debug";
       break;
     case "development":
-      torusUrl = "http://localhost:3001";
+      torusUrl = "http://localhost:3002";
       logLevel = "debug";
       break;
     case "new-dev-local":
@@ -211,11 +211,27 @@ export const getUpbondWalletUrl = async (
       break;
     case "staging":
       torusUrl = "https://wallet.stg.upbond.io";
-      logLevel = "debug";
+      logLevel = "info";
       break;
     case "direct-test":
       torusUrl = "https://wallet-embed-trial.dev.upbond.io";
       logLevel = "debug";
+      break;
+    case "v2_development":
+      torusUrl = "https://new-wallet-dbg-dwi.dev.upbond.io";
+      logLevel = "debug";
+      break;
+    case "v2_new-dev-local":
+      torusUrl = "http://localhost:3000";
+      logLevel = "debug";
+      break;
+    case "v2_local":
+      torusUrl = "http://localhost:3002";
+      logLevel = "debug";
+      break;
+    case "v2_staging":
+      torusUrl = "https://wallet.stg.upbond.io"; // TODO: change stag url to v2 stag url
+      logLevel = "info";
       break;
     default:
       torusUrl = `https://wallet.upbond.io`;
