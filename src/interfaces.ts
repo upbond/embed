@@ -58,7 +58,7 @@ export const UPBOND_BUILD_ENV = {
   V2_NEW_DEV_LOCAL: "v2_new-dev-local",
 } as const;
 
-export type BuildEnv = "production" | "development" | "testing" | "staging" | "direct-test" | "new-dev-local";
+export type BuildEnv = "production" | "development" | "testing" | "staging" | "direct-test" | "new-dev-local" | "v2_development" | "v2_new-dev-local" | "v2_local" | "v2_staging";
 
 export type PAYMENT_PROVIDER_TYPE = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
 
@@ -564,7 +564,7 @@ export interface WhiteLabelParams {
   /**
    * Whitelabel theme
    */
-  theme: ThemeParams;
+  theme?: ThemeParams;
   /**
    * Language of whitelabel.
    *
@@ -574,11 +574,11 @@ export interface WhiteLabelParams {
   /**
    * Logo Url to be used in light mode (dark logo)
    */
-  logoDark: string;
+  logoDark?: string;
   /**
    * Logo Url to be used in dark mode (light logo)
    */
-  logoLight: string;
+  logoLight?: string;
   /**
    * Shows/hides topup option in torus-website/widget.
    * Defaults to false
@@ -613,6 +613,68 @@ export interface WhiteLabelParams {
    * Custom translations. See (examples/vue-app) to configure
    */
   customTranslations?: LocaleLinks<unknown>;
+  /**
+   * Wallet theme
+   */
+  walletTheme?: {
+    /**
+     * Logo for wallet embed popup login
+     * @type {string}
+     */
+    logo?: string;
+    /**
+     * This value must true, if it's not true it will cause an UI error
+     * @type {boolean}
+     * @defaultValue true
+     */
+    isActive?: boolean;
+    /**
+     * Specify the name of the DApps
+     * @type {string}
+     */
+    name?: string;
+    /**
+     * Logo for the flying widget button
+     * @type {string}
+     */
+    buttonLogo?: string;
+    /**
+     * Background color for the login popup modal
+     * @type {string}
+     */
+    modalColor?: string;
+    /**
+     * Text color for the buttons text and some text on the notification popup
+     * @type {string}
+     */
+    textColor?: string;
+    /**
+     * Background color the buttons background.
+     * @type {string}
+     */
+    bgColor?: string;
+    /**
+     * Background color the hovered buttons.
+     * @type {string}
+     */
+    bgColorHover?: string;
+    /**
+     * Text color for the hovered buttons text and some text on the notification popup
+     * @type {string}
+     */
+    textColorHover?: string;
+    /**
+     * Config for the background and text in upbond login
+     * @type {{
+     *   globalBgColor: string;
+     *   globalTextColor: string;
+     * }}
+     */
+    upbondLogin?: {
+      globalBgColor: string;
+      globalTextColor: string;
+    };
+  }
 }
 
 export interface IUpbondEmbedParams {
