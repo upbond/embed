@@ -28,6 +28,7 @@ type PaymentErrors = { provider?: string } & PaymentErrorParams;
 export const defaultLoginParam = {
   "upbond-wallet-tesnet-line": {
     name: "Upbond",
+    loginProvider: "upbond-line",
     description: "LINE with UPBOND Identity",
     typeOfLogin: "line",
     jwtParams: {
@@ -48,7 +49,7 @@ export const defaultLoginParam = {
     priority: 1,
   } as LoginConfigItem,
   jwt: {
-    loginProvider: "jwt",
+    loginProvider: "upbond-google",
     verifier: "upbond-google-dev-tesnet",
     typeOfLogin: "jwt",
     name: "google",
