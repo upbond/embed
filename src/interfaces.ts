@@ -58,7 +58,17 @@ export const UPBOND_BUILD_ENV = {
   V2_NEW_DEV_LOCAL: "v2_new-dev-local",
 } as const;
 
-export type BuildEnv = "production" | "development" | "testing" | "staging" | "direct-test" | "new-dev-local" | "v2_development" | "v2_new-dev-local" | "v2_local" | "v2_staging";
+export type BuildEnv =
+  | "production"
+  | "development"
+  | "testing"
+  | "staging"
+  | "direct-test"
+  | "new-dev-local"
+  | "v2_development"
+  | "v2_new-dev-local"
+  | "v2_local"
+  | "v2_staging";
 
 export type PAYMENT_PROVIDER_TYPE = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
 
@@ -356,9 +366,20 @@ export interface LoginConfigItem {
    */
   priority?: number;
 
+  /**
+   * Motify button bg that shown on the modal
+   */
   buttonBgColor?: string;
 
+  /**
+   * Motify button text color that shown on the modal
+   */
   buttonTextColor?: string;
+
+  /**
+   * Required. choose which Login provider that you will use, starts with upbond-
+   */
+  loginProvider: string;
 }
 
 export interface LoginConfig {
@@ -674,7 +695,7 @@ export interface WhiteLabelParams {
       globalBgColor: string;
       globalTextColor: string;
     };
-  }
+  };
 }
 
 export interface IUpbondEmbedParams {

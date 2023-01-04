@@ -227,10 +227,6 @@ class Upbond {
     this.whiteLabel = whiteLabel;
     this.useWalletConnect = useWalletConnect;
     this.isCustomLogin = !!(loginConfig && Object.keys(loginConfig).length > 0) || !!(whiteLabel && Object.keys(whiteLabel).length > 0);
-
-    log.info("@customLogin?", this.isCustomLogin);
-
-    log.info(`Using custom login: ${this.isCustomLogin}`);
     log.setDefaultLevel(logLevel);
 
     if (enableLogging) log.enableAll();
