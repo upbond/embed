@@ -3,6 +3,8 @@ import Web3 from "web3";
 import { Web3Auth } from "@web3auth/modal";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import Web3Token from "web3-token";
+import { ethers } from "ethers";
+import { toast } from "react-hot-toast";
 
 class UpbondEmbed {
 
@@ -12,7 +14,7 @@ class UpbondEmbed {
   web3 = null
 
   // you can also using another envs.
-  env = "development"
+  env = "v2_local"
   
   provider
 
@@ -30,45 +32,57 @@ class UpbondEmbed {
     if (this.upbond instanceof Upbond) {
       await this.upbond.init({
         buildEnv: this.env,
-        isUsingDirect: true,
+        // isUsingDirect: false,
         skipDialog: false,
         dappRedirectUri: `${window.location.origin}/sapi`,
-        selectedVerifier: 'upbond-wallet-tesnet-line',
+        network: {
+          host: "https://matic-testnet-archive-rpc.bwarelabs.com",
+          chainId: 80001,
+          networkName: "Mumbai",
+          blockExplorer: "",
+          ticker: "MUMBAI",
+          tickerName: "MUMBAI",
+        },
+        // selectedVerifier: 'upbond-wallet-tesnet-line',
         loginConfig: {
-          jwt: {
-            name: 'Google Login',
-            typeOfLogin: 'jwt',
-            showOnModal: true,
-            clientId: "<your_client_id>",
-            showOnDesktop: true,
-            showOnMobile: true,
-            mainOption: true,
-            verifier: '<your_verifier>',
-            jwtParameters: {
-              // ... your jwtParameters
-            }
-          },
           "upbond-wallet-tesnet-line": {
             name: "Upbond",
             description: "LINE with UPBOND Identity",
             typeOfLogin: "line",
             jwtParams: {
-              // ... your jwt params
+              domain: "https://lzg2dndj.auth.dev.upbond.io",
+              connection: "line",
+              client_id: "FoQ_Ri8rKSXkHf82GRzZK",
+              clientId: 'FoQ_Ri8rKSXkHf82GRzZK',
+              scope: "openid email profile offline_access",
+              // redirect_uri: "http://localhost:3000/auth",
             },
-            clientId: "<your_client_id>",
-            logoHover: "",
-            logoLight: "https://app.upbond.io/assets/images/common/UPBOND%E3%83%AD%E3%82%B4new-01.svg",
-            logoDark: "https://app.upbond.io/assets/images/common/UPBOND%E3%83%AD%E3%82%B4new-01.svg",
+            jwtParameters: {
+              domain: "https://lzg2dndj.auth.dev.upbond.io",
+              connection: "line",
+              client_id: "FoQ_Ri8rKSXkHf82GRzZK",
+              clientId: 'FoQ_Ri8rKSXkHf82GRzZK',
+              scope: "openid email profile offline_access",
+            },
+            clientId: "BGbtA2oA0SYvm1fipIPaSgSTPfGJG8Q6Ep_XHuZY9qQVW5jUXTMd0l8xVtXPx91aCmFfuVqTZt9CK79BgHTNanU",
+            logo: "https://app.upbond.io/assets/images/common/UPBOND%E3%83%AD%E3%82%B4new-01.svg",
             showOnModal: true,
             showOnDesktop: true,
             showOnMobile: true,
             mainOption: true,
             priority: 1,
+            buttonBgColor: '#faf',
+            buttonTextColor: '#FFF'
           }
         },
         whiteLabel: {
-          logoDark: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Cow_female_black_white.jpg',
-          logoLight: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Cow_female_black_white.jpg',
+          logo: 'https://awsimages.detik.net.id/community/media/visual/2022/11/24/kucing-bernama-soleh-jadi-pegawai-ditjen-pajak-dok-twitter-ditjenpajakri_169.jpeg?w=700&q=90',
+          name: "SAPI",
+          modalLogo: 'https://www.greeners.co/wp-content/uploads/2021/03/Kucing-Domestik-1.jpg',
+          buttonLogo: 'https://cdn0-production-images-kly.akamaized.net/5TERlfRWmX7-a0Wu8BrpIE52Vrk=/1200x1200/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/4005698/original/052533500_1650872118-pexels-dids-1302290.jpg',
+          modalColor: '#3F03FF',
+          primaryColor: '#3F03FF',
+          isActive: true,
         }
       })
       this.initialized = true
@@ -94,6 +108,7 @@ class UpbondEmbed {
       }
     } catch (error) {
       console.log(error, '@errorOnReactProject?')
+      toast.error(error.message || 'Some error occured')
       return {
         msg: error.message || 'Failed to login',
         data: null
@@ -128,7 +143,7 @@ class UpbondEmbed {
         uxMode: "redirect",
         _iframeUrl: "http://localhost:3002",
         whiteLabel: {
-          name: "UPBOND",
+          name: "SAPI",
           logoLight: "https://app.dev.upbond.io/assets/images/common/UPBOND%E3%83%AD%E3%82%B4new-01.svg",
           logoDark: "https://app.dev.upbond.io/assets/images/common/UPBOND%E3%83%AD%E3%82%B4new-01.svg",
           defaultLanguage: "en",
@@ -177,6 +192,7 @@ class UpbondEmbed {
         }
       }
     } catch (error) {
+      toast.error(error.message || 'Some error occured')
       return {
         msg: error.message || 'Failed to login',
         data: null
@@ -188,10 +204,10 @@ class UpbondEmbed {
     if (this.upbond instanceof Upbond) {
       try {
         const userInfo = await this.upbond.getUserInfo()
-        const provider = this.upbond.provider
 
         return userInfo
       } catch (error) {
+        toast.error(error.message || 'Some error occured')
         throw new Error(error)
       }
     }
@@ -205,18 +221,25 @@ class UpbondEmbed {
         return sign
       } catch (error) {
         console.error(error)
+        toast.error(error.message || 'Some error occured')
         return null
       }
     }
   }
   async signWeb3Token(account) {
-    this.web3.setProvider(this.upbond.provider)
-    const sign = await Web3Token.sign(async (msg) => {
-      if (this.web3 instanceof Web3) {
-        return await this.web3.eth.personal.sign(msg, account)
-      }
-    }, '1d')
-    return sign
+    try {
+      const ether = new ethers.providers.Web3Provider(this.upbond.provider)
+      const signer = await ether.getSigner()
+      const sign = await Web3Token.sign(async (msg) => {
+        if (this.web3 instanceof Web3) {
+          return await signer.signMessage(msg)
+        }
+      }, '1d')
+      return sign
+    } catch (error) {
+      toast.error(error.message || 'Some error occured')
+      return
+    }
   }
 }
 
