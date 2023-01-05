@@ -256,12 +256,6 @@ class Upbond {
     this.torusAlertContainer.style.display = "none";
     this.torusAlertContainer.style.setProperty("z-index", this.alertZIndex.toString());
 
-    const link = window.document.createElement("link");
-    link.setAttribute("rel", "stylesheet");
-    link.setAttribute("type", "text/css");
-    link.setAttribute("href", `${torusUrl}/css/widget.css`);
-    this.styleLink = link;
-
     const { defaultLanguage = getUserLanguage(), customTranslations = {} } = this.whiteLabel || {};
     const mergedTranslations = deepmerge(configuration.translations, customTranslations);
     const languageTranslations = mergedTranslations[defaultLanguage] || configuration.translations[getUserLanguage()];
