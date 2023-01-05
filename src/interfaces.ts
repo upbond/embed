@@ -53,6 +53,7 @@ export const UPBOND_BUILD_ENV = {
   DIRECT_TEST: "direct-test",
   NEW_DEV_LOCAL: "new-dev-local",
   V2_DEVELOPMENT: "v2_development",
+  V2_DEBUG: "v2_debug",
   V2_LOCAL: "v2_local",
   V2_STAGING: "v2_staging",
   V2_NEW_DEV_LOCAL: "v2_new-dev-local",
@@ -66,6 +67,7 @@ export type BuildEnv =
   | "direct-test"
   | "new-dev-local"
   | "v2_development"
+  | "v2_debug"
   | "v2_new-dev-local"
   | "v2_local"
   | "v2_staging";
