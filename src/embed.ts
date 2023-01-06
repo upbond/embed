@@ -301,7 +301,6 @@ class Upbond {
             },
           });
         };
-        window.document.head.appendChild(this.styleLink);
         window.document.body.appendChild(this.upbondIframe);
         window.document.body.appendChild(this.torusAlertContainer);
       });
