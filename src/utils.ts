@@ -26,52 +26,42 @@ type PaymentErrorParams = {
 type PaymentErrors = { provider?: string } & PaymentErrorParams;
 
 export const defaultLoginParam = {
-  "upbond-wallet-tesnet-line": {
-    name: "Upbond",
-    loginProvider: "upbond-line",
-    description: "LINE with UPBOND Identity",
+  "upbond-line": {
+    name: "LINE",
+    description: "LINE",
     typeOfLogin: "line",
-    jwtParams: {
+    loginProvider: "upbond-line",
+    jwtParameters: {
       domain: "https://lzg2dndj.auth.dev.upbond.io",
       connection: "line",
       clientId: "FoQ_Ri8rKSXkHf82GRzZK",
       scope: "openid email profile offline_access",
-      // redirect_uri: "http://localhost:3000/auth",
     },
     clientId: "BGbtA2oA0SYvm1fipIPaSgSTPfGJG8Q6Ep_XHuZY9qQVW5jUXTMd0l8xVtXPx91aCmFfuVqTZt9CK79BgHTNanU",
-    logoHover: "",
-    logoLight: "https://app.upbond.io/assets/images/common/UPBOND%E3%83%AD%E3%82%B4new-01.svg",
-    logoDark: "https://app.upbond.io/assets/images/common/UPBOND%E3%83%AD%E3%82%B4new-01.svg",
     showOnModal: true,
     showOnDesktop: true,
     showOnMobile: true,
     mainOption: true,
     priority: 1,
+    customLogo: "line",
   } as LoginConfigItem,
-  jwt: {
-    loginProvider: "upbond-google",
-    verifier: "upbond-google-dev-tesnet",
+  "upbond-google": {
+    name: "Google",
+    description: "Google",
     typeOfLogin: "jwt",
-    name: "google",
-    description: "",
-    clientId: "hxFv4SaQVXv3tE_rhe5u9",
-    verifierSubIdentifier: "torus",
-    logoHover: "",
-    logoLight: "",
-    logoDark: "",
-    showOnModal: false,
-    mainOption: false,
-    showOnDesktop: false,
-    showOnMobile: false,
-    // For torus only
-    buttonDescription: "",
-    walletVerifier: "upbond-google-dev-tesnet",
+    loginProvider: "upbond-google",
     jwtParameters: {
-      domain: "https://lzg2dndj.auth.dev.upbond.io/",
-      connection: "google",
+      domain: "https://lzg2dndj.auth.dev.upbond.io",
+      connection: "line",
       clientId: "hxFv4SaQVXv3tE_rhe5u9",
-      redirect_uri: "http://localhost:3002/auth",
+      scope: "openid email profile offline_access",
     },
+    clientId: "BGbtA2oA0SYvm1fipIPaSgSTPfGJG8Q6Ep_XHuZY9qQVW5jUXTMd0l8xVtXPx91aCmFfuVqTZt9CK79BgHTNanU",
+    showOnModal: true,
+    showOnDesktop: true,
+    showOnMobile: true,
+    mainOption: true,
+    priority: 2,
     customLogo: "google",
   } as LoginConfigItem,
 } as LoginConfig;
@@ -214,6 +204,14 @@ export const getUpbondWalletUrl = async (
       torusUrl = "https://wallet.stg.upbond.io";
       logLevel = "info";
       break;
+    case "old_wallet":
+      torusUrl = "https://old-wallet.upbond.io";
+      logLevel = "debug";
+      break;
+    case "new_wallet":
+      torusUrl = "https://new-wallet.upbond.io";
+      logLevel = "debug";
+      break;            
     case "direct-test":
       torusUrl = "https://wallet-embed-trial.dev.upbond.io";
       logLevel = "debug";

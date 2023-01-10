@@ -50,6 +50,8 @@ export const UPBOND_BUILD_ENV = {
   DEVELOPMENT: "development",
   TESTING: "testing",
   STAGING: "staging",
+  DEV_OLD_WALLET: "old_wallet",
+  DEV_NEW_WALLET: "new_wallet",
   DIRECT_TEST: "direct-test",
   NEW_DEV_LOCAL: "new-dev-local",
   V2_DEVELOPMENT: "v2_development",
@@ -64,6 +66,8 @@ export type BuildEnv =
   | "development"
   | "testing"
   | "staging"
+  | "old_wallet"
+  | "new_wallet"
   | "direct-test"
   | "new-dev-local"
   | "v2_development"
