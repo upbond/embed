@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { get, setAPIKey } from "@toruslabs/http-helpers";
 import { BasePostMessageStream, JRPCRequest, ObjectMultiplex, setupMultiplex, Substream } from "@toruslabs/openlogin-jrpc";
 import deepmerge from "lodash.merge";
@@ -64,25 +65,25 @@ const UNSAFE_METHODS = [
 ];
 
 // preload for iframe doesn't work https://bugs.chromium.org/p/chromium/issues/detail?id=593267
-// (async function preLoadIframe() {
-//   try {
-//     if (typeof document === "undefined") return;
-//     const upbondIframeHtml = document.createElement("link");
-//     const { torusUrl } = await getUpbondWalletUrl("production", { check: false, hash: iframeIntegrity, version: "" });
-//     upbondIframeHtml.href = `${torusUrl}/popup`;
-//     upbondIframeHtml.crossOrigin = "anonymous";
-//     upbondIframeHtml.type = "text/html";
-//     upbondIframeHtml.rel = "prefetch";
-//     if (upbondIframeHtml.relList && upbondIframeHtml.relList.supports) {
-//       if (upbondIframeHtml.relList.supports("prefetch")) {
-//         log.info("IFrame loaded");
-//         document.head.appendChild(upbondIframeHtml);
-//       }
-//     }
-//   } catch (error) {
-//     log.warn(error);
-//   }
-// })();
+(async function preLoadIframe() {
+  try {
+    if (typeof document === "undefined") return;
+    const upbondIframeHtml = document.createElement("link");
+    const { torusUrl } = await getUpbondWalletUrl("production", { check: false, hash: iframeIntegrity, version: "" });
+    upbondIframeHtml.href = `${torusUrl}/popup`;
+    upbondIframeHtml.crossOrigin = "anonymous";
+    upbondIframeHtml.type = "text/html";
+    upbondIframeHtml.rel = "prefetch";
+    if (upbondIframeHtml.relList && upbondIframeHtml.relList.supports) {
+      if (upbondIframeHtml.relList.supports("prefetch")) {
+        log.info("IFrame loaded");
+        document.head.appendChild(upbondIframeHtml);
+      }
+    }
+  } catch (error) {
+    log.warn(error);
+  }
+})();
 
 export const ACCOUNT_TYPE = {
   NORMAL: "normal",
@@ -327,7 +328,11 @@ class Upbond {
         throw new Error("Integrity check failed");
       }
     } else {
-      await handleSetup();
+      try {
+        await handleSetup();
+      } catch (error) {
+        console.error(error, "@errorOnInit");
+      }
     }
     return undefined;
   }
