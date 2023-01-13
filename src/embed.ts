@@ -864,11 +864,17 @@ class Upbond {
         rehydrate: string;
         selectedAddress: string;
         verifier: string;
+        state: string;
       }>(window.location.search);
 
       const oauthStream = this.communicationMux.getStream("oauth") as Substream;
       const isLoggedIn = data.loggedIn === "true";
       const isRehydrate = data.rehydrate === "true";
+      let state = "";
+
+      if (data.state) {
+        state = data.state;
+      }
 
       const { selectedAddress, verifier } = data;
       if (isLoggedIn) {
@@ -879,7 +885,7 @@ class Upbond {
       this._displayIframe(true);
 
       oauthStream.write({ selectedAddress });
-      statusStream.write({ loggedIn: isLoggedIn, rehydrate: isRehydrate, verifier });
+      statusStream.write({ loggedIn: isLoggedIn, rehydrate: isRehydrate, verifier, state });
 
       await inpageProvider._initializeState();
 
