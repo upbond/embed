@@ -291,6 +291,133 @@ if (upbond.provider) {
 
 You can check this out [here](https://github.com/upbond/embed/tree/master/examples/react)
 
+
+# Whitelabel Example
+
+Use `whiteLabel` option inside the init configuration. 
+
+**Example in React:**
+
+```jsx
+import Upbond from "@upbond/upbond-embed";
+
+const Example = () => {
+	const upbond = new Upbond({})
+
+	const init = async () => {
+		await upbond.init({
+			whiteLabel: {
+				walletTheme: {
+          name: "Sample App",
+	        logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
+	        buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
+	        modalColor: "#f3f3f3",
+			    bgColor: "#214999",
+				  bgColorHover: "#f3f3f3",
+			    textColor: "#f3f3f3",
+			    textColorHover: "#214999",
+			    upbondLogin: {
+				    globalBgColor: "#f3f3f3",
+					  globalTextColor: "#214999"
+			    }
+        }
+      },
+		})
+	}
+	
+	useEffect(() => init(), [])
+
+	return (
+		// ...
+	)
+}
+```
+
+**Example in Vue:**
+
+```jsx
+<script>
+import Upbond from "@upbond/upbond-embed";
+
+const upbond = new Upbond();
+const init = async () => {
+  await upbond.init({
+		whiteLabel: {
+      walletTheme: {
+        name: "Sample App",
+        logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
+        buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
+        modalColor: "#f3f3f3",
+		    bgColor: "#214999",
+			  bgColorHover: "#f3f3f3",
+		    textColor: "#f3f3f3",
+		    textColorHover: "#214999",
+		    upbondLogin: {
+			    globalBgColor: "#ffffff",
+				  globalTextColor: "#214999"
+		    }
+      }
+    },
+	})
+}
+
+export default {
+  mounted() {
+    init()
+  }
+}
+</script>
+
+<template>
+  // ...
+</template>
+```
+
+## **Whitelabel wallet theme option**
+
+Setting up the color theme and logo.
+
+```jsx
+whiteLabel: {
+	/* wallet theme */
+	walletTheme: {
+		// other
+		name: "Sample App",
+	  // Logo setup
+    logo: "path or url",
+    buttonLogo: "path or url",
+
+    // Color theme setup
+    modalColor: "color hex",
+    bgColor: "color hex",
+    bgColorHover: "color hex",
+    textColor: "color hex",
+    textColorHover: "color hex",
+		
+		// Upbond login theme setup
+		upbondLogin: {
+			globalBgColor: "color hex",
+			globalTextColor: "color hex"
+		}
+  }
+}
+```
+
+- `name` let you setup the application’s name.
+- `logo` let you setup logo that will be displayed the login popup.
+- `buttonLogo` let you setup the logo for the flying wallet button.
+- `modalColor` let you setup the background color for the login popup.
+- `bgColor` let you setup the buttons background color.
+- `bgColorHover` let you setup the hovered buttons background color.
+- `textColor` let you setup the color of the buttons text and some text on the notification popup.
+- `textColorHover` let you setup the color of the hovered text inside buttons and some text on the notification popup.
+- `upbondLogin.globalBgColor` let you setup the color of the background on Upbond login site.
+- `upbondLogin.globalTextColor` let you setup the color of the text on Upbond login site.
+
+### Example white-labelled UI
+
+![whitelabel](https://user-images.githubusercontent.com/605150/212630002-30a049a9-3539-43b7-8b48-1ffa83ef7008.png)
+
 # Current version
 
 version: v1.3.1
