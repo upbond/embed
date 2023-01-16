@@ -203,7 +203,36 @@ class Upbond {
   }: IUpbondEmbedParams = {}): Promise<void> {
     log.info(`Using login config: `, loginConfig);
     if (this.isInitialized) throw new Error("Already initialized");
-    const { torusUrl, logLevel } = await getUpbondWalletUrl(buildEnv, integrity);
+    let buildTempEnv = buildEnv;
+    if (buildEnv === "v2_development") {
+      log.warn(
+        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on ${window.location.origin}.`
+      );
+      log.warn(`More information, please visit https://github.com/upbond/embed`);
+      buildTempEnv = "development";
+    }
+    if (buildEnv === "v2_production") {
+      log.warn(
+        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on ${window.location.origin}.`
+      );
+      log.warn(`More information, please visit https://github.com/upbond/embed`);
+      buildTempEnv = "production";
+    }
+    if (buildEnv === "v2_new-dev-local") {
+      log.warn(
+        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on ${window.location.origin}.`
+      );
+      log.warn(`More information, please visit https://github.com/upbond/embed`);
+      buildTempEnv = "new-dev-local";
+    }
+    const { torusUrl, logLevel } = await getUpbondWalletUrl(buildTempEnv, integrity);
+
+    if (buildEnv.includes("v1")) {
+      log.warn(
+        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on ${window.location.origin}`
+      );
+      log.warn(`More information, please visit https://github.com/upbond/embed`);
+    }
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
 

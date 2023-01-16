@@ -187,50 +187,51 @@ export const getUpbondWalletUrl = async (
     /*
     Default the default to v2
   */
-    case "v2_production":
     case "production":
       torusUrl = `https://wallet.upbond.io`;
       logLevel = "info";
       break;
-    case "v2_staging":
-    case "staging":
-      torusUrl = "https://wallet.stg.upbond.io";
-      logLevel = "info";
-      break;
-    case "v2_development":
-    case "development":
-      torusUrl = "https://new-wallet-mobile.dev.upbond.io";
-      logLevel = "debug";
-      break;
-    case "testing":
-      log.info("%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.DEVELOPMENT' instead.", "color: #FF0000");
-      torusUrl = "https://new-wallet-mobile.dev.upbond.io";
-      logLevel = "debug";
-      break;
     case "v1_production":
       torusUrl = `https://old-wallet.upbond.io`;
+      logLevel = "info";
+      break;
+    case "staging":
+      torusUrl = "https://wallet.stg.upbond.io";
       logLevel = "info";
       break;
     case "v1_staging":
       torusUrl = "https://old-wallet.stg.upbond.io";
       logLevel = "info";
       break;
+    case "development":
+      torusUrl = "https://new-wallet-mobile.dev.upbond.io";
+      logLevel = "debug";
+      break;
     case "v1_development":
       torusUrl = "https://wallet-mobile.dev.upbond.io";
       logLevel = "debug";
       break;
+    case "testing":
+      torusUrl = "https://new-wallet-mobile.dev.upbond.io";
+      logLevel = "debug";
+      break;
     case "v1_debug":
-    case "v2_debug":
-      torusUrl = "https://new-wallet-dbg-dwi.dev.upbond.io/";
+      torusUrl = "https://new-wallet.upbond.io";
+      logLevel = "debug";
+      break;
+    case "debug":
+      torusUrl = "https://new-wallet.upbond.io";
       logLevel = "debug";
       break;
     case "local":
-    case "v1_local":
-    case "v2_local":
-      log.info("%c [UPBOND-EMBED] WARNING! You are pointing UPBOND wallet on http://localhost:3000", "color: #FF0000");
-      torusUrl = "http://localhost:3000";
+      torusUrl = "http://localhost:3002";
       logLevel = "debug";
       break;
+    case "v1_local":
+      torusUrl = "http://localhost:3002";
+      logLevel = "debug";
+      break;
+    // ...Others...
     case "old_wallet":
       torusUrl = "https://old-wallet.upbond.io";
       logLevel = "debug";
@@ -240,24 +241,7 @@ export const getUpbondWalletUrl = async (
       logLevel = "debug";
       break;
     case "direct-test":
-      log.info("%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.DEVELOPMENT' instead.", "color: #FF0000");
       torusUrl = "https://wallet-embed-trial.dev.upbond.io";
-      logLevel = "debug";
-      break;
-    case "new-dev-local":
-      log.info(
-        "%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on https://localhost:3000",
-        "color: #FF0000"
-      );
-      torusUrl = "http://localhost:3000";
-      logLevel = "debug";
-      break;
-    case "v2_new-dev-local":
-      log.info(
-        "%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on https://localhost:3000",
-        "color: #FF0000"
-      );
-      torusUrl = "https://new-wallet.upbond.io";
       logLevel = "debug";
       break;
     default:
