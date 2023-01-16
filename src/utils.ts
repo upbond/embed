@@ -184,25 +184,45 @@ export const getUpbondWalletUrl = async (
   let logLevel: LogLevelDesc;
   // log.info("version used: ", versionUsed);
   switch (buildEnv) {
+    /*
+    Default the default to v2
+  */
+    case "v2_production":
     case "production":
       torusUrl = `https://wallet.upbond.io`;
       logLevel = "info";
       break;
-    case "testing":
-      torusUrl = "https://wallet-mobile.dev.upbond.io";
-      logLevel = "debug";
-      break;
-    case "development":
-      torusUrl = "http://localhost:3002";
-      logLevel = "debug";
-      break;
-    case "new-dev-local":
-      torusUrl = "http://localhost:3000";
-      logLevel = "debug";
-      break;
+    case "v2_staging":
     case "staging":
       torusUrl = "https://wallet.stg.upbond.io";
       logLevel = "info";
+      break;
+    case "v2_development":
+    case "development":
+      torusUrl = "https://new-wallet-mobile.dev.upbond.io";
+      logLevel = "debug";
+      break;
+    case "v1_production":
+      torusUrl = `https://old-wallet.upbond.io`;
+      logLevel = "info";
+      break;
+    case "v1_staging":
+      torusUrl = "https://old-wallet.stg.upbond.io";
+      logLevel = "info";
+      break;
+    case "v1_development":
+      torusUrl = "https://wallet-mobile.dev.upbond.io";
+      logLevel = "debug";
+      break;
+    case "v1_debug":
+    case "v2_debug":
+      torusUrl = "https://new-wallet-dbg-dwi.dev.upbond.io/";
+      logLevel = "debug";
+      break;
+    case "v1_local":
+    case "v2_local":
+      torusUrl = "http://localhost:3000";
+      logLevel = "debug";
       break;
     case "old_wallet":
       torusUrl = "https://old-wallet.upbond.io";
@@ -211,30 +231,6 @@ export const getUpbondWalletUrl = async (
     case "new_wallet":
       torusUrl = "https://new-wallet.upbond.io";
       logLevel = "debug";
-      break;
-    case "direct-test":
-      torusUrl = "https://wallet-embed-trial.dev.upbond.io";
-      logLevel = "debug";
-      break;
-    case "v2_debug":
-      torusUrl = "https://new-wallet-dbg-dwi.dev.upbond.io/";
-      logLevel = "debug";
-      break;
-    case "v2_development":
-      torusUrl = "https://new-wallet-mobile.dev.upbond.io";
-      logLevel = "debug";
-      break;
-    case "v2_new-dev-local":
-      torusUrl = "http://localhost:3000";
-      logLevel = "debug";
-      break;
-    case "v2_local":
-      torusUrl = "http://localhost:3002";
-      logLevel = "debug";
-      break;
-    case "v2_staging":
-      torusUrl = "https://wallet.stg.upbond.io"; // TODO: change stag url to v2 stag url
-      logLevel = "info";
       break;
     default:
       torusUrl = `https://wallet.upbond.io`;
