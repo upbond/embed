@@ -201,6 +201,11 @@ export const getUpbondWalletUrl = async (
     case "development":
       torusUrl = "https://new-wallet-mobile.dev.upbond.io";
       logLevel = "debug";
+      break;      
+    case "testing":
+      console.log("%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.DEVELOPMENT' instead.", "color: #FF0000");
+      torusUrl = "https://new-wallet-mobile.dev.upbond.io";
+      logLevel = "debug";
       break;
     case "v1_production":
       torusUrl = `https://old-wallet.upbond.io`;
@@ -219,8 +224,10 @@ export const getUpbondWalletUrl = async (
       torusUrl = "https://new-wallet-dbg-dwi.dev.upbond.io/";
       logLevel = "debug";
       break;
+    case "local":
     case "v1_local":
     case "v2_local":
+      console.log("%c [UPBOND-EMBED] WARNING! You are pointing UPBOND wallet on http://localhost:3000", "color: #FF0000");      
       torusUrl = "http://localhost:3000";
       logLevel = "debug";
       break;
@@ -232,6 +239,21 @@ export const getUpbondWalletUrl = async (
       torusUrl = "https://new-wallet.upbond.io";
       logLevel = "debug";
       break;
+    case "direct-test":
+      console.log("%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.DEVELOPMENT' instead.", "color: #FF0000");
+      torusUrl = "https://wallet-embed-trial.dev.upbond.io";
+      logLevel = "debug";
+      break;
+    case "new-dev-local":
+      console.log("%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on https://localhost:3000", "color: #FF0000");
+      torusUrl = "http://localhost:3000";
+      logLevel = "debug";
+      break;
+    case "v2_new-dev-local":
+      console.log("%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on https://localhost:3000", "color: #FF0000");
+      torusUrl = "https://new-wallet.upbond.io";
+      logLevel = "debug";
+      break;            
     default:
       torusUrl = `https://wallet.upbond.io`;
       logLevel = "info";

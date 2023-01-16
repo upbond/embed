@@ -47,8 +47,10 @@ export const SUPPORTED_PAYMENT_NETWORK = {
 
 export const UPBOND_BUILD_ENV = {
   PRODUCTION: "production",
-  DEVELOPMENT: "development",
   STAGING: "staging",
+  DEVELOPMENT: "development",
+  TESTING: "testing",
+  LOCAL: "local",
   V1_DEBUG: "v1_debug",
   V1_LOCAL: "v1_local",
   V1_DEVELOPMENT: "v1_development",
@@ -59,14 +61,19 @@ export const UPBOND_BUILD_ENV = {
   V2_DEVELOPMENT: "v2_development",
   V2_STAGING: "v2_staging",
   V2_PRODUCTION: "v2_production",
+  DIRECT_TEST: "direct-test",
+  NEW_DEV_LOCAL: "new-dev-local",
+  V2_NEW_DEV_LOCAL: "v2_new-dev-local",
   DEV_OLD_WALLET: "old_wallet",
   DEV_NEW_WALLET: "new_wallet",
 } as const;
 
 export type BuildEnv =
   | "production"
-  | "development"
   | "staging"
+  | "development"
+  | "testing"
+  | "local"
   | "v1_production"
   | "v1_development"
   | "v1_staging"
@@ -77,6 +84,9 @@ export type BuildEnv =
   | "v2_staging"
   | "v2_local"
   | "v2_debug"
+  | "direct-test"
+  | "new-dev-local"
+  | "v2_new-dev-local"
   | "old_wallet"
   | "new_wallet";
 

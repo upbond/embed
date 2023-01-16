@@ -46,6 +46,28 @@ const upbond = new Upbond(options);
     - `buttonSize` (optional) : number, default is `56`
     - `modalZIndex` (optional): number, default is `99999`
 
+
+- `UPBOND_BUILD_ENV` build environment settings: Build environments are divided into 3 types of environment usages: production, staging, and development. Development uses testnet, while staging and production use mainnet.
+
+```
+export const UPBOND_BUILD_ENV = {
+  PRODUCTION: "production", // point to wallet url https://wallet.upbond.io
+  STAGING: "staging", // point to wallet url https://wallet.stg.upbond.io
+  DEVELOPMENT: "development", // point to wallet url https://new-wallet-mobile.dev.upbond.io
+  V1_DEVELOPMENT: "v1_development",
+  V1_STAGING: "v1_staging",
+  V1_PRODUCTION: "v1_production",
+  V2_DEVELOPMENT: "v2_development",
+  V2_STAGING: "v2_staging",
+  V2_PRODUCTION: "v2_production",
+  .
+  .
+  .
+} as const;
+```
+
+`UPBOND_BUILD_ENV.PRODUCTION`, `UPBOND_BUILD_ENV.STAGING`, `UPBOND_BUILD_ENV.DEVELOPMENT` always point to the newest environment. As of January 2023, the newest wallet environment is `v2_*`.
+
 **Examples**
 
 ```javascript
@@ -58,7 +80,7 @@ const upbond = new Upbond({
 });
 
 await upbond.init({
-  buildEnv: UPBOND_BUILD_ENV.TESTING
+  buildEnv: UPBOND_BUILD_ENV.DEVELOPMENT
 });
 ```
 
@@ -97,7 +119,7 @@ const [initialized, setInitialized] = useState(false)
 useEffect(() => {
   const init = async () => {
     await upbond.init({
-      buildEnv: UPBOND_BUILD_ENV.TESTING
+      buildEnv: UPBOND_BUILD_ENV.DEVELOPMENT
     });
     setInitialized(true)
   }
@@ -271,4 +293,4 @@ You can check this out [here](https://github.com/upbond/embed/tree/master/exampl
 
 # Current version
 
-version: v1.0.10
+version: v1.3.0
