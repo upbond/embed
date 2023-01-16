@@ -47,34 +47,48 @@ export const SUPPORTED_PAYMENT_NETWORK = {
 
 export const UPBOND_BUILD_ENV = {
   PRODUCTION: "production",
+  STAGING: "staging",
   DEVELOPMENT: "development",
   TESTING: "testing",
-  STAGING: "staging",
-  DEV_OLD_WALLET: "old_wallet",
-  DEV_NEW_WALLET: "new_wallet",
-  DIRECT_TEST: "direct-test",
-  NEW_DEV_LOCAL: "new-dev-local",
-  V2_DEVELOPMENT: "v2_development",
+  LOCAL: "local",
+  V1_DEBUG: "v1_debug",
+  V1_LOCAL: "v1_local",
+  V1_DEVELOPMENT: "v1_development",
+  V1_STAGING: "v1_staging",
+  V1_PRODUCTION: "v1_production",
   V2_DEBUG: "v2_debug",
   V2_LOCAL: "v2_local",
+  V2_DEVELOPMENT: "v2_development",
   V2_STAGING: "v2_staging",
+  V2_PRODUCTION: "v2_production",
+  DIRECT_TEST: "direct-test",
+  NEW_DEV_LOCAL: "new-dev-local",
   V2_NEW_DEV_LOCAL: "v2_new-dev-local",
+  DEV_OLD_WALLET: "old_wallet",
+  DEV_NEW_WALLET: "new_wallet",
 } as const;
 
 export type BuildEnv =
   | "production"
+  | "staging"
   | "development"
   | "testing"
-  | "staging"
-  | "old_wallet"
-  | "new_wallet"
+  | "local"
+  | "v1_production"
+  | "v1_development"
+  | "v1_staging"
+  | "v1_local"
+  | "v1_debug"
+  | "v2_production"
+  | "v2_development"
+  | "v2_staging"
+  | "v2_local"
+  | "v2_debug"
   | "direct-test"
   | "new-dev-local"
-  | "v2_development"
-  | "v2_debug"
   | "v2_new-dev-local"
-  | "v2_local"
-  | "v2_staging";
+  | "old_wallet"
+  | "new_wallet";
 
 export type PAYMENT_PROVIDER_TYPE = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
 
