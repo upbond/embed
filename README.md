@@ -293,4 +293,4 @@ You can check this out [here](https://github.com/upbond/embed/tree/master/exampl
 
 # Current version
 
-version: v1.3.0
+version: v1.3.1
