@@ -795,7 +795,7 @@ class Upbond {
 
     inpageProvider.tryPreopenHandle = (payload: UnvalidatedJsonRpcRequest | UnvalidatedJsonRpcRequest[], cb: (...args: unknown[]) => void) => {
       const _payload = payload;
-      if (!this.buildEnv.includes("v1")) {
+      if (this.buildEnv.includes("v1")) {
         if (!Array.isArray(_payload) && UNSAFE_METHODS.includes(_payload.method)) {
           const preopenInstanceId = getPreopenInstanceId();
           this._handleWindow(preopenInstanceId, {
