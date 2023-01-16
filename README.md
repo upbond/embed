@@ -394,8 +394,8 @@ whiteLabel: {
 
 ### Example white-labelled UI
 
-![embed-screenshot.png](UPBOND%20Embed%20Whitelabel%20Document%2085f997f94e2f4ad1a72584034d5c6458/embed-screenshot.png)
+![whitelabel](https://user-images.githubusercontent.com/605150/212630002-30a049a9-3539-43b7-8b48-1ffa83ef7008.png)
 
 # Current version
 
-version: v1.0.10
+version: v1.3.1
