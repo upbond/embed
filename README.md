@@ -420,4 +420,4 @@ whiteLabel: {
 
 # Current version
 
-version: v1.3.1
+version: v1.3.2
