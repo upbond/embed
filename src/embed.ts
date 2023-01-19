@@ -108,8 +108,6 @@ class Upbond {
 
   isInitialized: boolean;
 
-  torusWidgetVisibility: boolean;
-
   torusAlert: HTMLDivElement;
 
   apiKey: string;
@@ -154,13 +152,14 @@ class Upbond {
 
   buildEnv: typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
 
+  widgetConfig: { showAfterLoggedIn: boolean; showBeforeLoggedIn: boolean };
+
   constructor({ buttonPosition = BUTTON_POSITION.BOTTOM_LEFT, buttonSize = 56, modalZIndex = 99999, apiKey = "torus-default" }: TorusCtorArgs = {}) {
     this.buttonPosition = buttonPosition;
     this.buttonSize = buttonSize;
     this.torusUrl = "";
     this.isLoggedIn = false; // ethereum.enable working
     this.isInitialized = false; // init done
-    this.torusWidgetVisibility = true;
     this.requestedVerifier = "";
     this.currentVerifier = "";
     this.apiKey = apiKey;
@@ -170,6 +169,10 @@ class Upbond {
     this.isIframeFullScreen = false;
     this.isUsingDirect = false;
     this.buildEnv = "production";
+    this.widgetConfig = {
+      showAfterLoggedIn: true,
+      showBeforeLoggedIn: false,
+    };
   }
 
   async init({
@@ -186,7 +189,7 @@ class Upbond {
       tickerName: "",
     },
     loginConfig = defaultLoginParam,
-    showUpbondButton = true,
+    widgetConfig,
     integrity = {
       check: false,
       hash: iframeIntegrity,
@@ -236,6 +239,12 @@ class Upbond {
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
 
+    if (!widgetConfig) {
+      log.info(`widgetConfig is not configured. Now using default widget configuration`);
+    } else {
+      this.widgetConfig = widgetConfig;
+    }
+
     if (selectedVerifier) {
       try {
         const isAvailableOnLoginConfig = loginConfig[selectedVerifier];
@@ -261,7 +270,6 @@ class Upbond {
 
     if (enableLogging) log.enableAll();
     else log.disableAll();
-    this.torusWidgetVisibility = showUpbondButton;
     const upbondIframeUrl = new URL(torusUrl);
     if (upbondIframeUrl.pathname.endsWith("/")) upbondIframeUrl.pathname += "popup";
     else upbondIframeUrl.pathname += "/popup";
@@ -317,10 +325,10 @@ class Upbond {
               whiteLabel: this.whiteLabel,
               buttonPosition: this.buttonPosition,
               buttonSize: this.buttonSize,
-              torusWidgetVisibility: this.torusWidgetVisibility,
               apiKey: this.apiKey,
               skipTKey,
               network,
+              widgetConfig: this.widgetConfig,
               mfaLevel,
               skipDialog,
               selectedVerifier,
@@ -422,16 +430,24 @@ class Upbond {
     this.isInitialized = false;
   }
 
-  hideTorusButton(): void {
-    this.torusWidgetVisibility = false;
+  hideWidget(): void {
     this._sendWidgetVisibilityStatus(false);
     this._displayIframe();
   }
 
-  showUpbondButton(): void {
-    this.torusWidgetVisibility = true;
+  showWidget(): void {
     this._sendWidgetVisibilityStatus(true);
     this._displayIframe();
+  }
+
+  showMenu(): void {
+    this._sendWidgetMenuVisibilityStatus(true);
+    this._displayIframe(true);
+  }
+
+  hideMenu(): void {
+    this._sendWidgetMenuVisibilityStatus(false);
+    this._displayIframe(false);
   }
 
   setProvider({ host = "mainnet", chainId = null, networkName = "", ...rest }: NetworkInterface): Promise<void> {
@@ -689,18 +705,26 @@ class Upbond {
   }
 
   protected _sendWidgetVisibilityStatus(status: boolean): void {
-    const torusWidgetVisibilityStream = this.communicationMux.getStream("torus-widget-visibility") as Substream;
-    torusWidgetVisibilityStream.write({
+    const upbondButtonVisibilityStream = this.communicationMux.getStream("widget-visibility") as Substream;
+    upbondButtonVisibilityStream.write({
+      data: status,
+    });
+  }
+
+  protected _sendWidgetMenuVisibilityStatus(status: boolean): void {
+    const upbondButtonVisibilityStream = this.communicationMux.getStream("menu-visibility") as Substream;
+    upbondButtonVisibilityStream.write({
       data: status,
     });
   }
 
   protected _displayIframe(isFull = false): void {
+    console.log("onDisplay: ", isFull);
     const style: Partial<CSSStyleDeclaration> = {};
     const size = this.buttonSize + 14; // 15px padding
     // set phase
     if (!isFull) {
-      style.display = this.torusWidgetVisibility ? "block" : "none";
+      style.display = this.isLoggedIn ? "block" : !this.isLoggedIn ? "block" : "none";
       style.height = `${size}px`;
       style.width = `${size}px`;
       switch (this.buttonPosition) {

@@ -15,11 +15,10 @@ class PopupHandler extends EventEmitter {
 
   iClosedWindow: boolean;
 
-  constructor({ url, target, features }: { url: URL; target?: string; features?: string }) {
+  constructor({ url, features }: { url: URL; target?: string; features?: string }) {
     super();
     this.url = url;
-    this.target = target || "_blank";
-    // eslint-disable-next-line no-console
+    this.target = "_blank";
     this.features = features || getPopupFeatures();
     this.window = undefined;
     this.windowTimer = undefined;
@@ -44,7 +43,7 @@ class PopupHandler extends EventEmitter {
   }
 
   open(): Promise<void> {
-    this.window = window.open(this.url.href, this.target, this.features);
+    this.window = window.open(this.url.href, "_blank");
     if (this.window?.focus) this.window.focus();
     return Promise.resolve();
   }
