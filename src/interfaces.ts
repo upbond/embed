@@ -146,7 +146,7 @@ export type EMBED_TRANSLATION_ITEM = {
 
 export type BUTTON_POSITION_TYPE = typeof BUTTON_POSITION[keyof typeof BUTTON_POSITION];
 
-export type WALLET_PATH = "transfer" | "topup" | "home" | "settings" | "history" | "discover";
+export type WALLET_PATH = "home" | "account";
 export type ETHEREUM_NETWORK_TYPE =
   | "ropsten"
   | "rinkeby"
@@ -756,7 +756,27 @@ export interface IUpbondEmbedParams {
    */
   buildEnv?: BuildEnv;
 
+  /**
+   * If using direct upbond embed will not going to open the window
+   * @defaultValue true
+   * @type {boolean}
+   * @memberof IUpbondEmbedParams
+   */
   isUsingDirect?: boolean;
+
+  /**
+   * Upbond button state, you can configure the button will be shown after or before loggedIn
+   *
+   * @type {{
+   *     showAfterLoggedIn: boolean;
+   *     showBeforeLoggedIn: boolean;
+   *   }}
+   * @memberof IUpbondEmbedParams
+   */
+  widgetConfig?: {
+    showAfterLoggedIn: boolean;
+    showBeforeLoggedIn: boolean;
+  };
 
   /**
    * Enables or disables logging.

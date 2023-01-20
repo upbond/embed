@@ -14,7 +14,7 @@ class UpbondEmbed {
   web3 = null
 
   // you can also using another envs.
-  env = "v2_local"
+  env = "local"
   
   provider
 
@@ -35,28 +35,26 @@ class UpbondEmbed {
         // isUsingDirect: false,
         skipDialog: false,
         dappRedirectUri: `${window.location.origin}/sapi`,
+        showUpbondButton: true,
+        widgetConfig: {
+          showAfterLoggedIn: true,
+          showBeforeLoggedIn: false,
+        },
         network: {
-          host: "https://matic-testnet-archive-rpc.bwarelabs.com",
+          host: "mumbai",
           chainId: 80001,
           networkName: "Mumbai",
           blockExplorer: "",
           ticker: "MUMBAI",
           tickerName: "MUMBAI",
+          rpcUrl: "https://rpc.ankr.com/polygon_mumbai"
         },
-        // selectedVerifier: 'upbond-wallet-tesnet-line',
         loginConfig: {
-          "upbond-wallet-tesnet-line": {
-            name: "Upbond",
-            description: "LINE with UPBOND Identity",
+          "upbond-line": {
+            name: "Login With LINE",
+            description: "LINE",
             typeOfLogin: "line",
-            jwtParams: {
-              domain: "https://lzg2dndj.auth.dev.upbond.io",
-              connection: "line",
-              client_id: "FoQ_Ri8rKSXkHf82GRzZK",
-              clientId: 'FoQ_Ri8rKSXkHf82GRzZK',
-              scope: "openid email profile offline_access",
-              // redirect_uri: "http://localhost:3000/auth",
-            },
+            loginProvider: "upbond-line",
             jwtParameters: {
               domain: "https://lzg2dndj.auth.dev.upbond.io",
               connection: "line",
@@ -71,8 +69,8 @@ class UpbondEmbed {
             showOnMobile: true,
             mainOption: true,
             priority: 1,
-            buttonBgColor: '#faf',
-            buttonTextColor: '#FFF'
+            buttonBgColor: "#289B2A",
+            buttonTextColor: "#f3f3f3",
           }
         },
         whiteLabel: {

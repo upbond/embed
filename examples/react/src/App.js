@@ -4,7 +4,6 @@ import upbondServices from "lib/UpbondEmbed";
 import { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import Web3 from "web3";
-import asobiAbi from './asobiMint.json';
 
 /* 
   Read this:
@@ -12,9 +11,6 @@ import asobiAbi from './asobiMint.json';
   if you're using hooks, sure you can put the new Upbond({}) on the useState.
   We're using this example because we're usually using this method for implementing the @upbond/upbond-embed lib
 */
-
-const erc20FactoryContract = '0xc80101fA4E473F47Fea06288FbF0D2ff8C9fF9e7'
-const mintContract = '0x9008347b7b15C99cA963A750e03cAb4801620188'
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -31,6 +27,7 @@ const App = () => {
     balance: 0
   })
   const _upbond = upbondServices.upbond.provider;
+  const _upbondInstance = upbondServices.upbond;
 
   useEffect(() => {
     const initUpbond = async () => {
@@ -160,6 +157,22 @@ const App = () => {
     }
   }
 
+  const showButtonBeforeLoggedIn = () => {
+    _upbondInstance.showWidget()
+  }
+
+  const hideButtonBeforeLoggedIn = () => {
+    _upbondInstance.hideWidget()
+  }
+
+  const openHomeWallet = () => {
+    _upbondInstance.showWallet("home")
+  }
+
+  const openMenu = () => {
+    _upbondInstance.showMenu()
+  }
+
   useEffect(() => {
     const init = async () => {
       if (upbondServices.upbond) {
@@ -284,6 +297,34 @@ const App = () => {
                 >
                   Send Transaction
                 </button>
+                <button
+                  type="button"
+                  className="mx-auto px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  w-1/4"
+                  onClick={showButtonBeforeLoggedIn}
+                >
+                  Show widget
+                </button>
+                <button
+                  type="button"
+                  className="mx-auto px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  w-1/4"
+                  onClick={hideButtonBeforeLoggedIn}
+                >
+                  Hide widget
+                </button>
+                <button
+                  type="button"
+                  className="mx-auto px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  w-1/4"
+                  onClick={openHomeWallet}
+                >
+                  Open home
+                </button>
+                <button
+                  type="button"
+                  className="mx-auto px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  w-1/4"
+                  onClick={openMenu}
+                >
+                  Open menu
+                </button>
               </div>
               <p className="text-black mt-5">Output: </p>
               <div className="overflow-hidden rounded-lg bg-white shadow mt-2">
@@ -329,6 +370,20 @@ const App = () => {
                   onClick={login}
                 >
                   Login 3.0
+                </button>
+                <button
+                  type="button"
+                  className="mx-auto px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  w-1/4"
+                  onClick={showButtonBeforeLoggedIn}
+                >
+                  Show widget before logged in
+                </button>
+                <button
+                  type="button"
+                  className="mx-auto px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500  w-1/4"
+                  onClick={hideButtonBeforeLoggedIn}
+                >
+                  Hide widget before logged in
                 </button>
               </div>
             )}
