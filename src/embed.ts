@@ -209,21 +209,21 @@ class Upbond {
     let buildTempEnv = buildEnv;
     if (buildEnv === "v2_development") {
       log.warn(
-        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on ${window.location.origin}.`
+        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.DEVELOPMENT' instead to point wallet on DEVELOPMENT environment.`
       );
       log.warn(`More information, please visit https://github.com/upbond/embed`);
       buildTempEnv = "development";
     }
     if (buildEnv === "v2_production") {
       log.warn(
-        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on ${window.location.origin}.`
+        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.PRODUCTION' instead to point wallet on PRODUCTION environment.`
       );
       log.warn(`More information, please visit https://github.com/upbond/embed`);
       buildTempEnv = "production";
     }
     if (buildEnv === "v2_new-dev-local") {
       log.warn(
-        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on ${window.location.origin}.`
+        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on LOCAL environment.`
       );
       log.warn(`More information, please visit https://github.com/upbond/embed`);
       buildTempEnv = "new-dev-local";
@@ -232,7 +232,7 @@ class Upbond {
 
     if (buildEnv.includes("v1")) {
       log.warn(
-        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on ${window.location.origin}`
+        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL|DEVELOPMENT|STAGING|PRODUCTION' instead to point wallet on each environment`
       );
       log.warn(`More information, please visit https://github.com/upbond/embed`);
     }
