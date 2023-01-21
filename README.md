@@ -291,6 +291,9 @@ if (upbond.provider) {
 
 You can check this out [here](https://github.com/upbond/embed/tree/master/examples/react)
 
+**Demo Dapps**
+
+You can also check our example in action [here](https://demo.upbond.io)
 
 # Whitelabel Example
 
@@ -420,4 +423,4 @@ whiteLabel: {
 
 # Current version
 
-version: v1.3.2
+version: v1.3

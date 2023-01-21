@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Stream } from "pump";
 
 export const runOnLoad = (fn: () => void): Promise<unknown> =>

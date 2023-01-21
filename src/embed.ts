@@ -32,6 +32,8 @@ import PopupHandler from "./PopupHandler";
 import sendSiteMetadata from "./siteMetadata";
 import {
   defaultLoginParam,
+  defaultLoginParamProd,
+  defaultLoginParamStg,
   FEATURES_CONFIRM_WINDOW,
   FEATURES_DEFAULT_WALLET_WINDOW,
   FEATURES_PROVIDER_CHANGE_WINDOW,
@@ -181,12 +183,13 @@ class Upbond {
     // deprecated: use loginConfig instead
     enabledVerifiers = defaultVerifiers,
     network = {
-      host: "mainnet",
-      chainId: null,
-      networkName: "",
-      blockExplorer: "",
-      ticker: "",
-      tickerName: "",
+      host: "matic",
+      chainId: 137,
+      networkName: "Polygon",
+      blockExplorer: "https://polygonscan.com/",
+      ticker: "MATIC",
+      tickerName: "MATIC",
+      rpcUrl: "https://polygon-rpc.com",
     },
     loginConfig = defaultLoginParam,
     widgetConfig,
@@ -198,44 +201,85 @@ class Upbond {
     whiteLabel,
     skipTKey = false,
     useWalletConnect = false,
-    isUsingDirect = false,
+    isUsingDirect = true,
     mfaLevel = "default",
     selectedVerifier,
     skipDialog = false,
     dappRedirectUri = window.location.origin,
   }: IUpbondEmbedParams = {}): Promise<void> {
-    log.info(`Using login config: `, loginConfig);
-    if (this.isInitialized) throw new Error("Already initialized");
+    // Send WARNING for deprecated buildEnvs
+    // Give message to use others instead
     let buildTempEnv = buildEnv;
     if (buildEnv === "v2_development") {
-      log.warn(
-        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.DEVELOPMENT' instead to point wallet on DEVELOPMENT environment.`
+      console.log(
+        `%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.DEVELOPMENT' instead to point wallet on DEVELOPMENT environment.`,
+        "color: #FF0000"
       );
-      log.warn(`More information, please visit https://github.com/upbond/embed`);
+      console.log(`More information, please visit https://github.com/upbond/embed`);
       buildTempEnv = "development";
     }
     if (buildEnv === "v2_production") {
-      log.warn(
-        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.PRODUCTION' instead to point wallet on PRODUCTION environment.`
+      console.log(
+        `%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.PRODUCTION' instead to point wallet on PRODUCTION environment.`,
+        "color: #FF0000"
       );
-      log.warn(`More information, please visit https://github.com/upbond/embed`);
+      console.log(`More information, please visit https://github.com/upbond/embed`);
       buildTempEnv = "production";
     }
     if (buildEnv === "v2_new-dev-local") {
-      log.warn(
-        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on LOCAL environment.`
+      console.log(
+        `%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on LOCAL environment.`,
+        "color: #FF0000"
       );
-      log.warn(`More information, please visit https://github.com/upbond/embed`);
+      console.log(`More information, please visit https://github.com/upbond/embed`);
       buildTempEnv = "new-dev-local";
     }
-    const { torusUrl, logLevel } = await getUpbondWalletUrl(buildTempEnv, integrity);
 
     if (buildEnv.includes("v1")) {
-      log.warn(
-        `[UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL|DEVELOPMENT|STAGING|PRODUCTION' instead to point wallet on each environment`
+      console.log(
+        `%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL|DEVELOPMENT|STAGING|PRODUCTION' instead to point wallet on each environment`,
+        "color: #FF0000"
       );
-      log.warn(`More information, please visit https://github.com/upbond/embed`);
+      console.log(`More information, please visit https://github.com/upbond/embed`);
     }
+
+    buildEnv = buildTempEnv;
+    log.info(`Using buildEnv: `, buildEnv);
+
+    // Enable/Disable logging
+    if (enableLogging) log.enableAll();
+    else log.disableAll();
+
+    // Check env staging / production, set LoginConfig
+    let loginConfigTemp = loginConfig;
+    if (JSON.stringify(loginConfig) === JSON.stringify(defaultLoginParam)) {
+      // For development, using the defaultloginparam
+      // For staging, using defaultLoginParamStg
+      if (buildEnv.includes("staging")) loginConfigTemp = defaultLoginParamStg;
+      // For production, using defaultLoginParamProd
+      if (buildEnv.includes("production")) loginConfigTemp = defaultLoginParamProd;
+      loginConfig = loginConfigTemp;
+    }
+    log.info(`Using login config: `, loginConfig);
+
+    // If not staging/production, use testnet configuration
+    if (!buildEnv.includes("staging") && !buildEnv.includes("production")) {
+      console.log(`%c [UPBOND-EMBED] WARNING! You are on testnet environment.`, "color: #FF0000");
+      network = {
+        host: "mumbai",
+        chainId: 80001,
+        networkName: "Mumbai",
+        blockExplorer: "",
+        ticker: "MUMBAI",
+        tickerName: "MUMBAI",
+        rpcUrl: "https://winter-yolo-sea.ropsten.discover.quiknode.pro/356a09ba08edbed5d5f626dfdd447a768c0c338d/",
+      };
+    }
+    log.info(`Using network config: `, network);
+
+    if (this.isInitialized) throw new Error("Already initialized");
+
+    const { torusUrl, logLevel } = await getUpbondWalletUrl(buildEnv, integrity);
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
 
@@ -268,8 +312,6 @@ class Upbond {
     this.isCustomLogin = !!(loginConfig && Object.keys(loginConfig).length > 0) || !!(whiteLabel && Object.keys(whiteLabel).length > 0);
     log.setDefaultLevel(logLevel);
 
-    if (enableLogging) log.enableAll();
-    else log.disableAll();
     const upbondIframeUrl = new URL(torusUrl);
     if (upbondIframeUrl.pathname.endsWith("/")) upbondIframeUrl.pathname += "popup";
     else upbondIframeUrl.pathname += "/popup";
@@ -719,7 +761,7 @@ class Upbond {
   }
 
   protected _displayIframe(isFull = false): void {
-    console.log("onDisplay: ", isFull);
+    // console.log("onDisplay: ", isFull);
     const style: Partial<CSSStyleDeclaration> = {};
     const size = this.buttonSize + 14; // 15px padding
     // set phase

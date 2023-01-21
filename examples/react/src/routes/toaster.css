@@ -1,0 +1,9 @@
+.toaster {
+  max-width: 95vh;
+  width: auto;
+}
+@media screen and (min-width: 500px) {
+  .toaster {
+    max-width: 837px;
+  }
+}
