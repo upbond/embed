@@ -232,6 +232,10 @@ export interface NetworkInterface {
    * Name for currency ticker (e.g: `Binance Coin`)
    */
   tickerName?: string;
+  /**
+   * URL for RPC (e.g: `https://rpc.ankr.com/polygon_mumbai`)
+   */
+  rpcUrl?: string;
 }
 
 export interface BaseLoginOptions {
