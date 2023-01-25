@@ -305,34 +305,34 @@ Use `whiteLabel` option inside the init configuration.
 import Upbond from "@upbond/upbond-embed";
 
 const Example = () => {
-	const upbond = new Upbond({})
+  const upbond = new Upbond({})
 
-	const init = async () => {
-		await upbond.init({
-			whiteLabel: {
-				walletTheme: {
+  const init = async () => {
+    await upbond.init({
+      whiteLabel: {
+        walletTheme: {
           name: "Sample App",
-	        logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
-	        buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
-	        modalColor: "#f3f3f3",
-			    bgColor: "#214999",
-				  bgColorHover: "#f3f3f3",
-			    textColor: "#f3f3f3",
-			    textColorHover: "#214999",
-			    upbondLogin: {
-				    globalBgColor: "#f3f3f3",
-					  globalTextColor: "#214999"
-			    }
+          logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
+          buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
+          modalColor: "#f3f3f3",
+          bgColor: "#214999",
+          bgColorHover: "#f3f3f3",
+          textColor: "#f3f3f3",
+          textColorHover: "#214999",
+          upbondLogin: {
+            globalBgColor: "#f3f3f3",
+            globalTextColor: "#214999"
+          }
         }
       },
-		})
-	}
-	
-	useEffect(() => init(), [])
+    })
+  }
+  
+  useEffect(() => init(), [])
 
-	return (
-		// ...
-	)
+  return (
+    // ...
+  )
 }
 ```
 
@@ -345,23 +345,23 @@ import Upbond from "@upbond/upbond-embed";
 const upbond = new Upbond();
 const init = async () => {
   await upbond.init({
-		whiteLabel: {
+    whiteLabel: {
       walletTheme: {
         name: "Sample App",
         logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
         buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
         modalColor: "#f3f3f3",
-		    bgColor: "#214999",
-			  bgColorHover: "#f3f3f3",
-		    textColor: "#f3f3f3",
-		    textColorHover: "#214999",
-		    upbondLogin: {
-			    globalBgColor: "#ffffff",
-				  globalTextColor: "#214999"
-		    }
+        bgColor: "#214999",
+        bgColorHover: "#f3f3f3",
+        textColor: "#f3f3f3",
+        textColorHover: "#214999",
+        upbondLogin: {
+          globalBgColor: "#ffffff",
+          globalTextColor: "#214999"
+        }
       }
     },
-	})
+  })
 }
 
 export default {
@@ -382,11 +382,11 @@ Setting up the color theme and logo.
 
 ```jsx
 whiteLabel: {
-	/* wallet theme */
-	walletTheme: {
-		// other
-		name: "Sample App",
-	  // Logo setup
+  /* wallet theme */
+  walletTheme: {
+    // other
+    name: "Sample App",
+    // Logo setup
     logo: "path or url",
     buttonLogo: "path or url",
 
@@ -396,12 +396,12 @@ whiteLabel: {
     bgColorHover: "color hex",
     textColor: "color hex",
     textColorHover: "color hex",
-		
-		// Upbond login theme setup
-		upbondLogin: {
-			globalBgColor: "color hex",
-			globalTextColor: "color hex"
-		}
+    
+    // Upbond login theme setup
+    upbondLogin: {
+      globalBgColor: "color hex",
+      globalTextColor: "color hex"
+    }
   }
 }
 ```
