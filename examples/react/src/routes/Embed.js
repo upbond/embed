@@ -47,7 +47,6 @@ const Embed = () => {
     }
   }, [_upbond]);
 
-
   useEffect(() => {
     const initUpbond = async () => {
       setLoading(true);
@@ -70,10 +69,7 @@ const Embed = () => {
       return;
     }
     const web3 = new Web3(_upbond);
-    const [accounts, chainId] = await Promise.all([
-      web3.eth.getAccounts(),
-      web3.eth.getChainId(),
-    ]);
+    const [accounts, chainId] = await Promise.all([web3.eth.getAccounts(), web3.eth.getChainId()]);
     if (accounts) {
       const balance = await web3.eth.getBalance(accounts[0]);
       setShowBc(true);
@@ -129,13 +125,8 @@ const Embed = () => {
       setBtnLoading(true);
       setIsCopy(false);
       setLoading(true);
-      const msgHash = Web3.utils.keccak256(
-        "Signing Transaction for Upbond Embed!"
-      );
-      const signedMsg = await upbondServices.signTransaction(
-        msgHash,
-        account[0]
-      );
+      const msgHash = Web3.utils.keccak256("Signing Transaction for Upbond Embed!");
+      const signedMsg = await upbondServices.signTransaction(msgHash, account[0]);
       console.log(signedMsg);
       setSignInfo(signedMsg);
       setBtnLoading(false);
@@ -239,32 +230,18 @@ const Embed = () => {
         />
       );
     } else {
-      return (
-        <img
-          className="inline-block h-14 w-14 rounded-full"
-          alt={userInfo.name}
-          src={DefaultProfileImage}
-        />
-      );
+      return <img className="inline-block h-14 w-14 rounded-full" alt={userInfo.name} src={DefaultProfileImage} />;
     }
   };
 
   return (
     <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
       <header className="App-header">
-        <p className="text-center text-xl font-bold my-3 lg:text-2xl">
-          Demo of UPBOND in DApps
-        </p>
+        <p className="text-center text-xl font-bold my-3 lg:text-2xl">Demo of UPBOND in DApps</p>
         <div className="mt-4 w-full px-4 flex justify-center">
-          <p className="text-center">
-            See how UPBOND can be embedded in your dapp.
-          </p>
+          <p className="text-center">See how UPBOND can be embedded in your dapp.</p>
         </div>
-        <img
-          src={companySampleLogo}
-          className="w-1/2 mx-auto rounded-xl m-5"
-          alt="UpbondBanner"
-        />
+        <img src={companySampleLogo} className="w-1/2 mx-auto rounded-xl m-5" alt="UpbondBanner" />
         {account && account.length > 0 ? (
           <div>
             <p className="text-center">Account : {account}</p>
@@ -345,9 +322,7 @@ const Embed = () => {
             </div>
             <p className="text-black mt-5">Output: </p>
             <div className="overflow-hidden rounded-lg bg-white shadow mt-2">
-              <div className="px-4 py-5 sm:p-6 whitespace-pre-line break-words">
-                {signInfo ? signInfo : "Nothing"}
-              </div>
+              <div className="px-4 py-5 sm:p-6 whitespace-pre-line break-words">{signInfo ? signInfo : "Nothing"}</div>
             </div>
             {signInfo && (
               <button
@@ -361,15 +336,10 @@ const Embed = () => {
                 {isCopy ? "Copied" : "Copy"}
               </button>
             )}
-            {Object.keys(txResult).length > 0 && (
-              <p className="text-black mt-5">Transaction Output: </p>
-            )}
+            {Object.keys(txResult).length > 0 && <p className="text-black mt-5">Transaction Output: </p>}
             {Object.keys(txResult).length > 0 &&
               Object.keys(txResult).map((x) => (
-                <div
-                  className="overflow-hidden rounded-lg bg-white shadow mt-2"
-                  key={x}
-                >
+                <div className="overflow-hidden rounded-lg bg-white shadow mt-2" key={x}>
                   <div className="px-4 py-5 sm:p-6 whitespace-pre-line break-words">
                     {x}: {txResult[x]}
                   </div>
