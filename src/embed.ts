@@ -260,21 +260,7 @@ class Upbond {
       if (buildEnv.includes("production")) loginConfigTemp = defaultLoginParamProd;
       loginConfig = loginConfigTemp;
     }
-    log.info(`Using login config: `, loginConfig);
-
-    // If not staging/production, use testnet configuration
-    if (!buildEnv.includes("staging") && !buildEnv.includes("production")) {
-      console.log(`%c [UPBOND-EMBED] WARNING! You are on testnet environment.`, "color: #FF0000");
-      network = {
-        host: "mumbai",
-        chainId: 80001,
-        networkName: "Mumbai",
-        blockExplorer: "",
-        ticker: "MUMBAI",
-        tickerName: "MUMBAI",
-        rpcUrl: "https://winter-yolo-sea.ropsten.discover.quiknode.pro/356a09ba08edbed5d5f626dfdd447a768c0c338d/",
-      };
-    }
+    log.info(`Using login config: `, loginConfig);    
     log.info(`Using network config: `, network);
 
     if (this.isInitialized) throw new Error("Already initialized");
