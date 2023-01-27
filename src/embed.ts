@@ -260,7 +260,7 @@ class Upbond {
       if (buildEnv.includes("production")) loginConfigTemp = defaultLoginParamProd;
       loginConfig = loginConfigTemp;
     }
-    log.info(`Using login config: `, loginConfig);    
+    log.info(`Using login config: `, loginConfig);
     log.info(`Using network config: `, network);
 
     if (this.isInitialized) throw new Error("Already initialized");
