@@ -11,7 +11,7 @@ class UpbondEmbed {
   web3 = null;
 
   // you can also use another envs.
-  env = `${process.env.REACT_APP_EMBED_BUILD_ENV}` || "production"; // may be development | staging | production
+  env = `${process.env.REACT_APP_EMBED_BUILD_ENV || "production"}`; // may be development | staging | production
 
   provider;
 
