@@ -2483,15 +2483,6 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.6.tgz#cee20bd55e68a1720bdab363ecf0c821ded4cd45"
   integrity sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==
 
-"@rashtaurigae/encryption-utils@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@rashtaurigae/encryption-utils/-/encryption-utils-2.0.1.tgz#d840768478f4e5f42346c59d007fcb710b227fa4"
-  integrity sha512-g4D4KhhXcPW8ojaVjj5Kdrq//7InsGQWIqXmqre/JEEnFa842QfTJTWUpGWWt+rowmRXVN397Efsr3HUctCyOA==
-  dependencies:
-    base64-js "^1.5.1"
-    crypto "^1.0.1"
-    sjcl "^1.0.8"
-
 "@remix-run/router@1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.3.0.tgz#b6ee542c7f087b73b3d8215b9bf799f648be71cb"
@@ -3663,11 +3654,12 @@
     "@typescript-eslint/types" "5.48.2"
     eslint-visitor-keys "^3.3.0"
 
-"@upbond/upbond-embed@file:../..":
-  version "1.3.3"
+"@upbond/upbond-embed@^1.3.3":
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/@upbond/upbond-embed/-/upbond-embed-1.3.6.tgz#e4b09536b865eacabb3a481b869f26cf86abb05b"
+  integrity sha512-yiBSovI8gHHmkETVU1e381Ir+rk4eTn1iCJI8EZ2RbwNiA+DIU3Y4PnJKSCSDS2tt3hH64tdH7hzKJm3AmkMrg==
   dependencies:
     "@metamask/obs-store" "^7.0.0"
-    "@rashtaurigae/encryption-utils" "^2.0.1"
     "@toruslabs/broadcast-channel" "^6.1.1"
     "@toruslabs/http-helpers" "^3.2.0"
     "@toruslabs/openlogin" "^2.7.0"
@@ -5176,7 +5168,7 @@ base-x@^4.0.0:
   resolved "https://registry.yarnpkg.com/base-x/-/base-x-4.0.0.tgz#d0e3b7753450c73f8ad2389b5c018a4af7b2224a"
   integrity sha512-FuwxlW4H5kh37X/oW59pwTzzTKRzfrrQwhmyspRM7swOEZcHtDZSCt45U6oKgtuFE+WYPblePMVIPR4RZrh/hw==
 
-base64-js@^1.3.1, base64-js@^1.5.1:
+base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
@@ -6177,11 +6169,6 @@ crypto-random-string@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-2.0.0.tgz#ef2a7a966ec11083388369baa02ebead229b30d5"
   integrity sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==
-
-crypto@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/crypto/-/crypto-1.0.1.tgz#2af1b7cad8175d24c8a1b0778255794a21803037"
-  integrity sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==
 
 css-blank-pseudo@^3.0.3:
   version "3.0.3"
@@ -13244,11 +13231,6 @@ sisteransi@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
   integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
-
-sjcl@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/sjcl/-/sjcl-1.0.8.tgz#f2ec8d7dc1f0f21b069b8914a41a8f236b0e252a"
-  integrity sha512-LzIjEQ0S0DpIgnxMEayM1rq9aGwGRG4OnZhCdjx7glTaJtf4zRfpg87ImfjSJjoW9vKpagd82McDOwbRT5kQKQ==
 
 slash@^3.0.0:
   version "3.0.0"

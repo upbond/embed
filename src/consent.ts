@@ -100,7 +100,18 @@ export default class Consent {
         const signer = ethProvider.getSigner();
         const requestedUserInfo = Web3Token.sign(
           async (msg: string) => {
-            const tx = await signer.signMessage(msg);
+            const data = {
+              domain: "example.com",
+              scope: this.consentConfigurations.scopes,
+              type: "consent_request",
+              data: {
+                vc: jwt,
+                vp: jwtPresentation,
+              },
+              expires_in: "3 days",
+              msg,
+            };
+            const tx = await signer.signMessage(JSON.stringify(data));
             return tx;
           },
           {
