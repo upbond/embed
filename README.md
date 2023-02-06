@@ -47,10 +47,18 @@ const upbond = new Upbond(options);
     - `modalZIndex` (optional): number, default is `99999`
 
 
-- `UPBOND_BUILD_ENV` build environment settings: Build environments are divided into 3 types of environment usages: production, staging, and development. Development uses testnet, while staging and production use mainnet.
+Then, initialize Upbond embed
 
+```javascript
+await upbond.init({
+  buildEnv: UPBOND_BUILD_ENV.PRODUCTION
+});
 ```
-export const UPBOND_BUILD_ENV = {
+
+************Parameters************
+
+- `buildEnv` (required): `UPBOND_BUILD_ENV` build environment settings: Build environments are divided into 3 types of environment usages: production, staging, and development. Development uses testnet, while staging and production use mainnet. Below is the definition or `UPBOND_BUILD_ENV` in the embed library.
+```
   PRODUCTION: "production", // point to wallet url https://wallet.upbond.io
   STAGING: "staging", // point to wallet url https://wallet.stg.upbond.io
   DEVELOPMENT: "development", // point to wallet url https://new-wallet-mobile.dev.upbond.io
@@ -63,10 +71,34 @@ export const UPBOND_BUILD_ENV = {
   .
   .
   .
-} as const;
+```
+`UPBOND_BUILD_ENV.PRODUCTION`, `UPBOND_BUILD_ENV.STAGING`, `UPBOND_BUILD_ENV.DEVELOPMENT` always point to the newest environment. As of January 2023, the newest wallet environment is `v2_*`.
+
+- `widgetConfig` (optional): Configuration to show embed button `before` or `after` logins.
+```javascript
+  widgetConfig: {
+    showAfterLoggedIn: true,
+    showBeforeLoggedIn: false,
+  }
 ```
 
-`UPBOND_BUILD_ENV.PRODUCTION`, `UPBOND_BUILD_ENV.STAGING`, `UPBOND_BUILD_ENV.DEVELOPMENT` always point to the newest environment. As of January 2023, the newest wallet environment is `v2_*`.
+- `network` (optional): Blockchain network configuration to connect. Default to `matic` network.
+```javascript
+network: {
+  host: "mumbai",
+  chainId: 80001,
+  networkName: "Mumbai",
+  blockExplorer: "",
+  ticker: "MUMBAI",
+  tickerName: "MUMBAI",
+  rpcUrl: "https://polygon-testnet.public.blastapi.io/",
+}
+```
+
+- `dappRedirectUri` (optional): Redirect URI after successful login from Embed. Default to the dApps URI. `${window.location.origin}/`
+```javascript
+  dappRedirectUri: "https://demo-dapps.com"
+```
 
 **Examples**
 
@@ -80,7 +112,21 @@ const upbond = new Upbond({
 });
 
 await upbond.init({
-  buildEnv: UPBOND_BUILD_ENV.DEVELOPMENT
+  buildEnv: UPBOND_BUILD_ENV.PRODUCTION,
+  widgetConfig: {
+    showAfterLoggedIn: true,
+    showBeforeLoggedIn: false,
+  },
+  network: {
+    host: "mumbai",
+    chainId: 80001,
+    networkName: "Mumbai",
+    blockExplorer: "",
+    ticker: "MUMBAI",
+    tickerName: "MUMBAI",
+    rpcUrl: "https://polygon-testnet.public.blastapi.io/",
+  },
+  dappRedirectUri: "https://demo-dapps.com"
 });
 ```
 
@@ -119,7 +165,7 @@ const [initialized, setInitialized] = useState(false)
 useEffect(() => {
   const init = async () => {
     await upbond.init({
-      buildEnv: UPBOND_BUILD_ENV.DEVELOPMENT
+      buildEnv: UPBOND_BUILD_ENV.PRODUCTION
     });
     setInitialized(true)
   }
