@@ -92,11 +92,11 @@ export type BuildEnv =
   | "debug"
   | "new_wallet";
 
-export type PAYMENT_PROVIDER_TYPE = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
+export type PAYMENT_PROVIDER_TYPE = (typeof PAYMENT_PROVIDER)[keyof typeof PAYMENT_PROVIDER];
 
-export type SUPPORTED_PAYMENT_NETWORK_TYPE = typeof SUPPORTED_PAYMENT_NETWORK[keyof typeof SUPPORTED_PAYMENT_NETWORK];
+export type SUPPORTED_PAYMENT_NETWORK_TYPE = (typeof SUPPORTED_PAYMENT_NETWORK)[keyof typeof SUPPORTED_PAYMENT_NETWORK];
 
-export type UPBOND_BUILD_ENV_TYPE = typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
+export type UPBOND_BUILD_ENV_TYPE = (typeof UPBOND_BUILD_ENV)[keyof typeof UPBOND_BUILD_ENV];
 
 export interface IPaymentProvider {
   line1: string;
@@ -144,7 +144,7 @@ export type EMBED_TRANSLATION_ITEM = {
   clickHere: string;
 };
 
-export type BUTTON_POSITION_TYPE = typeof BUTTON_POSITION[keyof typeof BUTTON_POSITION];
+export type BUTTON_POSITION_TYPE = (typeof BUTTON_POSITION)[keyof typeof BUTTON_POSITION];
 
 export type WALLET_PATH = "home" | "account";
 export type ETHEREUM_NETWORK_TYPE =
@@ -200,6 +200,22 @@ export interface TorusCtorArgs {
    * Get yours today at {@link https://developer.tor.us | Dashboard}
    */
   apiKey?: string;
+
+  /**
+   * Consent key
+   * For consent management
+   */
+  consentConfiguration?: {
+    clientId: string;
+    secretKey: string;
+    scope: string[];
+  };
+
+  /**
+   * Consent enabler for dapp
+   * For consent management
+   */
+  enableConsent?: boolean;
 }
 
 export interface TorusLoginParams {

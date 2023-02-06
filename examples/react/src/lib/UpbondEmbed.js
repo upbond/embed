@@ -1,4 +1,4 @@
-import Upbond from "@upbond/upbond-embed";
+import Upbond from "./upbond-embed/upbondEmbed.esm";
 import Web3 from "web3";
 import Web3Token from "web3-token";
 import { ethers } from "ethers";
@@ -11,7 +11,7 @@ class UpbondEmbed {
   web3 = null;
 
   // you can also use another envs.
-  env = `${process.env.REACT_APP_EMBED_BUILD_ENV || "production"}`; // may be development | staging | production
+  env = `local`; // may be development | staging | production
 
   provider;
 
@@ -20,7 +20,14 @@ class UpbondEmbed {
   initialized = false;
 
   constructor() {
-    this.upbond = new Upbond({});
+    this.upbond = new Upbond({
+      consentConfiguration: {
+        clientId: '19f9441057667f048bfb988c9414057a50c2563ea12afebc442ef440d22f4532',
+        secretKey: '9e368ebc95a794e63a16ff9767467fe1',
+        scope: ['name', 'email', 'birthday']
+      },
+      enableConsent: true
+    });
     this.web3 = new Web3();
     this.provider = null;
   }

@@ -4,6 +4,7 @@ import { BasePostMessageStream, JRPCRequest, ObjectMultiplex, setupMultiplex, Su
 import deepmerge from "lodash.merge";
 
 import configuration from "./config";
+import Consent from "./consent";
 import { documentReady, handleStream, htmlToElement, runOnLoad } from "./embedUtils";
 import UpbondInpageProvider from "./inpage-provider";
 import generateIntegrity from "./integrity";
@@ -146,17 +147,36 @@ class Upbond {
 
   selectedVerifier: string;
 
+  // eslint-disable-next-line prettier/prettier
+  buildEnv: typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
+
+  widgetConfig: { showAfterLoggedIn: boolean; showBeforeLoggedIn: boolean };
+
+  consent: Consent | null;
+
+  consentConfiguration: {
+    enable: boolean;
+    config: {
+      clientId: string;
+      secretKey: string;
+      scope: string[];
+    };
+  };
+
   private loginHint = "";
 
   private useWalletConnect: boolean;
 
   private isCustomLogin = false;
 
-  buildEnv: typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
-
-  widgetConfig: { showAfterLoggedIn: boolean; showBeforeLoggedIn: boolean };
-
-  constructor({ buttonPosition = BUTTON_POSITION.BOTTOM_LEFT, buttonSize = 56, modalZIndex = 99999, apiKey = "torus-default" }: TorusCtorArgs = {}) {
+  constructor({
+    buttonPosition = BUTTON_POSITION.BOTTOM_LEFT,
+    buttonSize = 56,
+    modalZIndex = 99999,
+    apiKey = "torus-default",
+    consentConfiguration,
+    enableConsent = false,
+  }: TorusCtorArgs = {}) {
     this.buttonPosition = buttonPosition;
     this.buttonSize = buttonSize;
     this.torusUrl = "";
@@ -167,6 +187,18 @@ class Upbond {
     this.apiKey = apiKey;
     setAPIKey(apiKey);
     this.modalZIndex = modalZIndex;
+    if (enableConsent && !consentConfiguration) {
+      throw new Error(`Missing consent api key`);
+    } else {
+      this.consentConfiguration = {
+        enable: enableConsent,
+        config: {
+          clientId: consentConfiguration.clientId,
+          scope: consentConfiguration.scope,
+          secretKey: consentConfiguration.secretKey,
+        },
+      };
+    }
     this.alertZIndex = modalZIndex + 1000;
     this.isIframeFullScreen = false;
     this.isUsingDirect = false;
@@ -395,6 +427,18 @@ class Upbond {
     } else {
       try {
         await handleSetup();
+        if (this.consentConfiguration.enable && this.consentConfiguration.config.clientId && this.consentConfiguration.config.secretKey) {
+          this.consent = new Consent({
+            consentApiKey: this.consentConfiguration.config.clientId,
+            key: this.consentConfiguration.config.secretKey,
+            scope: this.consentConfiguration.config.scope,
+            consentStream: this.communicationMux,
+            provider: this.provider,
+          });
+          this.consent.init();
+        } else {
+          this.consent = null;
+        }
       } catch (error) {
         console.error(error, "@errorOnInit");
       }
