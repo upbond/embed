@@ -123,12 +123,18 @@ export default class Consent {
         stream.on("data", (data) => {
           if (data.name === "consent_response") {
             resolve(data.data);
+          } else if (data.name === "consent_error") {
+            reject(data.data.msg);
           }
         });
         stream.on("error", (err) => {
           reject(err);
         });
       } catch (error) {
+        if (error.message && error.message.includes("user rejected signing")) {
+          // eslint-disable-next-line prefer-promise-reject-errors
+          reject("User rejected your request");
+        }
         reject(error);
       }
     });
