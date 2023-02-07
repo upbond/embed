@@ -98,7 +98,7 @@ export default class Consent {
       try {
         const ethProvider = new ethers.providers.Web3Provider(this.provider);
         const signer = ethProvider.getSigner();
-        const requestedUserInfo = Web3Token.sign(
+        Web3Token.sign(
           async (msg: string) => {
             const data = {
               domain: "example.com",
@@ -116,16 +116,18 @@ export default class Consent {
           },
           {
             domain: "example.com",
-            scope: this.consentConfigurations.scopes,
-            type: "consent_request",
-            data: {
-              vc: jwt,
-              vp: jwtPresentation,
-            },
             expires_in: "3 days",
           }
         );
-        resolve(requestedUserInfo);
+        const stream = this.communicationMux.getStream("consent") as Substream;
+        stream.on("data", (data) => {
+          if (data.name === "consent_response") {
+            resolve(data.data);
+          }
+        });
+        stream.on("error", (err) => {
+          reject(err);
+        });
       } catch (error) {
         reject(error);
       }
