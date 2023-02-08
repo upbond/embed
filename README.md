@@ -358,6 +358,7 @@ const Example = () => {
       whiteLabel: {
         walletTheme: {
           name: "Sample App",
+          lang: "ja",
           logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
           buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
           modalColor: "#f3f3f3",
@@ -394,6 +395,7 @@ const init = async () => {
     whiteLabel: {
       walletTheme: {
         name: "Sample App",
+        lang: "ja",
         logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
         buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
         modalColor: "#f3f3f3",
@@ -432,6 +434,7 @@ whiteLabel: {
   walletTheme: {
     // other
     name: "Sample App",
+    lang: "ja",
     // Logo setup
     logo: "path or url",
     buttonLogo: "path or url",
@@ -453,6 +456,7 @@ whiteLabel: {
 ```
 
 - `name` let you setup the application’s name.
+- `lang` let you setup the wallet's language. Current options include `en` for English and `ja` for Japanese. Default is English.
 - `logo` let you setup logo that will be displayed the login popup.
 - `buttonLogo` let you setup the logo for the flying wallet button.
 - `modalColor` let you setup the background color for the login popup.
