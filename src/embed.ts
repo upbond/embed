@@ -453,6 +453,23 @@ class Upbond {
     return this.ethereum.enable();
   }
 
+  requestAuthServiceAccessToken(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const stream = this.communicationMux.getStream("auth_service") as Substream;
+      stream.write({
+        name: "access_token_request",
+      });
+
+      stream.on("data", (ev) => {
+        if (ev.name !== "error") {
+          resolve(ev.data.authServiceAccessToken);
+        } else {
+          reject(ev.data.msg);
+        }
+      });
+    });
+  }
+
   logout(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!this.isLoggedIn) {

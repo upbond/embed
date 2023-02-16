@@ -216,6 +216,20 @@ const Embed = () => {
     }
   };
 
+  const requestAccessToken = async () => {
+    setBtnLoading(true)
+    try {
+      const data = await upbondServices.upbond.requestAuthServiceAccessToken();
+      setAllData({
+        accessToken: data
+      })
+      setBtnLoading(false)
+    } catch (error) {
+      setBtnLoading(false)
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
     const initLayout = async () => {
       console.log(`Initializing`, upbondServices.upbond.provider);
@@ -341,6 +355,14 @@ const Embed = () => {
                 onClick={consent}
               >
                 Check Consent
+              </button>
+              <button
+                type="button"
+                disabled={btnLoading}
+                className="disabled:bg-gray-500 items-center px-4 py-2 text-sm font-medium rounded-xl shadow-sm text-white bg-[#4B68AE] hover:bg-[#214999] border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4B68AE]"
+                onClick={requestAccessToken}
+              >
+                Request Access Token
               </button>
             </div>
             <p className="text-black mt-5">Output: </p>
