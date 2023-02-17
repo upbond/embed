@@ -189,13 +189,22 @@ class Upbond {
     this.modalZIndex = modalZIndex;
     if (enableConsent && !consentConfiguration) {
       throw new Error(`Missing consent api key`);
-    } else {
+    } else if (enableConsent && consentConfiguration.clientId && consentConfiguration.secretKey && consentConfiguration.scope) {
       this.consentConfiguration = {
         enable: enableConsent,
         config: {
-          clientId: consentConfiguration.clientId,
-          scope: consentConfiguration.scope,
-          secretKey: consentConfiguration.secretKey,
+          clientId: consentConfiguration?.clientId,
+          scope: consentConfiguration?.scope,
+          secretKey: consentConfiguration?.secretKey,
+        },
+      };
+    } else {
+      this.consentConfiguration = {
+        enable: false,
+        config: {
+          clientId: "",
+          scope: [""],
+          secretKey: "",
         },
       };
     }
