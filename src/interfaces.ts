@@ -67,6 +67,7 @@ export const UPBOND_BUILD_ENV = {
   DEV_OLD_WALLET: "old_wallet",
   DEBUG: "debug",
   DEV_NEW_WALLET: "new_wallet",
+  WALLET_DID: "wallet-did",
 } as const;
 
 export type BuildEnv =
@@ -90,7 +91,8 @@ export type BuildEnv =
   | "v2_new-dev-local"
   | "old_wallet"
   | "debug"
-  | "new_wallet";
+  | "new_wallet"
+  | "wallet-did";
 
 export type PAYMENT_PROVIDER_TYPE = (typeof PAYMENT_PROVIDER)[keyof typeof PAYMENT_PROVIDER];
 
