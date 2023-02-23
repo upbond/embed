@@ -38,6 +38,7 @@ class UpbondEmbed {
         buildEnv: this.env,
         whiteLabel: {
           walletTheme: {
+            lang: "ja",          
             logo: "https://i.ibb.co/L6vHB5d/company-logo-sample.png",
             name: "Company",
             buttonLogo:
