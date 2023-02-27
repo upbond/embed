@@ -61,13 +61,6 @@ await upbond.init({
 ```
   PRODUCTION: "production", // point to wallet url https://wallet.upbond.io
   STAGING: "staging", // point to wallet url https://wallet.stg.upbond.io
-  DEVELOPMENT: "development", // point to wallet url https://new-wallet-mobile.dev.upbond.io
-  V1_DEVELOPMENT: "v1_development",
-  V1_STAGING: "v1_staging",
-  V1_PRODUCTION: "v1_production",
-  V2_DEVELOPMENT: "v2_development",
-  V2_STAGING: "v2_staging",
-  V2_PRODUCTION: "v2_production",
   .
   .
   .
