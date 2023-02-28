@@ -558,7 +558,7 @@ class Upbond {
     );
   }
 
-  getUserInfo(message: string): Promise<UserInfo> {
+  getUserInfo(message?: string): Promise<UserInfo> {
     return new Promise((resolve, reject) => {
       if (this.isLoggedIn) {
         const userInfoAccessStream = this.communicationMux.getStream("user_info_access") as Substream;
@@ -1022,12 +1022,12 @@ class Upbond {
     const logoUrl = this._getLogoUrl();
     const torusAlert = htmlToElement<HTMLDivElement>(
       '<div id="torusAlert" class="torus-alert--v2">' +
-        `<div id="torusAlert__logo"><img src="${logoUrl}" /></div>` +
-        "<div>" +
-        `<h1 id="torusAlert__title">${this.embedTranslations.actionRequired}</h1>` +
-        `<p id="torusAlert__desc">${this.embedTranslations.pendingAction}</p>` +
-        "</div>" +
-        "</div>"
+      `<div id="torusAlert__logo"><img src="${logoUrl}" /></div>` +
+      "<div>" +
+      `<h1 id="torusAlert__title">${this.embedTranslations.actionRequired}</h1>` +
+      `<p id="torusAlert__desc">${this.embedTranslations.pendingAction}</p>` +
+      "</div>" +
+      "</div>"
     );
 
     const successAlert = htmlToElement(`<div><a id="torusAlert__btn">${this.embedTranslations.continue}</a></div>`);
