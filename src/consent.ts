@@ -80,12 +80,63 @@ export default class Consent {
       });
       stream.on("data", (data) => {
         if (data.name === "error") {
+          if (data.data.code && data.data.code === 401) {
+            this.requestDIDCreation(this.consentApiKey)
+              .then((jwtData) => resolve(jwtData))
+              .catch((err) => reject(err));
+          }
           reject(new Error(data.data.msg));
         } else {
           console.log(data.data, "@data DID?");
           resolve(data.data);
         }
       });
+    });
+  }
+
+  requestDIDCreation(clientId: string): Promise<{ jwt: string; jwtPresentation: string }> {
+    return new Promise((resolve, reject) => {
+      try {
+        const ethProvider = new ethers.providers.Web3Provider(this.provider);
+        const signer = ethProvider.getSigner();
+        Web3Token.sign(
+          async (msg: string) => {
+            const data = {
+              domain: "example.com",
+              scope: this.consentConfigurations.scopes,
+              type: "did_creation_request",
+              data: {
+                clientId,
+              },
+              expires_in: "3 days",
+              msg,
+            };
+            const tx = await signer.signMessage(JSON.stringify(data));
+            return tx;
+          },
+          {
+            domain: "example.com",
+            expires_in: "3 days",
+          }
+        );
+        const stream = this.communicationMux.getStream("consent") as Substream;
+        stream.on("data", (data) => {
+          if (data.name === "consent_response") {
+            resolve(data.data);
+          } else if (data.name === "consent_error") {
+            reject(data.data.msg);
+          }
+        });
+        stream.on("error", (err) => {
+          reject(err);
+        });
+      } catch (error) {
+        if (error.message && error.message.includes("user rejected signing")) {
+          // eslint-disable-next-line prefer-promise-reject-errors
+          reject("User rejected your request");
+        }
+        reject(error);
+      }
     });
   }
 

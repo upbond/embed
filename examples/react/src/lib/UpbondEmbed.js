@@ -24,7 +24,7 @@ class UpbondEmbed {
       consentConfiguration: {
         clientId: '19f9441057667f048bfb988c9414057a50c2563ea12afebc442ef440d22f4532',
         secretKey: '9e368ebc95a794e63a16ff9767467fe1',
-        scope: ['name', 'email', 'birthday']
+        scope: ['name', 'email', 'address', 'birthday']
       },
       enableConsent: true
     });

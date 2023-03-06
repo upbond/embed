@@ -213,7 +213,7 @@ class Upbond {
     this.isUsingDirect = false;
     this.buildEnv = "production";
     this.widgetConfig = {
-      showAfterLoggedIn: true,
+      showAfterLoggedIn: false,
       showBeforeLoggedIn: false,
     };
   }
@@ -233,7 +233,7 @@ class Upbond {
       rpcUrl: "https://polygon-rpc.com",
     },
     loginConfig = defaultLoginParam,
-    widgetConfig,
+    widgetConfig = this.widgetConfig, // default widget config
     integrity = {
       check: false,
       hash: iframeIntegrity,
@@ -309,12 +309,6 @@ class Upbond {
     const { torusUrl, logLevel } = await getUpbondWalletUrl(buildEnv, integrity);
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
-
-    if (!widgetConfig) {
-      log.info(`widgetConfig is not configured. Now using default widget configuration`);
-    } else {
-      this.widgetConfig = widgetConfig;
-    }
 
     if (selectedVerifier) {
       try {
@@ -412,6 +406,12 @@ class Upbond {
         window.document.body.appendChild(this.torusAlertContainer);
       });
     };
+
+    if (!widgetConfig) {
+      log.info(`widgetConfig is not configured. Now using default widget configuration`);
+    } else {
+      this.widgetConfig = widgetConfig;
+    }
 
     if (buildEnv === "production" && integrity.check) {
       // hacky solution to check for iframe integrity
@@ -628,7 +628,7 @@ class Upbond {
     );
   }
 
-  getUserInfo(message: string): Promise<UserInfo> {
+  getUserInfo(message?: string): Promise<UserInfo> {
     return new Promise((resolve, reject) => {
       if (this.isLoggedIn) {
         const userInfoAccessStream = this.communicationMux.getStream("user_info_access") as Substream;
@@ -817,7 +817,7 @@ class Upbond {
   }
 
   protected _displayIframe(isFull = false): void {
-    // console.log("onDisplay: ", isFull);
+    console.log("onDisplay: ", isFull);
     const style: Partial<CSSStyleDeclaration> = {};
     const size = this.buttonSize + 14; // 15px padding
     // set phase
