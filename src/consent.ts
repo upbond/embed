@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 /* eslint-disable prefer-const */
 
@@ -81,20 +82,19 @@ export default class Consent {
       stream.on("data", (data) => {
         if (data.name === "error") {
           if (data.data.code && data.data.code === 401) {
-            this.requestDIDCreation(this.consentApiKey)
+            this.requestDIDCreationOrFilledForm(this.consentApiKey, data.data.params ? data.data.params : {}, this.key)
               .then((jwtData) => resolve(jwtData))
               .catch((err) => reject(err));
           }
           reject(new Error(data.data.msg));
         } else {
-          console.log(data.data, "@data DID?");
           resolve(data.data);
         }
       });
     });
   }
 
-  requestDIDCreation(clientId: string): Promise<{ jwt: string; jwtPresentation: string }> {
+  requestDIDCreationOrFilledForm(clientId: string, params: { [x: string]: any }, secKey: string): Promise<{ jwt: string; jwtPresentation: string }> {
     return new Promise((resolve, reject) => {
       try {
         const ethProvider = new ethers.providers.Web3Provider(this.provider);
@@ -107,6 +107,8 @@ export default class Consent {
               type: "did_creation_request",
               data: {
                 clientId,
+                clientSecret: secKey,
+                params,
               },
               expires_in: "3 days",
               msg,
