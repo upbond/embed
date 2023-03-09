@@ -203,14 +203,14 @@ const Embed = () => {
   const consent = async () => {
     try {
       const data = await upbondServices.upbond.consent.getDid();
-      if (data.jwt && data.jwtPresentation) {
-        const token = await upbondServices.upbond.consent.requestUserData({
-          jwt: data.jwt,
-          jwtPresentation: data.jwtPresentation,
-        });
-        setAllData(token.data.requestedData);
-        console.log(token, "@token");
-      }
+      console.log(data, "@jwt vp data")
+      const token = await upbondServices.upbond.consent.requestUserData({
+        jwt: data.jwt,
+        jwtPresentation: data.jwtPresentation,
+      });
+      console.log(token, "@token?")
+      setAllData(token.data.requestedData);
+      console.log(token, "@token");
     } catch (error) {
       console.error(error, "@Error when consent!");
     }

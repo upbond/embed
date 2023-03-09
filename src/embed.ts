@@ -443,6 +443,7 @@ class Upbond {
             scope: this.consentConfiguration.config.scope,
             consentStream: this.communicationMux,
             provider: this.provider,
+            isLoggedIn: this.isLoggedIn,
           });
           this.consent.init();
         } else {

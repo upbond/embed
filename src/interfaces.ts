@@ -955,3 +955,58 @@ export type WalletProviderState = {
   isUnlocked: boolean;
   networkVersion: string;
 };
+
+export interface RequestedData {
+  email: string;
+  name: string;
+  address: string;
+  birthday: string;
+}
+
+export interface Vc {
+  userTarget: string;
+}
+
+export interface UserData {
+  dateAccepted: number;
+  userAddress: string;
+  dapp: string;
+  dappDescription: string;
+  dappId: number;
+}
+
+export interface CredentialSubject {
+  id: string;
+  ["@scope"]: string[];
+  userData: UserData;
+  signHash: string;
+  clientHost: string;
+}
+
+export interface Issuer {
+  id: string;
+}
+
+export interface Proof {
+  type: string;
+  jwt: string;
+}
+
+export interface Data {
+  requestedData: RequestedData;
+  vc: Vc;
+  credentialSubject: CredentialSubject;
+  issuer: Issuer;
+  type: string[];
+  ["@context"]: string[];
+  issuanceDate: Date;
+  proof: Proof;
+}
+
+export interface ConsentDidResponse {
+  data: Data;
+  deadline: number;
+  origin: string;
+  permited: string;
+  did: string;
+}

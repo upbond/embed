@@ -8,7 +8,9 @@ import * as crypto from "crypto-browserify";
 import * as ethers from "ethers";
 import Web3Token from "web3-token";
 
+import config from "./config";
 import UpbondInpageProvider from "./inpage-provider";
+import { ConsentDidResponse } from "./interfaces";
 
 export default class Consent {
   consentApiKey: string;
@@ -24,20 +26,36 @@ export default class Consent {
 
   key: string;
 
+  isLoggedIn: boolean;
+
+  didIntervalRequest: number;
+
+  isDidDeployed: boolean;
+
+  consentStreamName: { consent: string; listenerStream: string };
+
+  didCreationCb: Record<any, any>;
+
   constructor({
     consentApiKey,
     key,
     scope,
     consentStream,
     provider,
+    isLoggedIn = false,
+    didIntervalRequest = 5000,
   }: {
     consentApiKey: string;
     key: string;
     scope: string[];
     consentStream: ObjectMultiplex;
     provider: UpbondInpageProvider;
+    isLoggedIn?: boolean;
+    didIntervalRequest?: number;
   }) {
     if (consentApiKey && key) {
+      this.didIntervalRequest = didIntervalRequest;
+      this.isLoggedIn = isLoggedIn;
       this.consentConfigurations = {
         enabled: false,
         scopes: scope,
@@ -46,6 +64,14 @@ export default class Consent {
       this.key = key;
       this.communicationMux = consentStream;
       this.provider = provider;
+      this.isDidDeployed = false;
+      this.consentStreamName = {
+        consent: "consent",
+        listenerStream: "did_listener_stream",
+      };
+      this.didCreationCb = {};
+
+      this.listenDidCreation();
     }
   }
 
@@ -69,7 +95,7 @@ export default class Consent {
     jwtPresentation: string;
   }> {
     return new Promise((resolve, reject) => {
-      const stream = this.communicationMux.getStream("consent") as Substream;
+      const stream = this.communicationMux.getStream(this.consentStreamName.consent) as Substream;
       stream.write({
         name: "request",
         data: {
@@ -82,19 +108,23 @@ export default class Consent {
       stream.on("data", (data) => {
         if (data.name === "error") {
           if (data.data.code && data.data.code === 401) {
-            this.requestDIDCreationOrFilledForm(this.consentApiKey, data.data.params ? data.data.params : {}, this.key)
-              .then((jwtData) => resolve(jwtData))
-              .catch((err) => reject(err));
+            this.isDidDeployed = false;
+            this.didCreationCb = data.data.params;
+            resolve({
+              jwt: "",
+              jwtPresentation: "",
+            });
           }
           reject(new Error(data.data.msg));
         } else {
+          this.isDidDeployed = true;
           resolve(data.data);
         }
       });
     });
   }
 
-  requestDIDCreationOrFilledForm(clientId: string, params: { [x: string]: any }, secKey: string): Promise<{ jwt: string; jwtPresentation: string }> {
+  requestDIDCreationOrFilledForm(clientId: string, params: { [x: string]: any }, secKey: string): Promise<ConsentDidResponse> {
     return new Promise((resolve, reject) => {
       try {
         const ethProvider = new ethers.providers.Web3Provider(this.provider);
@@ -134,27 +164,39 @@ export default class Consent {
         });
       } catch (error) {
         if (error.message && error.message.includes("user rejected signing")) {
-          // eslint-disable-next-line prefer-promise-reject-errors
-          reject("User rejected your request");
+          reject(new Error("User rejected your request"));
         }
         reject(error);
       }
     });
   }
 
-  requestUserData(did: { jwt: string; jwtPresentation: string }): Promise<string> {
+  requestUserData(did: { jwt: string; jwtPresentation: string }, cb?: (stream: Substream) => void): Promise<ConsentDidResponse> {
     return new Promise((resolve, reject) => {
+      if (!this.isDidDeployed || (did.jwt === "" && did.jwtPresentation === "")) {
+        const data = this.requestDIDCreationOrFilledForm(
+          this.consentApiKey,
+          Object.keys(this.didCreationCb).length > 0 ? this.didCreationCb : {},
+          this.key
+        );
+        resolve(data);
+        return;
+      }
+      if (cb && typeof cb !== "function") {
+        reject(new Error(`Callback must be a function`));
+      }
       if (!did || !did.jwt || !did.jwtPresentation) {
         reject(new Error(`Missing did object`));
       }
       const { jwt, jwtPresentation } = did;
+      const stream = this.communicationMux.getStream("consent") as Substream;
       try {
         const ethProvider = new ethers.providers.Web3Provider(this.provider);
         const signer = ethProvider.getSigner();
         Web3Token.sign(
           async (msg: string) => {
             const data = {
-              domain: "example.com",
+              domain: this.isLocalhost() ? "example.com" : new URL(window.location.origin).hostname,
               scope: this.consentConfigurations.scopes,
               type: "consent_request",
               data: {
@@ -168,29 +210,59 @@ export default class Consent {
             return tx;
           },
           {
-            domain: "example.com",
+            domain: this.isLocalhost() ? "example.com" : new URL(window.location.origin).hostname,
             expires_in: "3 days",
           }
         );
-        const stream = this.communicationMux.getStream("consent") as Substream;
+        if (cb) {
+          const consentStream = this.communicationMux.getStream("consent_stream") as Substream;
+          cb(consentStream);
+        }
         stream.on("data", (data) => {
           if (data.name === "consent_response") {
             resolve(data.data);
+            stream.destroy();
           } else if (data.name === "consent_error") {
             reject(data.data.msg);
+            stream.destroy();
           }
         });
         stream.on("error", (err) => {
           reject(err);
+          stream.destroy();
         });
       } catch (error) {
         if (error.message && error.message.includes("user rejected signing")) {
-          // eslint-disable-next-line prefer-promise-reject-errors
-          reject("User rejected your request");
+          reject(new Error("User rejected your request"));
+          stream.destroy();
         }
         reject(error);
+        stream.destroy();
       }
     });
+  }
+
+  protected listenDidCreation() {
+    const stream = this.communicationMux.getStream(this.consentStreamName.listenerStream) as Substream;
+    stream.write({
+      name: config.DID_STREAM_NAME.REQUEST,
+      data: {
+        interval: this.didIntervalRequest,
+      },
+    });
+    stream.on("data", (ev) => {
+      if (ev.name && ev.name === config.DID_STREAM_NAME.RESULT) {
+        if (ev.data) {
+          this.isDidDeployed = true;
+        } else {
+          this.isDidDeployed = false;
+        }
+      }
+    });
+  }
+
+  protected isLocalhost(): boolean {
+    return new URL(window.location.origin).hostname === "localhost";
   }
 
   protected _createDigest(encodedData: crypto.BinaryLike, format: crypto.BinaryToTextEncoding) {
