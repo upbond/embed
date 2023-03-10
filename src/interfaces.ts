@@ -67,6 +67,7 @@ export const UPBOND_BUILD_ENV = {
   DEV_OLD_WALLET: "old_wallet",
   DEBUG: "debug",
   DEV_NEW_WALLET: "new_wallet",
+  WALLET_DID: "wallet-did",
 } as const;
 
 export type BuildEnv =
@@ -90,13 +91,14 @@ export type BuildEnv =
   | "v2_new-dev-local"
   | "old_wallet"
   | "debug"
-  | "new_wallet";
+  | "new_wallet"
+  | "wallet-did";
 
-export type PAYMENT_PROVIDER_TYPE = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
+export type PAYMENT_PROVIDER_TYPE = (typeof PAYMENT_PROVIDER)[keyof typeof PAYMENT_PROVIDER];
 
-export type SUPPORTED_PAYMENT_NETWORK_TYPE = typeof SUPPORTED_PAYMENT_NETWORK[keyof typeof SUPPORTED_PAYMENT_NETWORK];
+export type SUPPORTED_PAYMENT_NETWORK_TYPE = (typeof SUPPORTED_PAYMENT_NETWORK)[keyof typeof SUPPORTED_PAYMENT_NETWORK];
 
-export type UPBOND_BUILD_ENV_TYPE = typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
+export type UPBOND_BUILD_ENV_TYPE = (typeof UPBOND_BUILD_ENV)[keyof typeof UPBOND_BUILD_ENV];
 
 export interface IPaymentProvider {
   line1: string;
@@ -144,7 +146,7 @@ export type EMBED_TRANSLATION_ITEM = {
   clickHere: string;
 };
 
-export type BUTTON_POSITION_TYPE = typeof BUTTON_POSITION[keyof typeof BUTTON_POSITION];
+export type BUTTON_POSITION_TYPE = (typeof BUTTON_POSITION)[keyof typeof BUTTON_POSITION];
 
 export type WALLET_PATH = "home" | "account";
 export type ETHEREUM_NETWORK_TYPE =
@@ -200,6 +202,22 @@ export interface TorusCtorArgs {
    * Get yours today at {@link https://developer.tor.us | Dashboard}
    */
   apiKey?: string;
+
+  /**
+   * Consent key
+   * For consent management
+   */
+  consentConfiguration?: {
+    clientId: string;
+    secretKey: string;
+    scope: string[];
+  };
+
+  /**
+   * Consent enabler for dapp
+   * For consent management
+   */
+  enableConsent?: boolean;
 }
 
 export interface TorusLoginParams {
@@ -937,3 +955,58 @@ export type WalletProviderState = {
   isUnlocked: boolean;
   networkVersion: string;
 };
+
+export interface RequestedData {
+  email: string;
+  name: string;
+  address: string;
+  birthday: string;
+}
+
+export interface Vc {
+  userTarget: string;
+}
+
+export interface UserData {
+  dateAccepted: number;
+  userAddress: string;
+  dapp: string;
+  dappDescription: string;
+  dappId: number;
+}
+
+export interface CredentialSubject {
+  id: string;
+  ["@scope"]: string[];
+  userData: UserData;
+  signHash: string;
+  clientHost: string;
+}
+
+export interface Issuer {
+  id: string;
+}
+
+export interface Proof {
+  type: string;
+  jwt: string;
+}
+
+export interface Data {
+  requestedData: RequestedData;
+  vc: Vc;
+  credentialSubject: CredentialSubject;
+  issuer: Issuer;
+  type: string[];
+  ["@context"]: string[];
+  issuanceDate: Date;
+  proof: Proof;
+}
+
+export interface ConsentDidResponse {
+  data: Data;
+  deadline: number;
+  origin: string;
+  permited: string;
+  did: string;
+}

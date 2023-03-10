@@ -226,6 +226,11 @@ const translations = {
   },
 } as LocaleLinks<{ embed: EMBED_TRANSLATION_ITEM }>;
 
+const DID_STREAM_NAME = {
+  RESULT: "did_listen_result",
+  REQUEST: "did_listen_request",
+};
+
 export default {
   supportedVerifierList: Object.values(WALLET_VERIFIERS),
   paymentProviders,
@@ -233,4 +238,5 @@ export default {
   translations,
   prodTorusUrl: "",
   localStorageKeyPrefix: `torus-`,
+  DID_STREAM_NAME,
 };

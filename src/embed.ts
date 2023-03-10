@@ -4,6 +4,7 @@ import { BasePostMessageStream, JRPCRequest, ObjectMultiplex, setupMultiplex, Su
 import deepmerge from "lodash.merge";
 
 import configuration from "./config";
+import Consent from "./consent";
 import { documentReady, handleStream, htmlToElement, runOnLoad } from "./embedUtils";
 import UpbondInpageProvider from "./inpage-provider";
 import generateIntegrity from "./integrity";
@@ -146,17 +147,36 @@ class Upbond {
 
   selectedVerifier: string;
 
+  // eslint-disable-next-line prettier/prettier
+  buildEnv: typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
+
+  widgetConfig: { showAfterLoggedIn: boolean; showBeforeLoggedIn: boolean };
+
+  consent: Consent | null;
+
+  consentConfiguration: {
+    enable: boolean;
+    config: {
+      clientId: string;
+      secretKey: string;
+      scope: string[];
+    };
+  };
+
   private loginHint = "";
 
   private useWalletConnect: boolean;
 
   private isCustomLogin = false;
 
-  buildEnv: typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
-
-  widgetConfig: { showAfterLoggedIn: boolean; showBeforeLoggedIn: boolean };
-
-  constructor({ buttonPosition = BUTTON_POSITION.BOTTOM_LEFT, buttonSize = 56, modalZIndex = 99999, apiKey = "torus-default" }: TorusCtorArgs = {}) {
+  constructor({
+    buttonPosition = BUTTON_POSITION.BOTTOM_LEFT,
+    buttonSize = 56,
+    modalZIndex = 99999,
+    apiKey = "torus-default",
+    consentConfiguration,
+    enableConsent = false,
+  }: TorusCtorArgs = {}) {
     this.buttonPosition = buttonPosition;
     this.buttonSize = buttonSize;
     this.torusUrl = "";
@@ -167,12 +187,33 @@ class Upbond {
     this.apiKey = apiKey;
     setAPIKey(apiKey);
     this.modalZIndex = modalZIndex;
+    if (enableConsent && !consentConfiguration) {
+      throw new Error(`Missing consent api key`);
+    } else if (enableConsent && consentConfiguration.clientId && consentConfiguration.secretKey && consentConfiguration.scope) {
+      this.consentConfiguration = {
+        enable: enableConsent,
+        config: {
+          clientId: consentConfiguration?.clientId,
+          scope: consentConfiguration?.scope,
+          secretKey: consentConfiguration?.secretKey,
+        },
+      };
+    } else {
+      this.consentConfiguration = {
+        enable: false,
+        config: {
+          clientId: "",
+          scope: [""],
+          secretKey: "",
+        },
+      };
+    }
     this.alertZIndex = modalZIndex + 1000;
     this.isIframeFullScreen = false;
     this.isUsingDirect = false;
     this.buildEnv = "production";
     this.widgetConfig = {
-      showAfterLoggedIn: true,
+      showAfterLoggedIn: false,
       showBeforeLoggedIn: false,
     };
   }
@@ -192,7 +233,7 @@ class Upbond {
       rpcUrl: "https://polygon-rpc.com",
     },
     loginConfig = defaultLoginParam,
-    widgetConfig,
+    widgetConfig = this.widgetConfig, // default widget config
     integrity = {
       check: false,
       hash: iframeIntegrity,
@@ -268,12 +309,6 @@ class Upbond {
     const { torusUrl, logLevel } = await getUpbondWalletUrl(buildEnv, integrity);
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
-
-    if (!widgetConfig) {
-      log.info(`widgetConfig is not configured. Now using default widget configuration`);
-    } else {
-      this.widgetConfig = widgetConfig;
-    }
 
     if (selectedVerifier) {
       try {
@@ -372,6 +407,12 @@ class Upbond {
       });
     };
 
+    if (!widgetConfig) {
+      log.info(`widgetConfig is not configured. Now using default widget configuration`);
+    } else {
+      this.widgetConfig = widgetConfig;
+    }
+
     if (buildEnv === "production" && integrity.check) {
       // hacky solution to check for iframe integrity
       const fetchUrl = `${torusUrl}/popup`;
@@ -395,6 +436,19 @@ class Upbond {
     } else {
       try {
         await handleSetup();
+        if (this.consentConfiguration.enable && this.consentConfiguration.config.clientId && this.consentConfiguration.config.secretKey) {
+          this.consent = new Consent({
+            consentApiKey: this.consentConfiguration.config.clientId,
+            key: this.consentConfiguration.config.secretKey,
+            scope: this.consentConfiguration.config.scope,
+            consentStream: this.communicationMux,
+            provider: this.provider,
+            isLoggedIn: this.isLoggedIn,
+          });
+          this.consent.init();
+        } else {
+          this.consent = null;
+        }
       } catch (error) {
         console.error(error, "@errorOnInit");
       }
@@ -407,6 +461,23 @@ class Upbond {
     this.requestedVerifier = verifier;
     this.loginHint = loginHint;
     return this.ethereum.enable();
+  }
+
+  requestAuthServiceAccessToken(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const stream = this.communicationMux.getStream("auth_service") as Substream;
+      stream.write({
+        name: "access_token_request",
+      });
+
+      stream.on("data", (ev) => {
+        if (ev.name !== "error") {
+          resolve(ev.data.authServiceAccessToken);
+        } else {
+          reject(ev.data.msg);
+        }
+      });
+    });
   }
 
   logout(): Promise<void> {
@@ -558,7 +629,7 @@ class Upbond {
     );
   }
 
-  getUserInfo(message: string): Promise<UserInfo> {
+  getUserInfo(message?: string): Promise<UserInfo> {
     return new Promise((resolve, reject) => {
       if (this.isLoggedIn) {
         const userInfoAccessStream = this.communicationMux.getStream("user_info_access") as Substream;
@@ -747,7 +818,7 @@ class Upbond {
   }
 
   protected _displayIframe(isFull = false): void {
-    // console.log("onDisplay: ", isFull);
+    console.log("onDisplay: ", isFull);
     const style: Partial<CSSStyleDeclaration> = {};
     const size = this.buttonSize + 14; // 15px padding
     // set phase
