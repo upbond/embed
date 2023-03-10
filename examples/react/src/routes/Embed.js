@@ -1,4 +1,5 @@
 import SpinnerLoading from "component/SpinnerLoading";
+import { ethers } from "ethers";
 import upbondServices from "lib/UpbondEmbed";
 import { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
@@ -23,7 +24,6 @@ const Embed = () => {
   const [showBc, setShowBc] = useState(false);
   const [isCopy, setIsCopy] = useState(false);
   const [txResult, setTxResult] = useState({});
-  const [allData, setAllData] = useState(null);
   const [bcState, setBcState] = useState({
     address: "",
     chainId: 0,
@@ -36,6 +36,7 @@ const Embed = () => {
     const rehydrate = async () => {
       const web3 = new Web3(_upbond);
       const accs = await web3.eth.getAccounts();
+      console.log(`web3Accounts: `, accs);
       if (accs.length > 0) {
         setAccount(accs);
       }
@@ -45,6 +46,7 @@ const Embed = () => {
       rehydrate();
     }
   }, [_upbond]);
+
 
   useEffect(() => {
     const initUpbond = async () => {
@@ -68,7 +70,10 @@ const Embed = () => {
       return;
     }
     const web3 = new Web3(_upbond);
-    const [accounts, chainId] = await Promise.all([web3.eth.getAccounts(), web3.eth.getChainId()]);
+    const [accounts, chainId] = await Promise.all([
+      web3.eth.getAccounts(),
+      web3.eth.getChainId(),
+    ]);
     if (accounts) {
       const balance = await web3.eth.getBalance(accounts[0]);
       setShowBc(true);
@@ -124,8 +129,13 @@ const Embed = () => {
       setBtnLoading(true);
       setIsCopy(false);
       setLoading(true);
-      const msgHash = Web3.utils.keccak256("Signing Transaction for Upbond Embed!");
-      const signedMsg = await upbondServices.signTransaction(msgHash, account[0]);
+      const msgHash = Web3.utils.keccak256(
+        "Signing Transaction for Upbond Embed!"
+      );
+      const signedMsg = await upbondServices.signTransaction(
+        msgHash,
+        account[0]
+      );
       console.log(signedMsg);
       setSignInfo(signedMsg);
       setBtnLoading(false);
@@ -182,54 +192,6 @@ const Embed = () => {
     }
   };
 
-  const ProfileImage = () => {
-    if (userInfo && userInfo.profileImage) {
-      return (
-        <img
-          className="inline-block h-14 w-14 rounded-full"
-          alt={userInfo.name}
-          src={userInfo.profileImage}
-          onError={({ currentTarget }) => {
-            currentTarget.src = DefaultProfileImage;
-            currentTarget.onerror = null;
-          }}
-        />
-      );
-    } else {
-      return <img className="inline-block h-14 w-14 rounded-full" alt={userInfo.name} src={DefaultProfileImage} />;
-    }
-  };
-
-  const consent = async () => {
-    try {
-      const data = await upbondServices.upbond.consent.getDid();
-      console.log(data, "@jwt vp data")
-      const token = await upbondServices.upbond.consent.requestUserData({
-        jwt: data.jwt,
-        jwtPresentation: data.jwtPresentation,
-      });
-      console.log(token, "@token?")
-      setAllData(token.data.requestedData);
-      console.log(token, "@token");
-    } catch (error) {
-      console.error(error, "@Error when consent!");
-    }
-  };
-
-  const requestAccessToken = async () => {
-    setBtnLoading(true)
-    try {
-      const data = await upbondServices.upbond.requestAuthServiceAccessToken();
-      setAllData({
-        accessToken: data
-      })
-      setBtnLoading(false)
-    } catch (error) {
-      setBtnLoading(false)
-      console.error(error)
-    }
-  }
-
   useEffect(() => {
     const initLayout = async () => {
       console.log(`Initializing`, upbondServices.upbond.provider);
@@ -263,14 +225,46 @@ const Embed = () => {
     }
   }, [_upbond]);
 
+  const ProfileImage = () => {
+    if (userInfo && userInfo.profileImage) {
+      return (
+        <img
+          className="inline-block h-14 w-14 rounded-full"
+          alt={userInfo.name}
+          src={userInfo.profileImage}
+          onError={({ currentTarget }) => {
+            currentTarget.src = DefaultProfileImage;
+            currentTarget.onerror = null;
+          }}
+        />
+      );
+    } else {
+      return (
+        <img
+          className="inline-block h-14 w-14 rounded-full"
+          alt={userInfo.name}
+          src={DefaultProfileImage}
+        />
+      );
+    }
+  };
+
   return (
     <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
       <header className="App-header">
-        <p className="text-center text-xl font-bold my-3 lg:text-2xl">Demo of UPBOND in DApps</p>
+        <p className="text-center text-xl font-bold my-3 lg:text-2xl">
+          Demo of UPBOND in DApps
+        </p>
         <div className="mt-4 w-full px-4 flex justify-center">
-          <p className="text-center">See how UPBOND can be embedded in your dapp.</p>
+          <p className="text-center">
+            See how UPBOND can be embedded in your dapp.
+          </p>
         </div>
-        <img src={companySampleLogo} className="w-1/2 mx-auto rounded-xl m-5" alt="UpbondBanner" />
+        <img
+          src={companySampleLogo}
+          className="w-1/2 mx-auto rounded-xl m-5"
+          alt="UpbondBanner"
+        />
         {account && account.length > 0 ? (
           <div>
             <p className="text-center">Account : {account}</p>
@@ -348,40 +342,11 @@ const Embed = () => {
               >
                 Send Transaction
               </button>
-              <button
-                type="button"
-                disabled={btnLoading}
-                className="disabled:bg-gray-500 items-center px-4 py-2 text-sm font-medium rounded-xl shadow-sm text-white bg-[#4B68AE] hover:bg-[#214999] border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4B68AE]"
-                onClick={consent}
-              >
-                Check Consent
-              </button>
-              <button
-                type="button"
-                disabled={btnLoading}
-                className="disabled:bg-gray-500 items-center px-4 py-2 text-sm font-medium rounded-xl shadow-sm text-white bg-[#4B68AE] hover:bg-[#214999] border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4B68AE]"
-                onClick={requestAccessToken}
-              >
-                Request Access Token
-              </button>
             </div>
             <p className="text-black mt-5">Output: </p>
             <div className="overflow-hidden rounded-lg bg-white shadow mt-2">
               <div className="px-4 py-5 sm:p-6 whitespace-pre-line break-words">
-                {/* {signInfo ? signInfo : "Nothing"} */}
-                {allData ? (
-                  <>
-                    {Object.keys(allData).map((key, index) => {
-                      return (
-                        <div key={index}>
-                          {key} : {allData[key]}
-                        </div>
-                      );
-                    })}
-                  </>
-                ) : (
-                  "Nothing"
-                )}
+                {signInfo ? signInfo : "Nothing"}
               </div>
             </div>
             {signInfo && (
@@ -396,10 +361,15 @@ const Embed = () => {
                 {isCopy ? "Copied" : "Copy"}
               </button>
             )}
-            {Object.keys(txResult).length > 0 && <p className="text-black mt-5">Transaction Output: </p>}
+            {Object.keys(txResult).length > 0 && (
+              <p className="text-black mt-5">Transaction Output: </p>
+            )}
             {Object.keys(txResult).length > 0 &&
               Object.keys(txResult).map((x) => (
-                <div className="overflow-hidden rounded-lg bg-white shadow mt-2" key={x}>
+                <div
+                  className="overflow-hidden rounded-lg bg-white shadow mt-2"
+                  key={x}
+                >
                   <div className="px-4 py-5 sm:p-6 whitespace-pre-line break-words">
                     {x}: {txResult[x]}
                   </div>
