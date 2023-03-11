@@ -399,6 +399,7 @@ class Upbond {
                 enabled: isUsingDirect,
                 redirectUrl: dappRedirectUri,
               },
+              consentConfiguration: this.consentConfiguration ?? {},
             },
           });
         };

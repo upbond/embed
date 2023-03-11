@@ -29,6 +29,8 @@ const Embed = () => {
     chainId: 0,
     balance: 0,
   });
+  const [consentData, setConsentData] = useState({})
+  const [allData, setAllData] = useState(null)
 
   const _upbond = upbondServices.upbond.provider;
 
@@ -202,15 +204,8 @@ const Embed = () => {
 
   const consent = async () => {
     try {
-      const data = await upbondServices.upbond.consent.getDid();
-      console.log(data, "@jwt vp data")
-      const token = await upbondServices.upbond.consent.requestUserData({
-        jwt: data.jwt,
-        jwtPresentation: data.jwtPresentation,
-      });
-      console.log(token, "@token?")
-      setAllData(token.data.requestedData);
-      console.log(token, "@token");
+      const data = await upbondServices.upbond.consent.getUserData()
+      setConsentData(data)
     } catch (error) {
       console.error(error, "@Error when consent!");
     }
@@ -354,7 +349,7 @@ const Embed = () => {
                 className="disabled:bg-gray-500 items-center px-4 py-2 text-sm font-medium rounded-xl shadow-sm text-white bg-[#4B68AE] hover:bg-[#214999] border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4B68AE]"
                 onClick={consent}
               >
-                Check Consent
+                Get Consent data
               </button>
               <button
                 type="button"
@@ -379,6 +374,10 @@ const Embed = () => {
                       );
                     })}
                   </>
+                ) : Object.keys(consentData).length > 0 ? (
+                  <div>
+                    {JSON.stringify(consentData)}
+                  </div>
                 ) : (
                   "Nothing"
                 )}
