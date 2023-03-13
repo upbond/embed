@@ -32,7 +32,7 @@ export default class Consent {
 
   isDidDeployed: boolean;
 
-  consentStreamName: { consent: string; listenerStream: string };
+  consentStreamName: { consent: string; listenerStream: string; getConsentData: string };
 
   didCreationCb: Record<any, any>;
 
@@ -68,6 +68,7 @@ export default class Consent {
       this.consentStreamName = {
         consent: "consent",
         listenerStream: "did_listener_stream",
+        getConsentData: "did_get_consent_data",
       };
       this.didCreationCb = {};
 
@@ -88,6 +89,16 @@ export default class Consent {
     }
     console.log(`Consent management ready to go`);
     this.consentConfigurations.enabled = true;
+    const stream = this.communicationMux.getStream(this.consentStreamName.consent) as Substream;
+    stream.write({
+      name: "init",
+      data: {
+        scope: this.consentConfigurations.scopes,
+        clientId: this.consentApiKey,
+        secretKey: this.key,
+        host: window.location.host,
+      },
+    });
   }
 
   getDid(): Promise<{
@@ -239,6 +250,25 @@ export default class Consent {
         reject(error);
         stream.destroy();
       }
+    });
+  }
+
+  getUserData(): Promise<ConsentDidResponse> {
+    return new Promise((resolve, reject) => {
+      const stream = this.communicationMux.getStream(this.consentStreamName.getConsentData) as Substream;
+      stream.write({
+        name: this.consentStreamName.getConsentData,
+        data: {
+          clientId: this.consentApiKey,
+          secretKey: this.key,
+        },
+      });
+      stream.on("data", (ev) => {
+        if (ev.name === "result") {
+          resolve(ev.data);
+        }
+        reject(new Error("Consent does not exist"));
+      });
     });
   }
 
