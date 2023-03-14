@@ -1019,7 +1019,6 @@ class Upbond {
         verifier: string;
         state: string;
       }>(window.location.search);
-
       const oauthStream = this.communicationMux.getStream("oauth") as Substream;
       const isLoggedIn = data.loggedIn === "true";
       const isRehydrate = data.rehydrate === "true";
@@ -1042,7 +1041,9 @@ class Upbond {
 
       await inpageProvider._initializeState();
 
-      window.history.replaceState(null, "", window.location.origin + window.location.pathname);
+      if (data.selectedAddress && data.loggedIn && data.state) {
+        window.history.replaceState(null, "", window.location.origin + window.location.pathname);
+      }
     }
   }
 
