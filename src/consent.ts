@@ -261,6 +261,7 @@ export default class Consent {
         data: {
           clientId: this.consentApiKey,
           secretKey: this.key,
+          origin: window.location.origin,
         },
       });
       stream.on("data", (ev) => {
