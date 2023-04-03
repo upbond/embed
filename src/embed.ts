@@ -77,12 +77,12 @@ const UNSAFE_METHODS = [
     upbondIframeHtml.crossOrigin = "anonymous";
     upbondIframeHtml.type = "text/html";
     upbondIframeHtml.rel = "prefetch";
-    if (upbondIframeHtml.relList && upbondIframeHtml.relList.supports) {
-      if (upbondIframeHtml.relList.supports("prefetch")) {
-        log.info("IFrame loaded");
-        document.head.appendChild(upbondIframeHtml);
-      }
-    }
+    // if (upbondIframeHtml.relList && upbondIframeHtml.relList.supports) {
+    //   if (upbondIframeHtml.relList.supports("prefetch")) {
+    //     log.info("IFrame loaded");
+    //     document.head.appendChild(upbondIframeHtml);
+    //   }
+    // }
   } catch (error) {
     log.warn(error);
   }
