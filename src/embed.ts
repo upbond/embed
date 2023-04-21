@@ -550,7 +550,7 @@ class Upbond {
     this._displayIframe(false);
   }
 
-  setProvider({ host = "mainnet", chainId = null, networkName = "", ...rest }: NetworkInterface): Promise<void> {
+  setProvider({ host = "matic", chainId = null, networkName = "", ...rest }: NetworkInterface): Promise<void> {
     return new Promise((resolve, reject) => {
       const providerChangeStream = this.communicationMux.getStream("provider_change") as Substream;
       const handler = (chunk) => {
@@ -563,10 +563,6 @@ class Upbond {
       };
       handleStream(providerChangeStream, "data", handler);
       const preopenInstanceId = getPreopenInstanceId();
-      this._handleWindow(preopenInstanceId, {
-        target: "_blank",
-        features: FEATURES_PROVIDER_CHANGE_WINDOW,
-      });
       providerChangeStream.write({
         name: "show_provider_change",
         data: {
@@ -819,7 +815,6 @@ class Upbond {
   }
 
   protected _displayIframe(isFull = false): void {
-    // console.log("onDisplay: ", isFull);
     const style: Partial<CSSStyleDeclaration> = {};
     const size = this.buttonSize + 14; // 15px padding
     // set phase
