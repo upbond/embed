@@ -213,7 +213,7 @@ class Upbond {
     this.isUsingDirect = false;
     this.buildEnv = "production";
     this.widgetConfig = {
-      showAfterLoggedIn: false,
+      showAfterLoggedIn: true,
       showBeforeLoggedIn: false,
     };
   }
@@ -819,7 +819,7 @@ class Upbond {
   }
 
   protected _displayIframe(isFull = false): void {
-    console.log("onDisplay: ", isFull);
+    // console.log("onDisplay: ", isFull);
     const style: Partial<CSSStyleDeclaration> = {};
     const size = this.buttonSize + 14; // 15px padding
     // set phase
