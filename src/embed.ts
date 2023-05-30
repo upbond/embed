@@ -148,7 +148,7 @@ class Upbond {
   selectedVerifier: string;
 
   // eslint-disable-next-line prettier/prettier
-  buildEnv: (typeof UPBOND_BUILD_ENV)[keyof typeof UPBOND_BUILD_ENV];
+  buildEnv: typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
 
   widgetConfig: { showAfterLoggedIn: boolean; showBeforeLoggedIn: boolean };
 
