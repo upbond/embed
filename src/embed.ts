@@ -148,7 +148,7 @@ class Upbond {
   selectedVerifier: string;
 
   // eslint-disable-next-line prettier/prettier
-  buildEnv: typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
+  buildEnv: (typeof UPBOND_BUILD_ENV)[keyof typeof UPBOND_BUILD_ENV];
 
   widgetConfig: { showAfterLoggedIn: boolean; showBeforeLoggedIn: boolean };
 
@@ -550,7 +550,7 @@ class Upbond {
     this._displayIframe(false);
   }
 
-  setProvider({ host = "matic", chainId = null, networkName = "", ...rest }: NetworkInterface): Promise<void> {
+  setProvider({ host = "mainnet", chainId = null, networkName = "", ...rest }: NetworkInterface): Promise<void> {
     return new Promise((resolve, reject) => {
       const providerChangeStream = this.communicationMux.getStream("provider_change") as Substream;
       const handler = (chunk) => {
