@@ -563,10 +563,6 @@ class Upbond {
       };
       handleStream(providerChangeStream, "data", handler);
       const preopenInstanceId = getPreopenInstanceId();
-      this._handleWindow(preopenInstanceId, {
-        target: "_blank",
-        features: FEATURES_PROVIDER_CHANGE_WINDOW,
-      });
       providerChangeStream.write({
         name: "show_provider_change",
         data: {
@@ -819,7 +815,6 @@ class Upbond {
   }
 
   protected _displayIframe(isFull = false): void {
-    // console.log("onDisplay: ", isFull);
     const style: Partial<CSSStyleDeclaration> = {};
     const size = this.buttonSize + 14; // 15px padding
     // set phase
@@ -1009,40 +1004,50 @@ class Upbond {
 
     if (this.provider.shouldSendMetadata) sendSiteMetadata(this.provider._rpcEngine);
     inpageProvider._initializeState();
-    if (window.location.search) {
+
+    const getCachedData = localStorage.getItem("upbond_login");
+    if (window.location.search || getCachedData) {
       // taro buat send stream address disini:
-
-      const data = searchToObject<{
-        loggedIn: string;
-        rehydrate: string;
-        selectedAddress: string;
-        verifier: string;
-        state: string;
-      }>(window.location.search);
-      const oauthStream = this.communicationMux.getStream("oauth") as Substream;
-      const isLoggedIn = data.loggedIn === "true";
-      const isRehydrate = data.rehydrate === "true";
-      let state = "";
-
-      if (data.state) {
-        state = data.state;
+      let data;
+      if (getCachedData) {
+        data = JSON.parse(getCachedData) ? JSON.parse(getCachedData) : null;
       }
+      if (window.location.search) {
+        data = searchToObject<{
+          loggedIn: string;
+          rehydrate: string;
+          selectedAddress: string;
+          verifier: string;
+          state: string;
+        }>(window.location.search);
+        localStorage.setItem("upbond_login", JSON.stringify(data));
+      }
+      if (data) {
+        const oauthStream = this.communicationMux.getStream("oauth") as Substream;
+        const isLoggedIn = data.loggedIn === "true";
+        const isRehydrate = data.rehydrate === "true";
+        let state = "";
 
-      const { selectedAddress, verifier } = data;
-      if (isLoggedIn) {
-        this.isLoggedIn = true;
-        this.currentVerifier = verifier;
-      } else this._displayIframe(true);
+        if (data.state) {
+          state = data.state;
+        }
 
-      this._displayIframe(true);
+        const { selectedAddress, verifier } = data;
+        if (isLoggedIn) {
+          this.isLoggedIn = true;
+          this.currentVerifier = verifier;
+        } else this._displayIframe(true);
 
-      oauthStream.write({ selectedAddress });
-      statusStream.write({ loggedIn: isLoggedIn, rehydrate: isRehydrate, verifier, state });
+        this._displayIframe(true);
 
-      await inpageProvider._initializeState();
+        oauthStream.write({ selectedAddress });
+        statusStream.write({ loggedIn: isLoggedIn, rehydrate: isRehydrate, verifier, state });
 
-      if (data.selectedAddress && data.loggedIn && data.state) {
-        window.history.replaceState(null, "", window.location.origin + window.location.pathname);
+        await inpageProvider._initializeState();
+
+        if (data.selectedAddress && data.loggedIn && data.state) {
+          window.history.replaceState(null, "", window.location.origin + window.location.pathname);
+        }
       }
     }
   }
