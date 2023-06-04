@@ -500,6 +500,9 @@ class Upbond {
         } else reject(new Error("Some Error Occured"));
       };
       handleStream(statusStream, "data", statusStreamHandler);
+
+      // Remove localstorage upbond_login used for caching
+      localStorage.removeItem("upbond_login");
     });
   }
 
