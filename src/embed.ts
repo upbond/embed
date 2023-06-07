@@ -147,8 +147,7 @@ class Upbond {
 
   selectedVerifier: string;
 
-  // eslint-disable-next-line prettier/prettier
-  buildEnv: typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
+  buildEnv: (typeof UPBOND_BUILD_ENV)[keyof typeof UPBOND_BUILD_ENV];
 
   widgetConfig: { showAfterLoggedIn: boolean; showBeforeLoggedIn: boolean };
 
@@ -1010,20 +1009,22 @@ class Upbond {
 
     const getCachedData = localStorage.getItem("upbond_login");
     if (window.location.search || getCachedData) {
-      // taro buat send stream address disini:
       let data;
       if (getCachedData) {
         data = JSON.parse(getCachedData) ? JSON.parse(getCachedData) : null;
       }
       if (window.location.search) {
-        data = searchToObject<{
+        const { loggedIn, rehydrate, selectedAddress, verifier, state } = searchToObject<{
           loggedIn: string;
           rehydrate: string;
           selectedAddress: string;
           verifier: string;
           state: string;
         }>(window.location.search);
-        localStorage.setItem("upbond_login", JSON.stringify(data));
+        if (loggedIn !== undefined && rehydrate !== undefined && selectedAddress !== undefined && verifier !== undefined && state !== undefined) {
+          data = { loggedIn, rehydrate, selectedAddress, verifier, state };
+          localStorage.setItem("upbond_login", JSON.stringify(data));
+        }
       }
       if (data) {
         const oauthStream = this.communicationMux.getStream("oauth") as Substream;
