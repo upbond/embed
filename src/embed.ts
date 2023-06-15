@@ -1050,7 +1050,16 @@ class Upbond {
         await inpageProvider._initializeState();
 
         if (data.selectedAddress && data.loggedIn && data.state) {
-          window.history.replaceState(null, "", window.location.origin + window.location.pathname);
+          const urlParams = new URLSearchParams(window.location.search);
+          urlParams.delete("selectedAddress");
+          urlParams.delete("rehydrate");
+          urlParams.delete("loggedIn");
+          urlParams.delete("verifier");
+          urlParams.delete("state");
+          const newQueryParams = urlParams.toString();
+          const baseUrl = window.location.href.split("?")[0];
+          const newUrl = `${baseUrl}?${newQueryParams}`;
+          window.history.replaceState(null, null, newUrl);
         }
       }
     }
