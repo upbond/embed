@@ -991,7 +991,7 @@ class Upbond {
     const statusStream = communicationMux.getStream("status") as Substream;
     statusStream.on("data", (status) => {
       // login
-      if (status.loggedIn) {
+      if (status.loggedIn && localStorage.getItem("upbond_login")) {
         this.isLoggedIn = status.loggedIn;
         this.currentVerifier = status.verifier;
       } // logout
@@ -1061,6 +1061,15 @@ class Upbond {
           const newUrl = `${baseUrl}?${newQueryParams}`;
           window.history.replaceState(null, null, newUrl);
         }
+      } else {
+        const logOutStream = this.communicationMux.getStream("logout") as Substream;
+        logOutStream.write({ name: "logOut" });
+        const statusStreamHandler = () => {
+          this.isLoggedIn = false;
+          this.currentVerifier = "";
+          this.requestedVerifier = "";
+        };
+        handleStream(statusStream, "data", statusStreamHandler);
       }
     }
   }
