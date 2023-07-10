@@ -482,8 +482,8 @@ class Upbond {
 
   logout(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (!this.isLoggedIn) {
-        reject(new Error("User has not logged in yet"));
+      if (!this.isInitialized) {
+        reject(new Error("Please initialize first"));
         return;
       }
 
