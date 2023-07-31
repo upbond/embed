@@ -156,9 +156,9 @@ class Upbond {
   consentConfiguration: {
     enable: boolean;
     config: {
-      clientId: string;
-      secretKey: string;
+      publicKey: string;
       scope: string[];
+      origin: string;
     };
   };
 
@@ -168,46 +168,18 @@ class Upbond {
 
   private isCustomLogin = false;
 
-  constructor({
-    buttonPosition = BUTTON_POSITION.BOTTOM_LEFT,
-    buttonSize = 56,
-    modalZIndex = 99999,
-    apiKey = "torus-default",
-    consentConfiguration,
-    enableConsent = false,
-  }: TorusCtorArgs = {}) {
-    this.buttonPosition = buttonPosition;
-    this.buttonSize = buttonSize;
+  constructor(opts?: TorusCtorArgs) {
+    this.buttonPosition = opts.buttonPosition || "bottom-left";
+    this.buttonSize = opts.buttonSize || 56;
     this.torusUrl = "";
     this.isLoggedIn = false; // ethereum.enable working
     this.isInitialized = false; // init done
     this.requestedVerifier = "";
     this.currentVerifier = "";
-    this.apiKey = apiKey;
-    setAPIKey(apiKey);
-    this.modalZIndex = modalZIndex;
-    if (enableConsent && !consentConfiguration) {
-      throw new Error(`Missing consent api key`);
-    } else if (enableConsent && consentConfiguration.clientId && consentConfiguration.secretKey && consentConfiguration.scope) {
-      this.consentConfiguration = {
-        enable: enableConsent,
-        config: {
-          clientId: consentConfiguration?.clientId,
-          scope: consentConfiguration?.scope,
-          secretKey: consentConfiguration?.secretKey,
-        },
-      };
-    } else {
-      this.consentConfiguration = {
-        enable: false,
-        config: {
-          clientId: "",
-          scope: [""],
-          secretKey: "",
-        },
-      };
-    }
-    this.alertZIndex = modalZIndex + 1000;
+    this.apiKey = opts.apiKey || "torus-default";
+    setAPIKey(this.apiKey);
+    this.modalZIndex = opts.modalZIndex || 999999;
+    this.alertZIndex = this.modalZIndex + 1000;
     this.isIframeFullScreen = false;
     this.isUsingDirect = false;
     this.buildEnv = "production";
@@ -246,6 +218,14 @@ class Upbond {
     selectedVerifier,
     skipDialog = false,
     dappRedirectUri = window.location.origin,
+    consentConfiguration = {
+      enable: false,
+      config: {
+        publicKey: "",
+        scope: [],
+        origin: "",
+      },
+    },
   }: IUpbondEmbedParams = {}): Promise<void> {
     // Send WARNING for deprecated buildEnvs
     // Give message to use others instead
@@ -332,6 +312,8 @@ class Upbond {
     this.isCustomLogin = !!(loginConfig && Object.keys(loginConfig).length > 0) || !!(whiteLabel && Object.keys(whiteLabel).length > 0);
     log.setDefaultLevel(logLevel);
 
+    this.consentConfiguration = consentConfiguration;
+
     const upbondIframeUrl = new URL(torusUrl);
     if (upbondIframeUrl.pathname.endsWith("/")) upbondIframeUrl.pathname += "popup";
     else upbondIframeUrl.pathname += "/popup";
@@ -398,7 +380,7 @@ class Upbond {
                 enabled: isUsingDirect,
                 redirectUrl: dappRedirectUri,
               },
-              consentConfiguration: this.consentConfiguration ?? {},
+              consentConfiguration: this.consentConfiguration,
             },
           });
         };
@@ -436,10 +418,9 @@ class Upbond {
     } else {
       try {
         await handleSetup();
-        if (this.consentConfiguration.enable && this.consentConfiguration.config.clientId && this.consentConfiguration.config.secretKey) {
+        if (this.consentConfiguration.enable && this.consentConfiguration.config.publicKey) {
           this.consent = new Consent({
-            consentApiKey: this.consentConfiguration.config.clientId,
-            key: this.consentConfiguration.config.secretKey,
+            publicKey: this.consentConfiguration.config.publicKey,
             scope: this.consentConfiguration.config.scope,
             consentStream: this.communicationMux,
             provider: this.provider,
@@ -991,7 +972,7 @@ class Upbond {
     const statusStream = communicationMux.getStream("status") as Substream;
     statusStream.on("data", (status) => {
       // login
-      if (status.loggedIn && localStorage.getItem("upbond_login")) {
+      if (status.loggedIn) {
         this.isLoggedIn = status.loggedIn;
         this.currentVerifier = status.verifier;
       } // logout

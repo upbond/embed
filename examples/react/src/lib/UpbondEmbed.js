@@ -61,15 +61,20 @@ class UpbondEmbed {
         this.web3.setProvider(this.upbond.provider);
 
         const accounts = await this.web3.eth.getAccounts();
-
-        this.isLoggedIn = true;
-        this.provider = _provider;
-        return {
-          msg: "success",
-          data: _provider,
-          accounts,
-          // ... anything that you want to returns
-        };
+        if(accounts.length > 0) {
+          this.isLoggedIn = true;
+          this.provider = _provider;
+          return {
+            msg: "success",
+            data: _provider,
+            accounts,
+            // ... anything that you want to returns
+          };
+        } else {
+          return {
+            msg: "error",
+          }
+        }
       }
     } catch (error) {
       console.log(error, "@errorOnReactProject?");

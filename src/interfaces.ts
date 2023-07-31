@@ -202,22 +202,6 @@ export interface TorusCtorArgs {
    * Get yours today at {@link https://developer.tor.us | Dashboard}
    */
   apiKey?: string;
-
-  /**
-   * Consent key
-   * For consent management
-   */
-  consentConfiguration?: {
-    clientId: string;
-    secretKey: string;
-    scope: string[];
-  };
-
-  /**
-   * Consent enabler for dapp
-   * For consent management
-   */
-  enableConsent?: boolean;
 }
 
 export interface TorusLoginParams {
@@ -867,6 +851,15 @@ export interface IUpbondEmbedParams {
   skipDialog?: boolean;
 
   selectedVerifier?: string;
+
+  consentConfiguration?: {
+    enable: boolean;
+    config: {
+      publicKey: string;
+      scope: string[];
+      origin: string;
+    };
+  };
 }
 
 export interface UnvalidatedJsonRpcRequest {
