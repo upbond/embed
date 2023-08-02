@@ -1071,6 +1071,15 @@ class Upbond {
         };
         handleStream(statusStream, "data", statusStreamHandler);
       }
+    } else {
+      const logOutStream = this.communicationMux.getStream("logout") as Substream;
+      logOutStream.write({ name: "logOut" });
+      const statusStreamHandler = () => {
+        this.isLoggedIn = false;
+        this.currentVerifier = "";
+        this.requestedVerifier = "";
+      };
+      handleStream(statusStream, "data", statusStreamHandler);
     }
   }
 
