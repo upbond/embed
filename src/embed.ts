@@ -972,7 +972,7 @@ class Upbond {
     const statusStream = communicationMux.getStream("status") as Substream;
     statusStream.on("data", (status) => {
       // login
-      if (status.loggedIn) {
+      if (status.loggedIn && localStorage.getItem("upbond_login")) {
         this.isLoggedIn = status.loggedIn;
         this.currentVerifier = status.verifier;
       } // logout
