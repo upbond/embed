@@ -4,7 +4,7 @@ const fs = require("fs/promises");
 const main = async () => {
   try {
     const absolutePath = path.resolve("", "");
-    const frontPath = path.resolve("../", "embed-sample-v2/src/embed");
+    const frontPath = path.resolve("../", "react-upbond-embed/embed")
     try {
       await fs.access(frontPath);
       console.log(`The folder '${frontPath}' exists. Deleting it...`);
