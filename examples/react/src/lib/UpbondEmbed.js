@@ -10,7 +10,7 @@ class UpbondEmbed {
 
   // you can also using another envs.
   env = "direct-test"
-  
+
   provider
 
   isLoggedIn = false
@@ -29,6 +29,25 @@ class UpbondEmbed {
         buildEnv: this.env,
         isUsingDirect: true,
         dappRedirectUri: window.location.origin,
+        whiteLabel: {
+          walletTheme: {
+            lang: `${window.navigator.language}`,
+            logo: "https://i.ibb.co/L6vHB5d/company-logo-sample.png",
+            name: "Company",
+            buttonLogo: "https://i.ibb.co/wBmybLc/company-button-logo-sample.png",
+            isActive: true,
+
+            modalColor: "#fffff",
+            bgColor: "#4B68AE",
+            bgColorHover: "#214999",
+            textColor: "#f3f3f3",
+            textColorHover: "#ffffff",
+            upbondLogin: {
+              globalBgColor: "#ffffff",
+              globalTextColor: "#000000",
+            }
+          },
+        },
       })
       this.initialized = true
     }
