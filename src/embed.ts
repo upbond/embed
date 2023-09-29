@@ -168,7 +168,7 @@ class Upbond {
 
   private isCustomLogin = false;
 
-  constructor(opts?: TorusCtorArgs) {
+  constructor(opts: TorusCtorArgs = {}) {
     this.buttonPosition = opts.buttonPosition || "bottom-left";
     this.buttonSize = opts.buttonSize || 56;
     this.torusUrl = "";
