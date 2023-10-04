@@ -304,7 +304,7 @@ export const getUpbondWalletUrl = async (
       logLevel = "info";
       break;
     case "development":
-      torusUrl = "https://new-wallet-mobile.dev.upbond.io";
+      torusUrl = "https:/login.dev.upbond.io";
       logLevel = "debug";
       break;
     case "v1_development":
@@ -312,7 +312,7 @@ export const getUpbondWalletUrl = async (
       logLevel = "debug";
       break;
     case "testing":
-      torusUrl = "https://new-wallet-mobile.dev.upbond.io";
+      torusUrl = "https:/login.dev.upbond.io";
       logLevel = "debug";
       break;
     case "v1_debug":
