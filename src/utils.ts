@@ -286,62 +286,29 @@ export const getUpbondWalletUrl = async (
   switch (buildEnv) {
     /*
     Default the default to v2
-  */
+    */
     case "production":
+    case "v1_production":
+    case "v2_production":
       torusUrl = `https://wallet.upbond.io`;
       logLevel = "info";
       break;
-    case "v1_production":
-      torusUrl = `https://old-wallet.upbond.io`;
-      logLevel = "info";
-      break;
     case "staging":
-      torusUrl = "https://wallet.stg.upbond.io";
-      logLevel = "info";
-      break;
     case "v1_staging":
-      torusUrl = "https://old-wallet.stg.upbond.io";
+    case "v2_staging":
+      torusUrl = "https://login.stg.upbond.io";
       logLevel = "info";
       break;
     case "development":
-      torusUrl = "https:/login.dev.upbond.io";
-      logLevel = "debug";
-      break;
     case "v1_development":
-      torusUrl = "https://wallet-mobile.dev.upbond.io";
-      logLevel = "debug";
-      break;
+    case "v2_development":
     case "testing":
       torusUrl = "https:/login.dev.upbond.io";
       logLevel = "debug";
       break;
-    case "v1_debug":
-      torusUrl = "https://new-wallet.upbond.io";
-      logLevel = "debug";
-      break;
-    case "debug":
-      torusUrl = "https://new-wallet.upbond.io";
-      logLevel = "debug";
-      break;
     case "local":
+    case "v2_local":
       torusUrl = "http://localhost:3002";
-      logLevel = "debug";
-      break;
-    case "v1_local":
-      torusUrl = "http://localhost:3002";
-      logLevel = "debug";
-      break;
-    // ...Others...
-    case "old_wallet":
-      torusUrl = "https://old-wallet.upbond.io";
-      logLevel = "debug";
-      break;
-    case "new_wallet":
-      torusUrl = "https://new-wallet.upbond.io";
-      logLevel = "debug";
-      break;
-    case "direct-test":
-      torusUrl = "https://wallet-embed-trial.dev.upbond.io";
       logLevel = "debug";
       break;
     case "wallet-did":
