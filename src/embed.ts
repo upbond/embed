@@ -246,14 +246,6 @@ class Upbond {
       console.log(`More information, please visit https://github.com/upbond/embed`);
       buildTempEnv = "production";
     }
-    if (buildEnv === "v2_new-dev-local") {
-      console.log(
-        `%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL' instead to point wallet on LOCAL environment.`,
-        "color: #FF0000"
-      );
-      console.log(`More information, please visit https://github.com/upbond/embed`);
-      buildTempEnv = "new-dev-local";
-    }
 
     if (buildEnv.includes("v1")) {
       console.log(

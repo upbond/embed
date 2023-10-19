@@ -81,12 +81,7 @@ export type BuildEnv =
   | "v2_staging"
   | "v2_local"
   | "v2_debug"
-  | "direct-test"
-  | "new-dev-local"
-  | "v2_new-dev-local"
-  | "old_wallet"
   | "debug"
-  | "new_wallet"
   | "wallet-did";
 
 export type PAYMENT_PROVIDER_TYPE = (typeof PAYMENT_PROVIDER)[keyof typeof PAYMENT_PROVIDER];
