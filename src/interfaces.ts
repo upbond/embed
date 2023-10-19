@@ -61,12 +61,7 @@ export const UPBOND_BUILD_ENV = {
   V2_DEVELOPMENT: "v2_development",
   V2_STAGING: "v2_staging",
   V2_PRODUCTION: "v2_production",
-  DIRECT_TEST: "direct-test",
-  NEW_DEV_LOCAL: "new-dev-local",
-  V2_NEW_DEV_LOCAL: "v2_new-dev-local",
-  DEV_OLD_WALLET: "old_wallet",
   DEBUG: "debug",
-  DEV_NEW_WALLET: "new_wallet",
   WALLET_DID: "wallet-did",
 } as const;
 

@@ -57,15 +57,15 @@ await upbond.init({
 
 ************Parameters************
 
-- `buildEnv` (required): `UPBOND_BUILD_ENV` build environment settings: Build environments are divided into 3 types of environment usages: production, staging, and development. Development uses testnet, while staging and production use mainnet. Below is the definition or `UPBOND_BUILD_ENV` in the embed library.
+- `buildEnv` (required): `UPBOND_BUILD_ENV` build environment settings: Build environments are divided into 3 types of environment usages: production and staging. Below is the definition or `UPBOND_BUILD_ENV` in the embed library.
 ```
-  PRODUCTION: "production", // point to wallet url https://wallet.upbond.io
-  STAGING: "staging", // point to wallet url https://wallet.stg.upbond.io
+  PRODUCTION: "production",
+  STAGING: "staging",
   .
   .
   .
 ```
-`UPBOND_BUILD_ENV.PRODUCTION`, `UPBOND_BUILD_ENV.STAGING`, `UPBOND_BUILD_ENV.DEVELOPMENT` always point to the newest environment. As of January 2023, the newest wallet environment is `v2_*`.
+`UPBOND_BUILD_ENV.PRODUCTION`, `UPBOND_BUILD_ENV.STAGING` always point to the newest environment.
 
 - `widgetConfig` (optional): Configuration to show embed button `before` or `after` logins.
 ```javascript
@@ -201,7 +201,7 @@ const [initialized, setInitialized] = useState(false)
 useEffect(() => {
   const init = async () => {
     await upbond.init({
-      buildEnv: UPBOND_BUILD_ENV.TESTING
+      buildEnv: UPBOND_BUILD_ENV.PRODUCTION
     });
     setInitialized(true)
   }
@@ -466,4 +466,4 @@ whiteLabel: {
 
 # Current version
 
-version: v1.3
+version: v2.x
