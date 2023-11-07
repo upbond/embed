@@ -153,31 +153,33 @@ const upbond = new Upbond({
   modalZIndex: 150
 });
 
-const [initialized, setInitialized] = useState(false)
+const Example = () => {
+  const [initialized, setInitialized] = useState(false)
 
-useEffect(() => {
-  const init = async () => {
-    await upbond.init({
-      buildEnv: UPBOND_BUILD_ENV.PRODUCTION
-    });
-    setInitialized(true)
-  }
-  if (!initialized) {
-    init()
-  }
-}, [])
+  useEffect(() => {
+    const init = async () => {
+      await upbond.init({
+        buildEnv: UPBOND_BUILD_ENV.PRODUCTION
+      });
+      setInitialized(true)
+    }
+    if (!initialized) {
+      init()
+    }
+  }, [])
 
-const loginEmbed = async () => {
-  try {
-    await upbond.login();
-  } catch(err) {
-    throw new Error(err)
+  const loginEmbed = async () => {
+    try {
+      await upbond.login();
+    } catch(err) {
+      throw new Error(err)
+    }
   }
+
+  return (
+    // render yours
+  )
 }
-
-return (
-  // render yours
-)
 ```
 
 ## Logout
@@ -343,9 +345,8 @@ Use `whiteLabel` option inside the init configuration.
 ```jsx
 import Upbond from "@upbond/upbond-embed";
 
+const upbond = new Upbond({})
 const Example = () => {
-  const upbond = new Upbond({})
-
   const init = async () => {
     await upbond.init({
       whiteLabel: {
