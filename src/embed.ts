@@ -162,6 +162,8 @@ class Upbond {
     };
   };
 
+  flowConfig: string;
+
   private loginHint = "";
 
   private useWalletConnect: boolean;
@@ -226,6 +228,7 @@ class Upbond {
         origin: "",
       },
     },
+    flowConfig = "normal",
   }: IUpbondEmbedParams = {}): Promise<void> {
     // Send WARNING for deprecated buildEnvs
     // Give message to use others instead
@@ -305,6 +308,7 @@ class Upbond {
     log.setDefaultLevel(logLevel);
 
     this.consentConfiguration = consentConfiguration;
+    this.flowConfig = flowConfig;
 
     const upbondIframeUrl = new URL(torusUrl);
     if (upbondIframeUrl.pathname.endsWith("/")) upbondIframeUrl.pathname += "popup";
@@ -373,6 +377,7 @@ class Upbond {
                 redirectUrl: dappRedirectUri,
               },
               consentConfiguration: this.consentConfiguration,
+              flowConfig,
             },
           });
         };
