@@ -647,6 +647,47 @@ class Upbond {
     });
   }
 
+  getTkey(message?: string) {
+    return new Promise((resolve, reject) => {
+      if (this.isLoggedIn) {
+        const tkeyAccessStream = this.communicationMux.getStream("tkey_access") as Substream;
+        tkeyAccessStream.write({ name: "tkey_access_request" });
+        const tkeyAccessHandler = (chunk) => {
+          const {
+            name,
+            data: { approved, payload, rejected, newRequest },
+          } = chunk;
+          if (name === "tkey_access_response") {
+            if (approved) {
+              resolve(payload);
+            } else if (rejected) {
+              reject(new Error("User rejected the request"));
+            } else if (newRequest) {
+              const tkeyInfoStream = this.communicationMux.getStream("tkey") as Substream;
+              const tkeyInfoHandler = (handlerChunk) => {
+                if (handlerChunk.name === "tkey_response") {
+                  if (handlerChunk.data.approved) {
+                    resolve(handlerChunk.data.payload);
+                  } else {
+                    reject(new Error("User rejected the request"));
+                  }
+                }
+              };
+              handleStream(tkeyInfoStream, "data", tkeyInfoHandler);
+              const preopenInstanceId = getPreopenInstanceId();
+              this._handleWindow(preopenInstanceId, {
+                target: "_blank",
+                features: FEATURES_PROVIDER_CHANGE_WINDOW,
+              });
+              tkeyInfoStream.write({ name: "tkey_request", data: { message, preopenInstanceId } });
+            }
+          }
+        };
+        handleStream(tkeyAccessStream, "data", tkeyAccessHandler);
+      } else reject(new Error("User has not logged in yet"));
+    });
+  }
+
   initiateTopup(provider: PAYMENT_PROVIDER_TYPE, params: PaymentParams): Promise<boolean> {
     return new Promise((resolve, reject) => {
       if (this.isInitialized) {
