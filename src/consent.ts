@@ -22,6 +22,8 @@ export default class Consent {
     enabled: boolean;
   };
 
+  flowConfig: string;
+
   publicKey: string;
 
   isLoggedIn: boolean;
@@ -56,6 +58,7 @@ export default class Consent {
         enabled: false,
         scopes: scope,
       };
+      this.flowConfig = "normal";
       this.publicKey = publicKey;
       this.communicationMux = consentStream;
       this.provider = provider;

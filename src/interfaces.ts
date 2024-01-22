@@ -850,6 +850,8 @@ export interface IUpbondEmbedParams {
       origin: string;
     };
   };
+
+  flowConfig?: "normal" | "fastlogin";
 }
 
 export interface UnvalidatedJsonRpcRequest {
