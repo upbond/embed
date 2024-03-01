@@ -7,6 +7,7 @@ import Web3 from "web3";
 import companySampleLogo from "assets/images/sample-logo/company-logo-sample.png";
 import DefaultProfileImage from "assets/images/default-photo.svg";
 import "./toaster.css";
+import Erc721Abi from "json/erc721Abi.json";
 /* 
   Read this:
   This concept actually can be also using hooks (functional), you may can decide what you want to do
@@ -164,6 +165,26 @@ const Embed = () => {
       toast.error(error.message || "Some error occured");
     }
   };
+
+  const getName = async () => {
+    setBtnLoading(true);
+    try {
+      const provider = new ethers.providers.Web3Provider(_upbond);
+      const contractAddress = (await provider.detectNetwork()).chainId === 137 ? "0x948e28AF092e0747a5D74fB2Ac7EB0D0C93a5066" : "0x11026B3e31034bdE138551A439bD5a22AA59Bdb3" //nft contract
+      const contract = new ethers.Contract(
+        contractAddress,
+        Erc721Abi,
+        provider
+      );
+
+      const getName = await contract.name();
+      toast.success(`Name of the contract is ${getName}`);
+      setBtnLoading(false);
+    } catch (error) {
+      setBtnLoading(false);
+      console.log(error, "errorrrrrrrr");
+    }
+  }
 
   const deploy = async () => {
     try {
@@ -341,6 +362,14 @@ const Embed = () => {
                 onClick={deploy}
               >
                 Send Transaction
+              </button>
+              <button
+                type="button"
+                disabled={btnLoading}
+                className="disabled:bg-gray-500 items-center px-4 py-2 text-sm font-medium rounded-xl shadow-sm text-white bg-[#4B68AE] hover:bg-[#214999] border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4B68AE]"
+                onClick={getName}
+              >
+                Get Name
               </button>
             </div>
             <p className="text-black mt-5">Output: </p>
