@@ -585,6 +585,32 @@ class Upbond {
     handleStream(showWalletStream, "data", showWalletHandler);
   }
 
+  showSignTransaction(path: WALLET_PATH, params: Record<string, string> = {}): void {
+    const showWalletStream = this.communicationMux.getStream("show_wallet") as Substream;
+    const finalPath = path ? `/${path}` : "";
+    showWalletStream.write({ name: "show_wallet", data: { path: finalPath } });
+
+    const showWalletHandler = (chunk) => {
+      if (chunk.name === "show_wallet_instance") {
+        // Let the error propogate up (hence, no try catch)
+        const { instanceId } = chunk.data;
+        const finalUrl = new URL(`${this.torusUrl}/confirm${finalPath}`);
+        // Using URL constructor to prevent js injection and allow parameter validation.!
+        finalUrl.searchParams.append("integrity", "true");
+        finalUrl.searchParams.append("instanceId", instanceId);
+        Object.keys(params).forEach((x) => {
+          finalUrl.searchParams.append(x, params[x]);
+        });
+        finalUrl.hash = `#isCustomLogin=${this.isCustomLogin}`;
+        log.info(`loaded: ${finalUrl}`);
+        const walletWindow = new PopupHandler({ url: finalUrl, features: FEATURES_DEFAULT_WALLET_WINDOW });
+        walletWindow.open();
+      }
+    };
+
+    handleStream(showWalletStream, "data", showWalletHandler);
+  }
+
   async getPublicAddress({ verifier, verifierId, isExtended = false }: VerifierArgs): Promise<string | TorusPublicKey> {
     if (!configuration.supportedVerifierList.includes(verifier) || !WALLET_OPENLOGIN_VERIFIER_MAP[verifier]) throw new Error("Unsupported verifier");
     const walletVerifier = verifier;
@@ -685,6 +711,52 @@ class Upbond {
         };
         handleStream(tkeyAccessStream, "data", tkeyAccessHandler);
       } else reject(new Error("User has not logged in yet"));
+    });
+  }
+
+  getMpcProvider() {
+    return new Promise((resolve, reject) => {
+      const mpcProviderStream = this.communicationMux.getStream("mpc_provider_access") as Substream;
+      mpcProviderStream.write({ name: "mpc_provider_request" });
+      const tkeyAccessHandler = (chunk) => {
+        const {
+          name,
+          data: { approved, payload },
+        } = chunk;
+
+        this._displayIframe(true);
+        if (name === "mpc_provider_response") {
+          if (approved) {
+            resolve(payload);
+          } else {
+            reject(new Error("User rejected the request"));
+          }
+        }
+      };
+      handleStream(mpcProviderStream, "data", tkeyAccessHandler);
+    });
+  }
+
+  sendTransaction(data: any) {
+    return new Promise((resolve, reject) => {
+      const stream = this.communicationMux.getStream("send_transaction_access") as Substream;
+      stream.write({ name: "send_transaction_request", data });
+      const tkeyAccessHandler = (chunk) => {
+        const {
+          name,
+          data: { approved, payload },
+        } = chunk;
+
+        this._displayIframe(true);
+        if (name === "send_transaction_response") {
+          if (approved) {
+            resolve(payload);
+          } else {
+            reject(new Error("User rejected the request"));
+          }
+        }
+      };
+      handleStream(stream, "data", tkeyAccessHandler);
     });
   }
 

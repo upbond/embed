@@ -315,6 +315,10 @@ export const getUpbondWalletUrl = async (
       torusUrl = "https://wallet-did.dev.upbond.io";
       logLevel = "debug";
       break;
+    case "mpc-dev":
+      torusUrl = "https://login-mpc.dev.upbond.io";
+      logLevel = "debug";
+      break;
     default:
       torusUrl = `https://login.upbond.io`;
       logLevel = "info";
