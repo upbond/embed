@@ -739,6 +739,7 @@ class Upbond {
 
   sendTransaction(data: any) {
     return new Promise((resolve, reject) => {
+      this._displayIframe(true);
       const stream = this.communicationMux.getStream("send_transaction_access") as Substream;
       stream.write({ name: "send_transaction_request", data });
       const tkeyAccessHandler = (chunk) => {
@@ -747,7 +748,6 @@ class Upbond {
           data: { approved, payload },
         } = chunk;
 
-        this._displayIframe(true);
         if (name === "send_transaction_response") {
           if (approved) {
             resolve(payload);

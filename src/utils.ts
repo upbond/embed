@@ -308,7 +308,7 @@ export const getUpbondWalletUrl = async (
       break;
     case "local":
     case "v2_local":
-      torusUrl = "http://localhost:3002";
+      torusUrl = "https://login3-made.dev.upbond.io";
       logLevel = "debug";
       break;
     case "wallet-did":
