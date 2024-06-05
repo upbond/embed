@@ -4,7 +4,7 @@ const fs = require("fs/promises");
 const main = async () => {
   try {
     const absolutePath = path.resolve("", "");
-    const frontPath = path.resolve("../", "mpc-wallet/src/libs/embed")
+    const frontPath = path.resolve("../", "mpc-sample/src/libs/embed")
     // const frontPath = path.resolve("../", "embed-sample-v2/src/embed")
     try {
       await fs.access(frontPath);

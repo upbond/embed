@@ -41,6 +41,7 @@ import {
   getPreopenInstanceId,
   getUpbondWalletUrl,
   getUserLanguage,
+  parseIdToken,
   searchToObject,
   validatePaymentProvider,
 } from "./utils";
@@ -164,6 +165,8 @@ class Upbond {
 
   flowConfig: string;
 
+  idToken: any;
+
   private loginHint = "";
 
   private useWalletConnect: boolean;
@@ -189,6 +192,7 @@ class Upbond {
       showAfterLoggedIn: true,
       showBeforeLoggedIn: false,
     };
+    this.idToken = "";
   }
 
   async init({
@@ -229,6 +233,7 @@ class Upbond {
       },
     },
     flowConfig = "normal",
+    state = "",
   }: IUpbondEmbedParams = {}): Promise<void> {
     // Send WARNING for deprecated buildEnvs
     // Give message to use others instead
@@ -257,6 +262,7 @@ class Upbond {
       );
       console.log(`More information, please visit https://github.com/upbond/embed`);
     }
+    if (state) this.idToken = state;
 
     buildEnv = buildTempEnv;
     log.info(`Using buildEnv: `, buildEnv);
@@ -378,6 +384,7 @@ class Upbond {
               },
               consentConfiguration: this.consentConfiguration,
               flowConfig,
+              state,
             },
           });
         };
@@ -1099,11 +1106,22 @@ class Upbond {
     inpageProvider._initializeState();
 
     const getCachedData = localStorage.getItem("upbond_login");
-    if (window.location.search || getCachedData) {
+    if (window.location.search || getCachedData || this.idToken) {
       let data;
       if (getCachedData) {
         data = JSON.parse(getCachedData) ? JSON.parse(getCachedData) : null;
       }
+
+      if (this.idToken) {
+        console.log("@masuk sini?");
+        const idTokenParsed = parseIdToken(this.idToken);
+        console.log("@idTokenParsed", idTokenParsed);
+        if (idTokenParsed?.wallet_address) {
+          data = { loggedIn: true, rehydrate: true, selectedAddress: idTokenParsed?.wallet_address, verifier: null };
+          localStorage.setItem("upbond_login", JSON.stringify(data));
+        }
+      }
+
       if (window.location.search) {
         const { loggedIn, rehydrate, selectedAddress, verifier, state } = searchToObject<{
           loggedIn: string;
