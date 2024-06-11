@@ -1117,7 +1117,7 @@ class Upbond {
         const idTokenParsed = parseIdToken(this.idToken);
         console.log("@idTokenParsed", idTokenParsed);
         if (idTokenParsed?.wallet_address) {
-          data = { loggedIn: true, rehydrate: true, selectedAddress: idTokenParsed?.wallet_address, verifier: null };
+          data = { loggedIn: true, rehydrate: true, selectedAddress: idTokenParsed?.wallet_address, verifier: "" };
           localStorage.setItem("upbond_login", JSON.stringify(data));
         }
       }
