@@ -47,20 +47,50 @@ export const SUPPORTED_PAYMENT_NETWORK = {
 
 export const UPBOND_BUILD_ENV = {
   PRODUCTION: "production",
+  STAGING: "staging",
   DEVELOPMENT: "development",
   TESTING: "testing",
-  TORUS_UPBOND: "torus-upbond",
-  DIRECT_TEST: "direct-test",
-  NEW_DEV_LOCAL: "new-dev-local",
+  LOCAL: "local",
+  V1_DEBUG: "v1_debug",
+  V1_LOCAL: "v1_local",
+  V1_DEVELOPMENT: "v1_development",
+  V1_STAGING: "v1_staging",
+  V1_PRODUCTION: "v1_production",
+  V2_DEBUG: "v2_debug",
+  V2_LOCAL: "v2_local",
+  V2_DEVELOPMENT: "v2_development",
+  V2_STAGING: "v2_staging",
+  V2_PRODUCTION: "v2_production",
+  DEBUG: "debug",
+  WALLET_DID: "wallet-did",
+  MPC_DEV: "mpc-dev",
 } as const;
 
-export type BuildEnv = "production" | "development" | "testing" | "torus-upbond" | "direct-test" | "new-dev-local";
+export type BuildEnv =
+  | "production"
+  | "staging"
+  | "development"
+  | "testing"
+  | "local"
+  | "v1_production"
+  | "v1_development"
+  | "v1_staging"
+  | "v1_local"
+  | "v1_debug"
+  | "v2_production"
+  | "v2_development"
+  | "v2_staging"
+  | "v2_local"
+  | "v2_debug"
+  | "debug"
+  | "wallet-did"
+  | "mpc-dev";
 
-export type PAYMENT_PROVIDER_TYPE = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
+export type PAYMENT_PROVIDER_TYPE = (typeof PAYMENT_PROVIDER)[keyof typeof PAYMENT_PROVIDER];
 
-export type SUPPORTED_PAYMENT_NETWORK_TYPE = typeof SUPPORTED_PAYMENT_NETWORK[keyof typeof SUPPORTED_PAYMENT_NETWORK];
+export type SUPPORTED_PAYMENT_NETWORK_TYPE = (typeof SUPPORTED_PAYMENT_NETWORK)[keyof typeof SUPPORTED_PAYMENT_NETWORK];
 
-export type UPBOND_BUILD_ENV_TYPE = typeof UPBOND_BUILD_ENV[keyof typeof UPBOND_BUILD_ENV];
+export type UPBOND_BUILD_ENV_TYPE = (typeof UPBOND_BUILD_ENV)[keyof typeof UPBOND_BUILD_ENV];
 
 export interface IPaymentProvider {
   line1: string;
@@ -108,9 +138,9 @@ export type EMBED_TRANSLATION_ITEM = {
   clickHere: string;
 };
 
-export type BUTTON_POSITION_TYPE = typeof BUTTON_POSITION[keyof typeof BUTTON_POSITION];
+export type BUTTON_POSITION_TYPE = (typeof BUTTON_POSITION)[keyof typeof BUTTON_POSITION];
 
-export type WALLET_PATH = "transfer" | "topup" | "home" | "settings" | "history" | "discover";
+export type WALLET_PATH = "home" | "account";
 export type ETHEREUM_NETWORK_TYPE =
   | "ropsten"
   | "rinkeby"
@@ -196,6 +226,10 @@ export interface NetworkInterface {
    * Name for currency ticker (e.g: `Binance Coin`)
    */
   tickerName?: string;
+  /**
+   * URL for RPC (e.g: `https://rpc.ankr.com/polygon_mumbai`)
+   */
+  rpcUrl?: string;
 }
 
 export interface BaseLoginOptions {
@@ -351,6 +385,21 @@ export interface LoginConfigItem {
    * Modify the order of buttons. Should be greater than zero, where 1 is top priority.
    */
   priority?: number;
+
+  /**
+   * Motify button bg that shown on the modal
+   */
+  buttonBgColor?: string;
+
+  /**
+   * Motify button text color that shown on the modal
+   */
+  buttonTextColor?: string;
+
+  /**
+   * Required. choose which Login provider that you will use, starts with upbond-
+   */
+  loginProvider: string;
 }
 
 export interface LoginConfig {
@@ -556,7 +605,7 @@ export interface WhiteLabelParams {
   /**
    * Whitelabel theme
    */
-  theme: ThemeParams;
+  theme?: ThemeParams;
   /**
    * Language of whitelabel.
    *
@@ -566,11 +615,11 @@ export interface WhiteLabelParams {
   /**
    * Logo Url to be used in light mode (dark logo)
    */
-  logoDark: string;
+  logoDark?: string;
   /**
    * Logo Url to be used in dark mode (light logo)
    */
-  logoLight: string;
+  logoLight?: string;
   /**
    * Shows/hides topup option in torus-website/widget.
    * Defaults to false
@@ -605,6 +654,68 @@ export interface WhiteLabelParams {
    * Custom translations. See (examples/vue-app) to configure
    */
   customTranslations?: LocaleLinks<unknown>;
+  /**
+   * Wallet theme
+   */
+  walletTheme?: {
+    /**
+     * Logo for wallet embed popup login
+     * @type {string}
+     */
+    logo?: string;
+    /**
+     * This value must true, if it's not true it will cause an UI error
+     * @type {boolean}
+     * @defaultValue true
+     */
+    isActive?: boolean;
+    /**
+     * Specify the name of the DApps
+     * @type {string}
+     */
+    name?: string;
+    /**
+     * Logo for the flying widget button
+     * @type {string}
+     */
+    buttonLogo?: string;
+    /**
+     * Background color for the login popup modal
+     * @type {string}
+     */
+    modalColor?: string;
+    /**
+     * Text color for the buttons text and some text on the notification popup
+     * @type {string}
+     */
+    textColor?: string;
+    /**
+     * Background color the buttons background.
+     * @type {string}
+     */
+    bgColor?: string;
+    /**
+     * Background color the hovered buttons.
+     * @type {string}
+     */
+    bgColorHover?: string;
+    /**
+     * Text color for the hovered buttons text and some text on the notification popup
+     * @type {string}
+     */
+    textColorHover?: string;
+    /**
+     * Config for the background and text in upbond login
+     * @type {{
+     *   globalBgColor: string;
+     *   globalTextColor: string;
+     * }}
+     */
+    upbondLogin?: {
+      globalBgColor: string;
+      globalTextColor: string;
+    };
+  };
 }
 
 export interface IUpbondEmbedParams {
@@ -643,7 +754,27 @@ export interface IUpbondEmbedParams {
    */
   buildEnv?: BuildEnv;
 
+  /**
+   * If using direct upbond embed will not going to open the window
+   * @defaultValue true
+   * @type {boolean}
+   * @memberof IUpbondEmbedParams
+   */
   isUsingDirect?: boolean;
+
+  /**
+   * Upbond button state, you can configure the button will be shown after or before loggedIn
+   *
+   * @type {{
+   *     showAfterLoggedIn: boolean;
+   *     showBeforeLoggedIn: boolean;
+   *   }}
+   * @memberof IUpbondEmbedParams
+   */
+  widgetConfig?: {
+    showAfterLoggedIn: boolean;
+    showBeforeLoggedIn: boolean;
+  };
 
   /**
    * Enables or disables logging.
@@ -712,6 +843,18 @@ export interface IUpbondEmbedParams {
   skipDialog?: boolean;
 
   selectedVerifier?: string;
+
+  consentConfiguration?: {
+    enable: boolean;
+    config: {
+      publicKey: string;
+      scope: string[];
+      origin: string;
+    };
+  };
+
+  flowConfig?: "normal" | "fastlogin";
+  state?: string;
 }
 
 export interface UnvalidatedJsonRpcRequest {
@@ -800,3 +943,58 @@ export type WalletProviderState = {
   isUnlocked: boolean;
   networkVersion: string;
 };
+
+export interface RequestedData {
+  email: string;
+  name: string;
+  address: string;
+  birthday: string;
+}
+
+export interface Vc {
+  userTarget: string;
+}
+
+export interface UserData {
+  dateAccepted: number;
+  userAddress: string;
+  dapp: string;
+  dappDescription: string;
+  dappId: number;
+}
+
+export interface CredentialSubject {
+  id: string;
+  ["@scope"]: string[];
+  userData: UserData;
+  signHash: string;
+  clientHost: string;
+}
+
+export interface Issuer {
+  id: string;
+}
+
+export interface Proof {
+  type: string;
+  jwt: string;
+}
+
+export interface Data {
+  requestedData: RequestedData;
+  vc: Vc;
+  credentialSubject: CredentialSubject;
+  issuer: Issuer;
+  type: string[];
+  ["@context"]: string[];
+  issuanceDate: Date;
+  proof: Proof;
+}
+
+export interface ConsentDidResponse {
+  data: Data;
+  deadline: number;
+  origin: string;
+  permited: string;
+  did: string;
+}

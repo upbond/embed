@@ -195,14 +195,6 @@ class UpbondInpageProvider extends SafeEventEmitter {
     //       this._state.hasEmittedConnection = true;
     //     }
     //   }
-
-    //   // Emit networkChanged event on network change
-    //   if ("networkVersion" in state && state.networkVersion !== this.networkVersion) {
-    //     this.networkVersion = state.networkVersion || null;
-    //     this.emit("networkChanged", this.networkVersion);
-    //   }
-    // });
-
     pump(
       mux.createStream("publicConfig") as unknown as Duplex,
       storeAsStream(this._publicConfigStore),
@@ -220,7 +212,6 @@ class UpbondInpageProvider extends SafeEventEmitter {
     });
 
     // connect to async provider
-
     const jsonRpcConnection = createStreamMiddleware();
     pump(
       jsonRpcConnection.stream,
@@ -384,7 +375,7 @@ class UpbondInpageProvider extends SafeEventEmitter {
   /**
    * Internal RPC method. Forwards requests to background via the RPC engine.
    * Also remap ids inbound and outbound.
-   *
+   * ::dwiyan::
    * @param payload - The RPC request object.
    * @param callback - The consumer's callback.
    * @param isInternal - false - Whether the request is internal.

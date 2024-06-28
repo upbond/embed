@@ -26,52 +26,143 @@ type PaymentErrorParams = {
 type PaymentErrors = { provider?: string } & PaymentErrorParams;
 
 export const defaultLoginParam = {
-  "upbond-wallet-tesnet-line": {
-    name: "Upbond",
-    description: "LINE with UPBOND Identity",
+  "upbond-line": {
+    name: "LINE",
+    description: "LINE",
     typeOfLogin: "line",
-    jwtParams: {
+    loginProvider: "upbond-line",
+    jwtParameters: {
       domain: "https://lzg2dndj.auth.dev.upbond.io",
       connection: "line",
       clientId: "FoQ_Ri8rKSXkHf82GRzZK",
       scope: "openid email profile offline_access",
-      // redirect_uri: "http://localhost:3000/auth",
     },
     clientId: "BGbtA2oA0SYvm1fipIPaSgSTPfGJG8Q6Ep_XHuZY9qQVW5jUXTMd0l8xVtXPx91aCmFfuVqTZt9CK79BgHTNanU",
-    logoHover: "",
-    logoLight: "https://app.upbond.io/assets/images/common/UPBOND%E3%83%AD%E3%82%B4new-01.svg",
-    logoDark: "https://app.upbond.io/assets/images/common/UPBOND%E3%83%AD%E3%82%B4new-01.svg",
     showOnModal: true,
     showOnDesktop: true,
     showOnMobile: true,
     mainOption: true,
     priority: 1,
+    customLogo: "line",
+    logo: "https://elvira.co.th/wp-content/uploads/2016/02/line-icon.png",
+    buttonBgColor: "#289B2A",
+    buttonTextColor: "#f3f3f3",
   } as LoginConfigItem,
-  jwt: {
-    loginProvider: "jwt",
-    verifier: "upbond-google-dev-tesnet",
+  "upbond-google": {
+    name: "Google",
+    description: "Google",
     typeOfLogin: "jwt",
-    name: "google",
-    description: "",
-    clientId: "hxFv4SaQVXv3tE_rhe5u9",
-    verifierSubIdentifier: "torus",
-    logoHover: "",
-    logoLight: "",
-    logoDark: "",
-    showOnModal: false,
-    mainOption: false,
-    showOnDesktop: false,
-    showOnMobile: false,
-    // For torus only
-    buttonDescription: "",
-    walletVerifier: "upbond-google-dev-tesnet",
+    loginProvider: "upbond-google",
     jwtParameters: {
-      domain: "https://lzg2dndj.auth.dev.upbond.io/",
-      connection: "google",
+      domain: "https://lzg2dndj.auth.dev.upbond.io",
+      connection: "line",
       clientId: "hxFv4SaQVXv3tE_rhe5u9",
-      redirect_uri: "http://localhost:3002/auth",
+      scope: "openid email profile offline_access",
     },
+    clientId: "BGbtA2oA0SYvm1fipIPaSgSTPfGJG8Q6Ep_XHuZY9qQVW5jUXTMd0l8xVtXPx91aCmFfuVqTZt9CK79BgHTNanU",
+    showOnModal: true,
+    showOnDesktop: true,
+    showOnMobile: true,
+    mainOption: true,
+    priority: 2,
     customLogo: "google",
+    logo: "https://www.seekpng.com/png/full/788-7887426_google-g-png-google-logo-white-png.png",
+    buttonBgColor: "#4B68AE",
+    buttonTextColor: "#FFF",
+  } as LoginConfigItem,
+} as LoginConfig;
+
+export const defaultLoginParamStg = {
+  "upbond-line": {
+    name: "LINE",
+    description: "LINE",
+    typeOfLogin: "line",
+    loginProvider: "upbond-line",
+    jwtParameters: {
+      domain: "https://6a8e4595.auth.stg.upbond.io",
+      connection: "line",
+      clientId: "YQvxSsSNOIFgoEwZoiPdm",
+      scope: "openid email profile offline_access",
+    },
+    clientId: "BGbtA2oA0SYvm1fipIPaSgSTPfGJG8Q6Ep_XHuZY9qQVW5jUXTMd0l8xVtXPx91aCmFfuVqTZt9CK79BgHTNanU",
+    showOnModal: true,
+    showOnDesktop: true,
+    showOnMobile: true,
+    mainOption: true,
+    priority: 1,
+    customLogo: "line",
+    logo: "https://elvira.co.th/wp-content/uploads/2016/02/line-icon.png",
+    buttonBgColor: "#289B2A",
+    buttonTextColor: "#f3f3f3",
+  } as LoginConfigItem,
+  "upbond-google": {
+    name: "Google",
+    description: "Google",
+    typeOfLogin: "jwt",
+    loginProvider: "upbond-google",
+    jwtParameters: {
+      domain: "https://6a8e4595.auth.stg.upbond.io",
+      connection: "line",
+      clientId: "zYvDxb22eVYLqDMAp_ql9",
+      scope: "openid email profile offline_access",
+    },
+    clientId: "BGbtA2oA0SYvm1fipIPaSgSTPfGJG8Q6Ep_XHuZY9qQVW5jUXTMd0l8xVtXPx91aCmFfuVqTZt9CK79BgHTNanU",
+    showOnModal: true,
+    showOnDesktop: true,
+    showOnMobile: true,
+    mainOption: true,
+    priority: 2,
+    customLogo: "google",
+    logo: "https://www.seekpng.com/png/full/788-7887426_google-g-png-google-logo-white-png.png",
+    buttonBgColor: "#4B68AE",
+    buttonTextColor: "#FFF",
+  } as LoginConfigItem,
+} as LoginConfig;
+
+export const defaultLoginParamProd = {
+  "upbond-line": {
+    name: "LINE",
+    description: "LINE",
+    typeOfLogin: "line",
+    loginProvider: "upbond-line",
+    jwtParameters: {
+      domain: "https://auth.upbond.io",
+      connection: "line",
+      clientId: "wa3wjaB0dx0RO9AgzngM-",
+      scope: "openid email profile offline_access",
+    },
+    clientId: "BKmNTSQ7y8yWyhNT_W5BobaAu7Re-zLW6fzK0bzdvjP9a-G4OP8ajriQJHFOH3ypvRIJeEp_O40aag-7iNTyp-s",
+    showOnModal: true,
+    showOnDesktop: true,
+    showOnMobile: true,
+    mainOption: true,
+    priority: 1,
+    customLogo: "line",
+    logo: "https://elvira.co.th/wp-content/uploads/2016/02/line-icon.png",
+    buttonBgColor: "#289B2A",
+    buttonTextColor: "#f3f3f3",
+  } as LoginConfigItem,
+  "upbond-google": {
+    name: "Google",
+    description: "Google",
+    typeOfLogin: "jwt",
+    loginProvider: "upbond-google",
+    jwtParameters: {
+      domain: "https://auth.upbond.io",
+      connection: "line",
+      clientId: "hxFv4SaQVXv3tE_rhe5u9",
+      scope: "openid email profile offline_access",
+    },
+    clientId: "BKmNTSQ7y8yWyhNT_W5BobaAu7Re-zLW6fzK0bzdvjP9a-G4OP8ajriQJHFOH3ypvRIJeEp_O40aag-7iNTyp-s",
+    showOnModal: true,
+    showOnDesktop: true,
+    showOnMobile: true,
+    mainOption: true,
+    priority: 2,
+    customLogo: "google",
+    logo: "https://www.seekpng.com/png/full/788-7887426_google-g-png-google-logo-white-png.png",
+    buttonBgColor: "#4B68AE",
+    buttonTextColor: "#FFF",
   } as LoginConfigItem,
 } as LoginConfig;
 
@@ -193,32 +284,43 @@ export const getUpbondWalletUrl = async (
   let logLevel: LogLevelDesc;
   // log.info("version used: ", versionUsed);
   switch (buildEnv) {
+    /*
+    Default the default to v2
+    */
     case "production":
-      torusUrl = `https://wallet.upbond.io`;
+    case "v1_production":
+    case "v2_production":
+      torusUrl = `https://login.upbond.io`;
       logLevel = "info";
       break;
-    case "testing":
-      torusUrl = "https://wallet-mobile.dev.upbond.io";
-      logLevel = "debug";
+    case "staging":
+    case "v1_staging":
+    case "v2_staging":
+      torusUrl = "https://login.stg.upbond.io";
+      logLevel = "info";
       break;
     case "development":
-      torusUrl = "http://localhost:3001";
+    case "v1_development":
+    case "v2_development":
+    case "testing":
+      torusUrl = "https:/login.dev.upbond.io";
       logLevel = "debug";
       break;
-    case "new-dev-local":
-      torusUrl = "http://localhost:3000";
+    case "local":
+    case "v2_local":
+      torusUrl = "http://localhost:3002";
       logLevel = "debug";
       break;
-    case "torus-upbond":
-      torusUrl = "https://torus-wallet.upbond.io";
+    case "wallet-did":
+      torusUrl = "https://wallet-did.dev.upbond.io";
       logLevel = "debug";
       break;
-    case "direct-test":
-      torusUrl = "https://wallet-embed-trial.dev.upbond.io";
+    case "mpc-dev":
+      torusUrl = "https://login-mpc.dev.upbond.io";
       logLevel = "debug";
       break;
     default:
-      torusUrl = `https://wallet.upbond.io`;
+      torusUrl = `https://login.upbond.io`;
       logLevel = "info";
       break;
   }
@@ -282,4 +384,32 @@ export const searchToObject = <T>(search): T => {
       if (parts[0]) result[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
       return result as T;
     }, {});
+};
+
+export const parseIdToken = (token, pureJwt = false) => {
+  if (pureJwt) {
+    const json = decodeURIComponent(
+      window
+        .atob(token)
+        .split("")
+        .map((c) => {
+          return `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`;
+        })
+        .join("")
+    );
+    return JSON.parse(json);
+  }
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map((c) => {
+        return `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`;
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
 };

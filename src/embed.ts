@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 import { get, setAPIKey } from "@toruslabs/http-helpers";
 import { BasePostMessageStream, JRPCRequest, ObjectMultiplex, setupMultiplex, Substream } from "@toruslabs/openlogin-jrpc";
 import deepmerge from "lodash.merge";
 
 import configuration from "./config";
+import Consent from "./consent";
 import { documentReady, handleStream, htmlToElement, runOnLoad } from "./embedUtils";
 import UpbondInpageProvider from "./inpage-provider";
 import generateIntegrity from "./integrity";
@@ -31,12 +33,15 @@ import PopupHandler from "./PopupHandler";
 import sendSiteMetadata from "./siteMetadata";
 import {
   defaultLoginParam,
+  defaultLoginParamProd,
+  defaultLoginParamStg,
   FEATURES_CONFIRM_WINDOW,
   FEATURES_DEFAULT_WALLET_WINDOW,
   FEATURES_PROVIDER_CHANGE_WINDOW,
   getPreopenInstanceId,
   getUpbondWalletUrl,
   getUserLanguage,
+  parseIdToken,
   searchToObject,
   validatePaymentProvider,
 } from "./utils";
@@ -73,12 +78,12 @@ const UNSAFE_METHODS = [
     upbondIframeHtml.crossOrigin = "anonymous";
     upbondIframeHtml.type = "text/html";
     upbondIframeHtml.rel = "prefetch";
-    if (upbondIframeHtml.relList && upbondIframeHtml.relList.supports) {
-      if (upbondIframeHtml.relList.supports("prefetch")) {
-        log.info("IFrame loaded");
-        document.head.appendChild(upbondIframeHtml);
-      }
-    }
+    // if (upbondIframeHtml.relList && upbondIframeHtml.relList.supports) {
+    //   if (upbondIframeHtml.relList.supports("prefetch")) {
+    //     log.info("IFrame loaded");
+    //     document.head.appendChild(upbondIframeHtml);
+    //   }
+    // }
   } catch (error) {
     log.warn(error);
   }
@@ -106,8 +111,6 @@ class Upbond {
   isLoggedIn: boolean;
 
   isInitialized: boolean;
-
-  torusWidgetVisibility: boolean;
 
   torusAlert: HTMLDivElement;
 
@@ -145,27 +148,51 @@ class Upbond {
 
   selectedVerifier: string;
 
+  buildEnv: (typeof UPBOND_BUILD_ENV)[keyof typeof UPBOND_BUILD_ENV];
+
+  widgetConfig: { showAfterLoggedIn: boolean; showBeforeLoggedIn: boolean };
+
+  consent: Consent | null;
+
+  consentConfiguration: {
+    enable: boolean;
+    config: {
+      publicKey: string;
+      scope: string[];
+      origin: string;
+    };
+  };
+
+  flowConfig: string;
+
+  idToken: any;
+
   private loginHint = "";
 
   private useWalletConnect: boolean;
 
   private isCustomLogin = false;
 
-  constructor({ buttonPosition = BUTTON_POSITION.BOTTOM_LEFT, buttonSize = 56, modalZIndex = 99999, apiKey = "torus-default" }: TorusCtorArgs = {}) {
-    this.buttonPosition = buttonPosition;
-    this.buttonSize = buttonSize;
+  constructor(opts: TorusCtorArgs = {}) {
+    this.buttonPosition = opts.buttonPosition || "bottom-left";
+    this.buttonSize = opts.buttonSize || 56;
     this.torusUrl = "";
     this.isLoggedIn = false; // ethereum.enable working
     this.isInitialized = false; // init done
-    this.torusWidgetVisibility = true;
     this.requestedVerifier = "";
     this.currentVerifier = "";
-    this.apiKey = apiKey;
-    setAPIKey(apiKey);
-    this.modalZIndex = modalZIndex;
-    this.alertZIndex = modalZIndex + 1000;
+    this.apiKey = opts.apiKey || "torus-default";
+    setAPIKey(this.apiKey);
+    this.modalZIndex = opts.modalZIndex || 999999;
+    this.alertZIndex = this.modalZIndex + 1000;
     this.isIframeFullScreen = false;
     this.isUsingDirect = false;
+    this.buildEnv = "production";
+    this.widgetConfig = {
+      showAfterLoggedIn: true,
+      showBeforeLoggedIn: false,
+    };
+    this.idToken = "";
   }
 
   async init({
@@ -174,15 +201,16 @@ class Upbond {
     // deprecated: use loginConfig instead
     enabledVerifiers = defaultVerifiers,
     network = {
-      host: "mainnet",
-      chainId: null,
-      networkName: "",
-      blockExplorer: "",
-      ticker: "",
-      tickerName: "",
+      host: "matic",
+      chainId: 137,
+      networkName: "Polygon",
+      blockExplorer: "https://polygonscan.com/",
+      ticker: "MATIC",
+      tickerName: "MATIC",
+      rpcUrl: "https://polygon-rpc.com",
     },
     loginConfig = defaultLoginParam,
-    showUpbondButton = true,
+    widgetConfig = this.widgetConfig, // default widget config
     integrity = {
       check: false,
       hash: iframeIntegrity,
@@ -191,14 +219,73 @@ class Upbond {
     whiteLabel,
     skipTKey = false,
     useWalletConnect = false,
-    isUsingDirect = false,
+    isUsingDirect = true,
     mfaLevel = "default",
     selectedVerifier,
     skipDialog = false,
     dappRedirectUri = window.location.origin,
+    consentConfiguration = {
+      enable: false,
+      config: {
+        publicKey: "",
+        scope: [],
+        origin: "",
+      },
+    },
+    flowConfig = "normal",
+    state = "",
   }: IUpbondEmbedParams = {}): Promise<void> {
+    // Send WARNING for deprecated buildEnvs
+    // Give message to use others instead
+    let buildTempEnv = buildEnv;
+    if (buildEnv === "v2_development") {
+      console.log(
+        `%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.DEVELOPMENT' instead to point wallet on DEVELOPMENT environment.`,
+        "color: #FF0000"
+      );
+      console.log(`More information, please visit https://github.com/upbond/embed`);
+      buildTempEnv = "development";
+    }
+    if (buildEnv === "v2_production") {
+      console.log(
+        `%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.PRODUCTION' instead to point wallet on PRODUCTION environment.`,
+        "color: #FF0000"
+      );
+      console.log(`More information, please visit https://github.com/upbond/embed`);
+      buildTempEnv = "production";
+    }
+
+    if (buildEnv.includes("v1")) {
+      console.log(
+        `%c [UPBOND-EMBED] WARNING! This buildEnv is deprecating soon. Please use 'UPBOND_BUILD_ENV.LOCAL|DEVELOPMENT|STAGING|PRODUCTION' instead to point wallet on each environment`,
+        "color: #FF0000"
+      );
+      console.log(`More information, please visit https://github.com/upbond/embed`);
+    }
+    if (state) this.idToken = state;
+
+    buildEnv = buildTempEnv;
+    log.info(`Using buildEnv: `, buildEnv);
+
+    // Enable/Disable logging
+    if (enableLogging) log.enableAll();
+    else log.disableAll();
+
+    // Check env staging / production, set LoginConfig
+    let loginConfigTemp = loginConfig;
+    if (JSON.stringify(loginConfig) === JSON.stringify(defaultLoginParam)) {
+      // For development, using the defaultloginparam
+      // For staging, using defaultLoginParamStg
+      if (buildEnv.includes("staging")) loginConfigTemp = defaultLoginParamStg;
+      // For production, using defaultLoginParamProd
+      if (buildEnv.includes("production")) loginConfigTemp = defaultLoginParamProd;
+      loginConfig = loginConfigTemp;
+    }
     log.info(`Using login config: `, loginConfig);
+    log.info(`Using network config: `, network);
+
     if (this.isInitialized) throw new Error("Already initialized");
+
     const { torusUrl, logLevel } = await getUpbondWalletUrl(buildEnv, integrity);
 
     log.info(`Url Loaded: ${torusUrl} with log: ${logLevel}`);
@@ -216,6 +303,7 @@ class Upbond {
       }
     }
 
+    this.buildEnv = buildEnv;
     this.skipDialog = skipDialog;
     this.dappRedirectUrl = dappRedirectUri;
     this.isUsingDirect = isUsingDirect;
@@ -223,15 +311,11 @@ class Upbond {
     this.whiteLabel = whiteLabel;
     this.useWalletConnect = useWalletConnect;
     this.isCustomLogin = !!(loginConfig && Object.keys(loginConfig).length > 0) || !!(whiteLabel && Object.keys(whiteLabel).length > 0);
-
-    log.info("@customLogin?", this.isCustomLogin);
-
-    log.info(`Using custom login: ${this.isCustomLogin}`);
     log.setDefaultLevel(logLevel);
 
-    if (enableLogging) log.enableAll();
-    else log.disableAll();
-    this.torusWidgetVisibility = showUpbondButton;
+    this.consentConfiguration = consentConfiguration;
+    this.flowConfig = flowConfig;
+
     const upbondIframeUrl = new URL(torusUrl);
     if (upbondIframeUrl.pathname.endsWith("/")) upbondIframeUrl.pathname += "popup";
     else upbondIframeUrl.pathname += "/popup";
@@ -255,12 +339,6 @@ class Upbond {
     this.torusAlertContainer = htmlToElement<HTMLDivElement>('<div id="torusAlertContainer"></div>');
     this.torusAlertContainer.style.display = "none";
     this.torusAlertContainer.style.setProperty("z-index", this.alertZIndex.toString());
-
-    const link = window.document.createElement("link");
-    link.setAttribute("rel", "stylesheet");
-    link.setAttribute("type", "text/css");
-    link.setAttribute("href", `${torusUrl}/css/widget.css`);
-    this.styleLink = link;
 
     const { defaultLanguage = getUserLanguage(), customTranslations = {} } = this.whiteLabel || {};
     const mergedTranslations = deepmerge(configuration.translations, customTranslations);
@@ -293,10 +371,10 @@ class Upbond {
               whiteLabel: this.whiteLabel,
               buttonPosition: this.buttonPosition,
               buttonSize: this.buttonSize,
-              torusWidgetVisibility: this.torusWidgetVisibility,
               apiKey: this.apiKey,
               skipTKey,
               network,
+              widgetConfig: this.widgetConfig,
               mfaLevel,
               skipDialog,
               selectedVerifier,
@@ -304,14 +382,22 @@ class Upbond {
                 enabled: isUsingDirect,
                 redirectUrl: dappRedirectUri,
               },
+              consentConfiguration: this.consentConfiguration,
+              flowConfig,
+              state,
             },
           });
         };
-        window.document.head.appendChild(this.styleLink);
         window.document.body.appendChild(this.upbondIframe);
         window.document.body.appendChild(this.torusAlertContainer);
       });
     };
+
+    if (!widgetConfig) {
+      log.info(`widgetConfig is not configured. Now using default widget configuration`);
+    } else {
+      this.widgetConfig = widgetConfig;
+    }
 
     if (buildEnv === "production" && integrity.check) {
       // hacky solution to check for iframe integrity
@@ -334,7 +420,23 @@ class Upbond {
         throw new Error("Integrity check failed");
       }
     } else {
-      await handleSetup();
+      try {
+        await handleSetup();
+        if (this.consentConfiguration.enable && this.consentConfiguration.config.publicKey) {
+          this.consent = new Consent({
+            publicKey: this.consentConfiguration.config.publicKey,
+            scope: this.consentConfiguration.config.scope,
+            consentStream: this.communicationMux,
+            provider: this.provider,
+            isLoggedIn: this.isLoggedIn,
+          });
+          this.consent.init();
+        } else {
+          this.consent = null;
+        }
+      } catch (error) {
+        console.error(error, "@errorOnInit");
+      }
     }
     return undefined;
   }
@@ -346,10 +448,27 @@ class Upbond {
     return this.ethereum.enable();
   }
 
+  requestAuthServiceAccessToken(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const stream = this.communicationMux.getStream("auth_service") as Substream;
+      stream.write({
+        name: "access_token_request",
+      });
+
+      stream.on("data", (ev) => {
+        if (ev.name !== "error") {
+          resolve(ev.data.authServiceAccessToken);
+        } else {
+          reject(ev.data.msg);
+        }
+      });
+    });
+  }
+
   logout(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (!this.isLoggedIn) {
-        reject(new Error("User has not logged in yet"));
+      if (!this.isInitialized) {
+        reject(new Error("Please initialize first"));
         return;
       }
 
@@ -365,6 +484,9 @@ class Upbond {
         } else reject(new Error("Some Error Occured"));
       };
       handleStream(statusStream, "data", statusStreamHandler);
+
+      // Remove localstorage upbond_login used for caching
+      localStorage.removeItem("upbond_login");
     });
   }
 
@@ -395,16 +517,24 @@ class Upbond {
     this.isInitialized = false;
   }
 
-  hideTorusButton(): void {
-    this.torusWidgetVisibility = false;
+  hideWidget(): void {
     this._sendWidgetVisibilityStatus(false);
     this._displayIframe();
   }
 
-  showUpbondButton(): void {
-    this.torusWidgetVisibility = true;
+  showWidget(): void {
     this._sendWidgetVisibilityStatus(true);
     this._displayIframe();
+  }
+
+  showMenu(): void {
+    this._sendWidgetMenuVisibilityStatus(true);
+    this._displayIframe(true);
+  }
+
+  hideMenu(): void {
+    this._sendWidgetMenuVisibilityStatus(false);
+    this._displayIframe(false);
   }
 
   setProvider({ host = "mainnet", chainId = null, networkName = "", ...rest }: NetworkInterface): Promise<void> {
@@ -420,10 +550,6 @@ class Upbond {
       };
       handleStream(providerChangeStream, "data", handler);
       const preopenInstanceId = getPreopenInstanceId();
-      this._handleWindow(preopenInstanceId, {
-        target: "_blank",
-        features: FEATURES_PROVIDER_CHANGE_WINDOW,
-      });
       providerChangeStream.write({
         name: "show_provider_change",
         data: {
@@ -466,6 +592,32 @@ class Upbond {
     handleStream(showWalletStream, "data", showWalletHandler);
   }
 
+  showSignTransaction(path: WALLET_PATH, params: Record<string, string> = {}): void {
+    const showWalletStream = this.communicationMux.getStream("show_wallet") as Substream;
+    const finalPath = path ? `/${path}` : "";
+    showWalletStream.write({ name: "show_wallet", data: { path: finalPath } });
+
+    const showWalletHandler = (chunk) => {
+      if (chunk.name === "show_wallet_instance") {
+        // Let the error propogate up (hence, no try catch)
+        const { instanceId } = chunk.data;
+        const finalUrl = new URL(`${this.torusUrl}/confirm${finalPath}`);
+        // Using URL constructor to prevent js injection and allow parameter validation.!
+        finalUrl.searchParams.append("integrity", "true");
+        finalUrl.searchParams.append("instanceId", instanceId);
+        Object.keys(params).forEach((x) => {
+          finalUrl.searchParams.append(x, params[x]);
+        });
+        finalUrl.hash = `#isCustomLogin=${this.isCustomLogin}`;
+        log.info(`loaded: ${finalUrl}`);
+        const walletWindow = new PopupHandler({ url: finalUrl, features: FEATURES_DEFAULT_WALLET_WINDOW });
+        walletWindow.open();
+      }
+    };
+
+    handleStream(showWalletStream, "data", showWalletHandler);
+  }
+
   async getPublicAddress({ verifier, verifierId, isExtended = false }: VerifierArgs): Promise<string | TorusPublicKey> {
     if (!configuration.supportedVerifierList.includes(verifier) || !WALLET_OPENLOGIN_VERIFIER_MAP[verifier]) throw new Error("Unsupported verifier");
     const walletVerifier = verifier;
@@ -487,7 +639,7 @@ class Upbond {
     );
   }
 
-  getUserInfo(message: string): Promise<UserInfo> {
+  getUserInfo(message?: string): Promise<UserInfo> {
     return new Promise((resolve, reject) => {
       if (this.isLoggedIn) {
         const userInfoAccessStream = this.communicationMux.getStream("user_info_access") as Substream;
@@ -525,6 +677,93 @@ class Upbond {
         };
         handleStream(userInfoAccessStream, "data", userInfoAccessHandler);
       } else reject(new Error("User has not logged in yet"));
+    });
+  }
+
+  getTkey(message?: string) {
+    return new Promise((resolve, reject) => {
+      if (this.isLoggedIn) {
+        const tkeyAccessStream = this.communicationMux.getStream("tkey_access") as Substream;
+        tkeyAccessStream.write({ name: "tkey_access_request" });
+        const tkeyAccessHandler = (chunk) => {
+          const {
+            name,
+            data: { approved, payload, rejected, newRequest },
+          } = chunk;
+          if (name === "tkey_access_response") {
+            if (approved) {
+              resolve(payload);
+            } else if (rejected) {
+              reject(new Error("User rejected the request"));
+            } else if (newRequest) {
+              const tkeyInfoStream = this.communicationMux.getStream("tkey") as Substream;
+              const tkeyInfoHandler = (handlerChunk) => {
+                if (handlerChunk.name === "tkey_response") {
+                  if (handlerChunk.data.approved) {
+                    resolve(handlerChunk.data.payload);
+                  } else {
+                    reject(new Error("User rejected the request"));
+                  }
+                }
+              };
+              handleStream(tkeyInfoStream, "data", tkeyInfoHandler);
+              const preopenInstanceId = getPreopenInstanceId();
+              this._handleWindow(preopenInstanceId, {
+                target: "_blank",
+                features: FEATURES_PROVIDER_CHANGE_WINDOW,
+              });
+              tkeyInfoStream.write({ name: "tkey_request", data: { message, preopenInstanceId } });
+            }
+          }
+        };
+        handleStream(tkeyAccessStream, "data", tkeyAccessHandler);
+      } else reject(new Error("User has not logged in yet"));
+    });
+  }
+
+  getMpcProvider() {
+    return new Promise((resolve, reject) => {
+      const mpcProviderStream = this.communicationMux.getStream("mpc_provider_access") as Substream;
+      mpcProviderStream.write({ name: "mpc_provider_request" });
+      const tkeyAccessHandler = (chunk) => {
+        const {
+          name,
+          data: { approved, payload },
+        } = chunk;
+
+        this._displayIframe(true);
+        if (name === "mpc_provider_response") {
+          if (approved) {
+            resolve(payload);
+          } else {
+            reject(new Error("User rejected the request"));
+          }
+        }
+      };
+      handleStream(mpcProviderStream, "data", tkeyAccessHandler);
+    });
+  }
+
+  sendTransaction(data: any) {
+    return new Promise((resolve, reject) => {
+      this._displayIframe(true);
+      const stream = this.communicationMux.getStream("send_transaction_access") as Substream;
+      stream.write({ name: "send_transaction_request", data });
+      const tkeyAccessHandler = (chunk) => {
+        const {
+          name,
+          data: { approved, payload },
+        } = chunk;
+
+        if (name === "send_transaction_response") {
+          if (approved) {
+            resolve(payload);
+          } else {
+            reject(new Error("User rejected the request"));
+          }
+        }
+      };
+      handleStream(stream, "data", tkeyAccessHandler);
     });
   }
 
@@ -662,8 +901,15 @@ class Upbond {
   }
 
   protected _sendWidgetVisibilityStatus(status: boolean): void {
-    const torusWidgetVisibilityStream = this.communicationMux.getStream("torus-widget-visibility") as Substream;
-    torusWidgetVisibilityStream.write({
+    const upbondButtonVisibilityStream = this.communicationMux.getStream("widget-visibility") as Substream;
+    upbondButtonVisibilityStream.write({
+      data: status,
+    });
+  }
+
+  protected _sendWidgetMenuVisibilityStatus(status: boolean): void {
+    const upbondButtonVisibilityStream = this.communicationMux.getStream("menu-visibility") as Substream;
+    upbondButtonVisibilityStream.write({
       data: status,
     });
   }
@@ -673,7 +919,7 @@ class Upbond {
     const size = this.buttonSize + 14; // 15px padding
     // set phase
     if (!isFull) {
-      style.display = this.torusWidgetVisibility ? "block" : "none";
+      style.display = this.isLoggedIn ? "block" : !this.isLoggedIn ? "block" : "none";
       style.height = `${size}px`;
       style.width = `${size}px`;
       switch (this.buttonPosition) {
@@ -797,13 +1043,15 @@ class Upbond {
 
     inpageProvider.tryPreopenHandle = (payload: UnvalidatedJsonRpcRequest | UnvalidatedJsonRpcRequest[], cb: (...args: unknown[]) => void) => {
       const _payload = payload;
-      if (!Array.isArray(_payload) && UNSAFE_METHODS.includes(_payload.method)) {
-        const preopenInstanceId = getPreopenInstanceId();
-        this._handleWindow(preopenInstanceId, {
-          target: "_blank",
-          features: FEATURES_CONFIRM_WINDOW,
-        });
-        _payload.preopenInstanceId = preopenInstanceId;
+      if (this.buildEnv.includes("v1")) {
+        if (!Array.isArray(_payload) && UNSAFE_METHODS.includes(_payload.method)) {
+          const preopenInstanceId = getPreopenInstanceId();
+          this._handleWindow(preopenInstanceId, {
+            target: "_blank",
+            features: FEATURES_CONFIRM_WINDOW,
+          });
+          _payload.preopenInstanceId = preopenInstanceId;
+        }
       }
       inpageProvider._rpcEngine.handle(_payload as JRPCRequest<unknown>[], cb);
     };
@@ -841,7 +1089,7 @@ class Upbond {
     const statusStream = communicationMux.getStream("status") as Substream;
     statusStream.on("data", (status) => {
       // login
-      if (status.loggedIn) {
+      if (status.loggedIn && localStorage.getItem("upbond_login")) {
         this.isLoggedIn = status.loggedIn;
         this.currentVerifier = status.verifier;
       } // logout
@@ -856,35 +1104,91 @@ class Upbond {
 
     if (this.provider.shouldSendMetadata) sendSiteMetadata(this.provider._rpcEngine);
     inpageProvider._initializeState();
-    if (window.location.search) {
-      // taro buat send stream address disini:
 
-      const data = searchToObject<{
-        loggedIn: string;
-        rehydrate: string;
-        selectedAddress: string;
-        verifier: string;
-      }>(window.location.search);
+    const getCachedData = localStorage.getItem("upbond_login");
+    if (window.location.search || getCachedData || this.idToken) {
+      let data;
+      if (getCachedData) {
+        data = JSON.parse(getCachedData) ? JSON.parse(getCachedData) : null;
+      }
 
-      const oauthStream = this.communicationMux.getStream("oauth") as Substream;
-      const isLoggedIn = data.loggedIn === "true";
-      const isRehydrate = data.rehydrate === "true";
+      if (this.idToken) {
+        console.log("@masuk sini?");
+        const idTokenParsed = parseIdToken(this.idToken);
+        console.log("@idTokenParsed", idTokenParsed);
+        if (idTokenParsed?.wallet_address) {
+          data = { loggedIn: true, rehydrate: true, selectedAddress: idTokenParsed?.wallet_address, verifier: "" };
+          localStorage.setItem("upbond_login", JSON.stringify(data));
+        }
+      }
 
-      const { selectedAddress, verifier } = data;
+      if (window.location.search) {
+        const { loggedIn, rehydrate, selectedAddress, verifier, state } = searchToObject<{
+          loggedIn: string;
+          rehydrate: string;
+          selectedAddress: string;
+          verifier: string;
+          state: string;
+        }>(window.location.search);
+        if (loggedIn !== undefined && rehydrate !== undefined && selectedAddress !== undefined && verifier !== undefined && state !== undefined) {
+          data = { loggedIn, rehydrate, selectedAddress, verifier, state };
+          localStorage.setItem("upbond_login", JSON.stringify(data));
+        }
+      }
+      if (data) {
+        const oauthStream = this.communicationMux.getStream("oauth") as Substream;
+        const isLoggedIn = data.loggedIn === "true";
+        const isRehydrate = data.rehydrate === "true";
+        let state = "";
 
-      if (isLoggedIn) {
-        this.isLoggedIn = true;
-        this.currentVerifier = verifier;
-      } else this._displayIframe(true);
+        if (data.state) {
+          state = data.state;
+        }
 
-      this._displayIframe(true);
+        const { selectedAddress, verifier } = data;
+        if (isLoggedIn) {
+          this.isLoggedIn = true;
+          this.currentVerifier = verifier;
+        } else this._displayIframe(true);
 
-      oauthStream.write({ selectedAddress });
-      statusStream.write({ loggedIn: isLoggedIn, rehydrate: isRehydrate, verifier });
+        this._displayIframe(true);
 
-      await inpageProvider._initializeState();
+        oauthStream.write({ selectedAddress });
+        statusStream.write({ loggedIn: isLoggedIn, rehydrate: isRehydrate, verifier, state });
 
-      window.history.replaceState(null, "", window.location.origin + window.location.pathname);
+        await inpageProvider._initializeState();
+
+        if (data.selectedAddress && data.loggedIn && data.state) {
+          const urlParams = new URLSearchParams(window.location.search);
+          urlParams.delete("selectedAddress");
+          urlParams.delete("rehydrate");
+          urlParams.delete("loggedIn");
+          urlParams.delete("verifier");
+          urlParams.delete("state");
+          const newQueryParams = urlParams.toString();
+          const baseUrl = window.location.href.split("?")[0];
+          const newUrl = `${baseUrl}?${newQueryParams}`;
+          window.history.replaceState(null, null, newUrl);
+        }
+      } else {
+        const logOutStream = this.communicationMux.getStream("logout") as Substream;
+        logOutStream.write({ name: "logOut" });
+        const statusStreamHandler = () => {
+          this.isLoggedIn = false;
+          this.currentVerifier = "";
+          this.requestedVerifier = "";
+        };
+        handleStream(statusStream, "data", statusStreamHandler);
+      }
+    } else {
+      const logOutStream = this.communicationMux.getStream("logout") as Substream;
+      logOutStream.write({ name: "logOut" });
+      const statusStreamHandler = () => {
+        this.isLoggedIn = false;
+        this.currentVerifier = "";
+        this.requestedVerifier = "";
+      };
+      handleStream(statusStream, "data", statusStreamHandler);
     }
   }
 

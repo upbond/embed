@@ -46,6 +46,53 @@ const upbond = new Upbond(options);
     - `buttonSize` (optional) : number, default is `56`
     - `modalZIndex` (optional): number, default is `99999`
 
+
+Then, initialize Upbond embed
+
+```javascript
+await upbond.init({
+  buildEnv: UPBOND_BUILD_ENV.PRODUCTION
+});
+```
+
+************Parameters************
+
+- `buildEnv` (required): `UPBOND_BUILD_ENV` build environment settings: Build environments are divided into 3 types of environment usages: production and staging. Below is the definition or `UPBOND_BUILD_ENV` in the embed library.
+```
+  PRODUCTION: "production",
+  STAGING: "staging",
+  .
+  .
+  .
+```
+`UPBOND_BUILD_ENV.PRODUCTION`, `UPBOND_BUILD_ENV.STAGING` always point to the newest environment.
+
+- `widgetConfig` (optional): Configuration to show embed button `before` or `after` logins.
+```javascript
+  widgetConfig: {
+    showAfterLoggedIn: true,
+    showBeforeLoggedIn: false,
+  }
+```
+
+- `network` (optional): Blockchain network configuration to connect. Default to `matic` network.
+```javascript
+network: {
+  host: "mumbai",
+  chainId: 80001,
+  networkName: "Mumbai",
+  blockExplorer: "",
+  ticker: "MUMBAI",
+  tickerName: "MUMBAI",
+  rpcUrl: "https://polygon-testnet.public.blastapi.io/",
+}
+```
+
+- `dappRedirectUri` (optional): Redirect URI after successful login from Embed. Default to the dApps URI. `${window.location.origin}/`
+```javascript
+  dappRedirectUri: "https://demo-dapps.com"
+```
+
 **Examples**
 
 ```javascript
@@ -58,7 +105,21 @@ const upbond = new Upbond({
 });
 
 await upbond.init({
-  buildEnv: UPBOND_BUILD_ENV.TESTING
+  buildEnv: UPBOND_BUILD_ENV.PRODUCTION,
+  widgetConfig: {
+    showAfterLoggedIn: true,
+    showBeforeLoggedIn: false,
+  },
+  network: {
+    host: "mumbai",
+    chainId: 80001,
+    networkName: "Mumbai",
+    blockExplorer: "",
+    ticker: "MUMBAI",
+    tickerName: "MUMBAI",
+    rpcUrl: "https://polygon-testnet.public.blastapi.io/",
+  },
+  dappRedirectUri: "https://demo-dapps.com"
 });
 ```
 
@@ -97,7 +158,7 @@ const [initialized, setInitialized] = useState(false)
 useEffect(() => {
   const init = async () => {
     await upbond.init({
-      buildEnv: UPBOND_BUILD_ENV.TESTING
+      buildEnv: UPBOND_BUILD_ENV.PRODUCTION
     });
     setInitialized(true)
   }
@@ -140,7 +201,7 @@ const [initialized, setInitialized] = useState(false)
 useEffect(() => {
   const init = async () => {
     await upbond.init({
-      buildEnv: UPBOND_BUILD_ENV.TESTING
+      buildEnv: UPBOND_BUILD_ENV.PRODUCTION
     });
     setInitialized(true)
   }
@@ -269,6 +330,9 @@ if (upbond.provider) {
 
 You can check this out [here](https://github.com/upbond/embed/tree/master/examples/react)
 
+**Demo Dapps**
+
+You can also check our example in action [here](https://demo.upbond.io)
 
 # Whitelabel Example
 
@@ -280,34 +344,35 @@ Use `whiteLabel` option inside the init configuration.
 import Upbond from "@upbond/upbond-embed";
 
 const Example = () => {
-	const upbond = new Upbond({})
+  const upbond = new Upbond({})
 
-	const init = async () => {
-		await upbond.init({
-			whiteLabel: {
-				walletTheme: {
+  const init = async () => {
+    await upbond.init({
+      whiteLabel: {
+        walletTheme: {
           name: "Sample App",
-	        logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
-	        buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
-	        modalColor: "#f3f3f3",
-			    bgColor: "#214999",
-				  bgColorHover: "#f3f3f3",
-			    textColor: "#f3f3f3",
-			    textColorHover: "#214999",
-			    upbondLogin: {
-				    globalBgColor: "#f3f3f3",
-					  globalTextColor: "#214999"
-			    }
+          lang: "ja",
+          logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
+          buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
+          modalColor: "#f3f3f3",
+          bgColor: "#214999",
+          bgColorHover: "#f3f3f3",
+          textColor: "#f3f3f3",
+          textColorHover: "#214999",
+          upbondLogin: {
+            globalBgColor: "#f3f3f3",
+            globalTextColor: "#214999"
+          }
         }
       },
-		})
-	}
-	
-	useEffect(() => init(), [])
+    })
+  }
+  
+  useEffect(() => init(), [])
 
-	return (
-		// ...
-	)
+  return (
+    // ...
+  )
 }
 ```
 
@@ -320,23 +385,24 @@ import Upbond from "@upbond/upbond-embed";
 const upbond = new Upbond();
 const init = async () => {
   await upbond.init({
-		whiteLabel: {
+    whiteLabel: {
       walletTheme: {
         name: "Sample App",
+        lang: "ja",
         logo: "https://miro.medium.com/max/1200/1*jfdwtvU6V6g99q3G7gq7dQ.png",
         buttonLogo: "https://cdn.freebiesupply.com/images/large/2x/medium-icon-white-on-black.png",
         modalColor: "#f3f3f3",
-		    bgColor: "#214999",
-			  bgColorHover: "#f3f3f3",
-		    textColor: "#f3f3f3",
-		    textColorHover: "#214999",
-		    upbondLogin: {
-			    globalBgColor: "#ffffff",
-				  globalTextColor: "#214999"
-		    }
+        bgColor: "#214999",
+        bgColorHover: "#f3f3f3",
+        textColor: "#f3f3f3",
+        textColorHover: "#214999",
+        upbondLogin: {
+          globalBgColor: "#ffffff",
+          globalTextColor: "#214999"
+        }
       }
     },
-	})
+  })
 }
 
 export default {
@@ -357,11 +423,12 @@ Setting up the color theme and logo.
 
 ```jsx
 whiteLabel: {
-	/* wallet theme */
-	walletTheme: {
-		// other
-		name: "Sample App",
-	  // Logo setup
+  /* wallet theme */
+  walletTheme: {
+    // other
+    name: "Sample App",
+    lang: "ja",
+    // Logo setup
     logo: "path or url",
     buttonLogo: "path or url",
 
@@ -371,17 +438,18 @@ whiteLabel: {
     bgColorHover: "color hex",
     textColor: "color hex",
     textColorHover: "color hex",
-		
-		// Upbond login theme setup
-		upbondLogin: {
-			globalBgColor: "color hex",
-			globalTextColor: "color hex"
-		}
+    
+    // Upbond login theme setup
+    upbondLogin: {
+      globalBgColor: "color hex",
+      globalTextColor: "color hex"
+    }
   }
 }
 ```
 
 - `name` let you setup the application’s name.
+- `lang` let you setup the wallet's language. Current options include `en` for English and `ja` for Japanese. Default is English.
 - `logo` let you setup logo that will be displayed the login popup.
 - `buttonLogo` let you setup the logo for the flying wallet button.
 - `modalColor` let you setup the background color for the login popup.
@@ -398,4 +466,4 @@ whiteLabel: {
 
 # Current version
 
-version: v1.3.1
+version: v2.x
