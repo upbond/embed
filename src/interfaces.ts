@@ -63,6 +63,7 @@ export const UPBOND_BUILD_ENV = {
   V2_PRODUCTION: "v2_production",
   DEBUG: "debug",
   WALLET_DID: "wallet-did",
+  MPC_DEV: "mpc-dev",
 } as const;
 
 export type BuildEnv =
@@ -82,7 +83,8 @@ export type BuildEnv =
   | "v2_local"
   | "v2_debug"
   | "debug"
-  | "wallet-did";
+  | "wallet-did"
+  | "mpc-dev";
 
 export type PAYMENT_PROVIDER_TYPE = (typeof PAYMENT_PROVIDER)[keyof typeof PAYMENT_PROVIDER];
 
@@ -852,6 +854,7 @@ export interface IUpbondEmbedParams {
   };
 
   flowConfig?: "normal" | "fastlogin";
+  state?: string;
 }
 
 export interface UnvalidatedJsonRpcRequest {

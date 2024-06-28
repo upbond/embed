@@ -315,6 +315,10 @@ export const getUpbondWalletUrl = async (
       torusUrl = "https://wallet-did.dev.upbond.io";
       logLevel = "debug";
       break;
+    case "mpc-dev":
+      torusUrl = "https://login-mpc.dev.upbond.io";
+      logLevel = "debug";
+      break;
     default:
       torusUrl = `https://login.upbond.io`;
       logLevel = "info";
@@ -380,4 +384,32 @@ export const searchToObject = <T>(search): T => {
       if (parts[0]) result[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
       return result as T;
     }, {});
+};
+
+export const parseIdToken = (token, pureJwt = false) => {
+  if (pureJwt) {
+    const json = decodeURIComponent(
+      window
+        .atob(token)
+        .split("")
+        .map((c) => {
+          return `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`;
+        })
+        .join("")
+    );
+    return JSON.parse(json);
+  }
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map((c) => {
+        return `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`;
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
 };
