@@ -63,7 +63,7 @@ export const UPBOND_BUILD_ENV = {
   V2_PRODUCTION: "v2_production",
   V3_DEVELOPMENT: "v3_development",
   V3_STAGING: "v3_staging",
-  V3_PRODUCTION: "v3_production",  
+  V3_PRODUCTION: "v3_production",
   DEBUG: "debug",
   WALLET_DID: "wallet-did",
   MPC_DEV: "mpc-dev",
