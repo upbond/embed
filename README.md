@@ -61,7 +61,6 @@ In addition to the standard initialization method, UPBOND Embed can be initializ
 
 ```javascript
   await this.upbond.init({
-    buildEnv: UPBOND_BUILD_ENV.PRODUCTION,
     state: idToken
     });
 ```
