@@ -1,0 +1,32 @@
+{
+  "name": "mpc-sample",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@auth0/auth0-react": "^2.2.4",
+    "@upbond/upbond-embed": "file:../",
+    "ethers": "^5.7.0",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "web3": "^1.8.1",
+    "web3-token": "^1.0.6",
+    "@toruslabs/http-helpers": "^6.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
