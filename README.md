@@ -55,6 +55,17 @@ await upbond.init({
 });
 ```
 
+************Initializing with idToken from Login 3.0************
+
+In addition to the standard initialization method, UPBOND Embed can be initialized using an `idToken` from Login 3.0 to the `state` variable This allows developers to bypass the `upbond.login()` function, directly creating a login session. Please refer to the Login 3.0 sample codes for the implementation.
+
+```javascript
+  await this.upbond.init({
+    buildEnv: UPBOND_BUILD_ENV.PRODUCTION,
+    state: idToken
+    });
+```
+
 ************Parameters************
 
 - `buildEnv` (required): `UPBOND_BUILD_ENV` build environment settings: Build environments are divided into 3 types of environment usages: production and staging. Below is the definition or `UPBOND_BUILD_ENV` in the embed library.
