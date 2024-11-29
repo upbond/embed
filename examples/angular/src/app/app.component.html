@@ -1,0 +1,71 @@
+<div
+  class="flex justify-center flex-col text-center py-6 items-center h-screen"
+>
+  <p class="font-bold text-2xl">Demo of UPBOND in DApps Angular Version</p>
+  <p>See how UPBOND can be embedded in your dapp.</p>
+  <img
+    src="https://embed-sample.dev.upbond.io/static/media/company-logo-sample.614a5e0665c7df202dbf.png"
+    class="w-1/4"
+  />
+  <button
+    *ngIf="!isLoggedIn"
+    class="bg-[#6a81fc] text-white font-bold py-2 px-4 border border-[#6a81fc] rounded-xl w-28"
+    (click)="login()"
+  >
+    Login 3.0
+  </button>
+  <div class="flex justify-between items-center flex-col gap-2" *ngIf="isLoggedIn">
+    <p>Account : {{ account }}</p>
+    <div class="flex flex-row justify-between items-center gap-2" *ngIf="isLoggedIn">
+      <button
+        class="bg-[#6a81fc] text-white font-bold py-2 px-4 border border-[#6a81fc] rounded-xl w-full"
+        (click)="userInfo()"
+      >
+        UserInfo
+      </button>
+      <button
+        class="bg-[#6a81fc] text-white font-bold py-2 px-4 border border-[#6a81fc] rounded-xl w-full"
+        (click)="getBlockchainInfo()"
+      >
+        BlockChainInfo
+      </button>
+      <button
+        class="bg-[#6a81fc] text-white font-bold py-2 px-4 border border-[#6a81fc] rounded-xl w-full"
+        (click)="signTransaction()"
+      >
+        Sign Transaction
+      </button>
+      <button
+        class="bg-[#6a81fc] text-white font-bold py-2 px-4 border border-[#6a81fc] rounded-xl w-full"
+        (click)="signTransactionWeb3Token()"
+      >
+        Sign Web3 Token
+      </button>
+      <button
+        class="bg-[#6a81fc] text-white font-bold py-2 px-4 border border-[#6a81fc] rounded-xl w-full"
+        (click)="deploy()"
+      >
+        Send Transaction
+      </button>
+      <button
+        class="bg-[#6a81fc] text-white font-bold py-2 px-4 border border-[#6a81fc] rounded-xl w-full"
+        (click)="consent ()"
+      >
+        Get Consent Data
+      </button>
+      <button
+      class="bg-[#6a81fc] text-white font-bold py-2 px-4 border border-[#6a81fc] rounded-xl w-full"
+      (click)="logout()"
+    >
+      Logout
+    </button>
+    </div>
+    <p>Output <br/>
+      {{data}}</p>
+  </div>
+  <ngx-spinner
+    type="ball-scale-multiple"
+    size="large"
+    fullscreen="false"
+  ></ngx-spinner>
+</div>
