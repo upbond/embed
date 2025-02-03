@@ -1,4 +1,4 @@
-import Upbond from "@upbond/upbond-embed";
+import Upbond, { UPBOND_BUILD_ENV } from "@upbond/upbond-embed";
 import Web3 from "web3";
 import Web3Token from "web3-token";
 import { ethers } from "ethers";
@@ -41,7 +41,7 @@ class UpbondEmbed {
     blockExplorer: "https://amoy.polygonscan.com/",
     ticker: "AMOY",
     tickerName: "AMOY",
-    rpcUrl: "https://polygon-amoy.drpc.org"
+    rpcUrl: "https://rpc-amoy.polygon.technology"
   };
 
   constructor() {
@@ -54,12 +54,13 @@ class UpbondEmbed {
   async init({ idToken }) {
     if (this.upbond instanceof Upbond) {
       await this.upbond.init({
+        buildEnv: "v3_staging",
         state: idToken,
         network: this.networks,
         whiteLabel: this.whiteLabel,
         widgetConfig: {
-          showAfterLoggedIn: false,
-          showBeforeLoggedIn: false
+          showAfterLoggedIn: true,
+          showBeforeLoggedIn: true
         }
       });
       console.log("UPBOND Embed initialized!");
