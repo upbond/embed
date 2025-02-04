@@ -1,39 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Environment Configuration
 
-## Getting Started
+Before setting up the development environment, configure the necessary environment variables. Below is a sample configuration for the staging environment:
 
-First, build the embed packae:
+```
+NEXT_PUBLIC_URL=http://localhost:3000
+NEXT_PUBLIC_AUTHSERVICE_CLIENT_ID=B2GBRrZR2nn2P5exjaF1T
+NEXT_PUBLIC_LOGIN_UPBOND_DOMAIN=https://auth-wallet.stg.upbond.io
+```
 
-```bash
-cd ../
+Ensure that these environment variables are correctly set in a `.env.local` file in your project root.
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+Begin by cloning the embed repository to your local machine:
+
+```
+git clone https://github.com/upbond/embed.git
+cd embed
+```
+
+### 2. Install Dependencies and Build the Embed Package
+
+The embed package needs to be built before it can be used. To do this, run the following commands:
+
+```
 npm install --legacy-peer-deps
 npm run build
 ```
 
-Second, install dependencies and then run the development server:
+This step ensures that all dependencies are installed correctly and that the package is compiled.
 
-```bash
+### 3. Run the Example Application
+
+To start the development server and test the example implementation, navigate to the `examples` directory and install dependencies:
+
+```
+cd examples
 npm install --legacy-peer-deps
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Once the server is running, you can access the example application in your browser at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [http://localhost:3000](http://localhost:3000/)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### 4. Understanding the Build Environment
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The example implementation is configured for the staging environment using `v3_staging` as the `buildEnv`. If you need to modify this for production or other environments, update the environment variables accordingly.
