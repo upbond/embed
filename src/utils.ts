@@ -126,7 +126,7 @@ export const defaultLoginParamProd = {
     typeOfLogin: "line",
     loginProvider: "upbond-line",
     jwtParameters: {
-      domain: "https://auth.upbond.io",
+      domain: "https://classic.auth.upbond.io",
       connection: "line",
       clientId: "wa3wjaB0dx0RO9AgzngM-",
       scope: "openid email profile offline_access",
@@ -148,7 +148,7 @@ export const defaultLoginParamProd = {
     typeOfLogin: "jwt",
     loginProvider: "upbond-google",
     jwtParameters: {
-      domain: "https://auth.upbond.io",
+      domain: "https://classic.auth.upbond.io",
       connection: "line",
       clientId: "hxFv4SaQVXv3tE_rhe5u9",
       scope: "openid email profile offline_access",
@@ -290,7 +290,7 @@ export const getUpbondWalletUrl = async (
     case "production":
     case "v1_production":
     case "v2_production":
-      torusUrl = `https://login.upbond.io`;
+      torusUrl = `https://classic.login.upbond.io`;
       logLevel = "info";
       break;
     case "staging":
@@ -329,7 +329,7 @@ export const getUpbondWalletUrl = async (
       logLevel = "info";
       break;
     default:
-      torusUrl = `https://login.upbond.io`;
+      torusUrl = `https://classic.login.upbond.io`;
       logLevel = "info";
       break;
   }
