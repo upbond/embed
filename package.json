@@ -24,8 +24,7 @@
     "@babel/runtime": "7.x"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://npm.pkg.github.com/upbond"
   },
   "dependencies": {
     "@ansugroup/timing-safe-equal": "^0.1.3",
