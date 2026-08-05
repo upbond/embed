@@ -1,0 +1,32 @@
+version: 2
+
+# 依存の自動監査（upbond-executives#49 / C5）
+# 背景: 依存の脆弱性・不審な更新を自動検知できないと改ざんの混入に気づけない。
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/examples"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"
+
+  # Actions 自身の更新も監査対象（サプライチェーンの入口になるため）
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"
