@@ -8,6 +8,10 @@ on:
     types: [published]
   workflow_dispatch:
 
+# 既定は読み取りのみ。publish ジョブでのみ昇格させる（upbond-executives#46 / C2）
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,6 +26,13 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
+    # 人手 publish を禁止し、承認ゲートを通した CI からのみ publish する。
+    # environment 側で required reviewers を設定すること（設定は GitHub UI / org-admin）。
+    environment: npm-publish
+    permissions:
+      contents: read
+      # provenance（来歴証明）の署名に必要。npm の Trusted Publisher 設定とも対になる。
+      id-token: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -36,6 +47,6 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           if [[ "$VERSION" == *"-"* ]]; then TAG=rc; else TAG=latest; fi
           echo "Publishing $VERSION with dist-tag $TAG"
-          npm publish --access public --tag "$TAG"
+          npm publish --access public --provenance --tag "$TAG"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
